@@ -133,13 +133,14 @@ const CreateVehicle = () => {
   // ================= FRONTEND VALIDATION =================
   const validateForm = () => {
     const errors = {};
-    if (!formData.driver) errors.driver = "Chauffeur is required.";
+    // if (!formData.driver) errors.driver = "Chauffeur is required.";
     if (!formData.segment) errors.segment = "Segment is required.";
-    if (!formData.brand) errors.brand = "Brand is required.";
-    if (!formData.model) errors.model = "Model is required.";
-    if (!formData.year) errors.year = "Year is required.";
-    if (!formData.carNumber) errors.carNumber = "Vehicle number is required.";
+    // if (!formData.brand) errors.brand = "Brand is required.";
+    // if (!formData.model) errors.model = "Model is required.";
+    // if (!formData.year) errors.year = "Year is required.";
+    // if (!formData.carNumber) errors.carNumber = "Vehicle number is required.";
 
+    console.log("Validation errors:", errors);
     setApiError(errors);
     return Object.keys(errors).length === 0;
   };
@@ -172,15 +173,20 @@ const CreateVehicle = () => {
   // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submit button clicked");
+    console.log("Current formData:", formData);
     setApiError({});
     setLoading(true);
 
     if (!validateForm()) {
+      console.log("Validation failed");
       setLoading(false);
       return;
     }
+    console.log("Validation passed");
 
     try {
+      console.log("Form data before creating FormData:", formData);
       const data = new FormData();
 
       // Append all simple text fields
@@ -215,13 +221,16 @@ const CreateVehicle = () => {
       if (formData.rcFrontPhoto) data.append("rcFrontPhoto", formData.rcFrontPhoto);
       if (formData.rcBackPhoto) data.append("rcBackPhoto", formData.rcBackPhoto);
 
+      console.log("FormData created, calling createVehicle");
       const res = await createVehicle(data);
+      console.log("API response:", res);
 
       if (res?.status) {
         toast.success("Vehicle Created Successfully");
         navigate(-1);
       } else {
         const errMsg = res?.message || "Failed to create vehicle";
+        console.log("API returned false status, message:", errMsg);
         toast.error(errMsg);
       }
     } catch (err) {
@@ -289,7 +298,7 @@ const CreateVehicle = () => {
           >
             {segments.map((s) => (
               <Option key={s._id} value={s._id}>
-                {/* {`${s.name} (${s.maxCapacity})`} */}
+                {`${s.name}`}
               </Option>
             ))}
           </Select>
@@ -314,24 +323,24 @@ const CreateVehicle = () => {
           )} */}
 
           {[
-            "Vehicle Brand",
-            "Vehicle model",
-            "fuel Type",
-            " Manufacturer Year",
-            "Vehicle Number",
-            "color",
-            "BootSpace (Lr)",
-            "Capacity (Seater)",
-            "Certificate Number"
-          ].map((name) => (
-            <div key={name}>
-              <label className="ml-2 mt-5 font-normal block capitalize">{name}</label>
+            { label: "Vehicle Brand *", key: "brand", type: "text" },
+            { label: "Vehicle Model *", key: "model", type: "text" },
+            { label: "Fuel Type", key: "fuelType", type: "select" },
+            { label: "Manufacturer Year *", key: "year", type: "number" },
+            { label: "Vehicle Number *", key: "carNumber", type: "text" },
+            { label: "Color", key: "color", type: "text" },
+            { label: "Boot Space (Lr)", key: "bootSpace", type: "text" },
+            { label: "Capacity (Seater)", key: "capacity", type: "text" },
+            { label: "RC Number", key: "certificateNumber", type: "text" }
+          ].map(({ label, key, type }) => (
+            <div key={key}>
+              <label className="ml-2 mt-5 font-normal block">{label}</label>
 
               {/* ✅ FUEL TYPE DROPDOWN */}
-              {name === "fuel Type" ? (
+              {type === "select" ? (
                 <select
-                  name={name}
-                  value={formData[name] || ""}
+                  name={key}
+                  value={formData[key] || ""}
                   onChange={handleChange}
                   className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
                 >
@@ -341,33 +350,38 @@ const CreateVehicle = () => {
                 </select>
               ) : (
                 <input
-                  type={name === "year" ? "number" : "text"}
-                  name={name}
-                  value={formData[name] || ""}
+                  type={type}
+                  name={key}
+                  value={formData[key] || ""}
                   onChange={handleChange}
                   className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
-                  placeholder={`Enter ${name}`}
+                  placeholder={`Enter ${label}`}
                 />
               )}
 
-              {apiError[name] && (
-                <p className="text-red-500 text-sm ml-2">{apiError[name]}</p>
+              {apiError[key] && (
+                <p className="text-red-500 text-sm ml-2">{apiError[key]}</p>
               )}
             </div>
           ))}
 
           {/* DATE FIELDS */}
-          {["Certificate Expiry", "Insurance Expiry", "Pollution Expiry", "RC Expiry"].map((name) => (
-            <div key={name}>
-              <label className="ml-2 mt-5 font-normal block">{name}</label>
+          {[
+            { label: "Certificate Expiry", key: "certificateExpiry" },
+            { label: "Insurance Expiry", key: "insuranceExpiry" },
+            { label: "Pollution Expiry", key: "pollutionExpiry" },
+            { label: "RC Expiry", key: "rcExpeiry" }
+          ].map(({ label, key }) => (
+            <div key={key}>
+              <label className="ml-2 mt-5 font-normal block">{label}</label>
               <input
                 type="date"
-                name={name}
-                value={formData[name] || ""}
+                name={key}
+                value={formData[key] || ""}
                 onChange={handleChange}
                 className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
               />
-              {apiError[name] && <p className="text-red-500 text-sm ml-2">{apiError[name]}</p>}
+              {apiError[key] && <p className="text-red-500 text-sm ml-2">{apiError[key]}</p>}
             </div>
           ))}
 

@@ -94,7 +94,7 @@ const Sidebar = () => {
           sectionName: "Vehicle",
         },
         {
-          name: "FuelLogs",
+          name: "Fuel Logs",
           link: "/home/fuelLogs",
           sectionName: "FuelLogs",
         },
@@ -129,7 +129,7 @@ const Sidebar = () => {
     },
 
     {
-      name: "Support",
+      name: "Complaint",
       link: "/home/complaint",
       icon: MdReportProblem,
       sectionName: "Complaint",

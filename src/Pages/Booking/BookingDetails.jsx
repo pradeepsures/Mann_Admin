@@ -12,15 +12,30 @@ import { toast } from "react-hot-toast";
 
 const { Option } = Select;
 
+//first letter capital
+const capitalizeFirst = (value) => {
+  if (value === null || value === undefined || value === "") return "N/A";
+
+  // if number, return as it is
+  if (typeof value !== "string") return value;
+
+  return value
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 // ✅ Field (thin divider)
 const Field = ({ label, value }) => (
   <div className="flex justify-between gap-4 py-2 border-b border-gray-100">
     <span className="text-gray-500 text-sm font-medium">{label}</span>
-    <span className="text-gray-800 text-sm text-right">
+    {/* <span className="text-gray-800 text-sm text-right">
       {value !== null && value !== undefined && value !== ""
         ? value
         : "N/A"}
-    </span>
+    </span> */}
+    <span className="text-gray-800 text-sm text-right">
+  {capitalizeFirst(value)}
+</span>
   </div>
 );
 
@@ -145,21 +160,18 @@ useEffect(() => {
 
         {/* BOOKING */}
         <Section title="Booking Info">
-          <Field label="BookingId" value={data._id} />
           <Field label="Booking Type" value={data.bookingType} />
           <Field label="Trip Status" value={data.tripStatus} />
           <Field label="Overall Status" value={data.overallStatus} />
           <Field label="Payment Status" value={data.paymentStatus} />
-          <Field label="Assignment Status" value={data.assignmentStatus} />
           <Field label="Trip Start Otp" value={data.tripStartOtp} />
           <Field label="Trip End Otp" value={data.tripEndOtp} />
+          <Field label="Assignment Status" value={data.assignmentStatus} />
         </Section>
 
 
         {/* USER */}
         <Section title="User Info">
-          <Field label="Name" value={data.user?.name} />
-          <Field label="Email" value={data.user?.email} />
           <Field label="Traveller Name" value={data.travellerName} />
           <Field label="Traveller Phone" value={data.travellerPhone} />
           <Field label="Traveller Email" value={data.travellerEmail} />
@@ -180,7 +192,6 @@ useEffect(() => {
           <Field label="Brand" value={data.vehicle?.brand} />
           <Field label="Model" value={data.vehicle?.model} />
           <Field label="Fuel Type" value={data.vehicle?.fuelType} />
-          {/* <Field label="Color" value={data.vehicle?.color} /> */}
           <Field label="Car Number" value={data.vehicle?.carNumber} />
           <Field label="Capacity" value={data.vehicle?.capacity} />
         </Section>
@@ -200,6 +211,8 @@ useEffect(() => {
               label="Date"
               value={data.tripStartAtIST || data.scheduledAtIST || "-"}
             />
+            <Field label="Latitude" value={data.pickup?.lat} />
+            <Field label="Longitude" value={data.pickup?.lng} />
           </div>
 
           {/* RIGHT SIDE = DROP */}
@@ -213,6 +226,8 @@ useEffect(() => {
               label="Date"
               value={data.tripEndAtIST || "-"}
             />
+            <Field label="Latitude" value={data.dropoff?.lat} />
+            <Field label="Longitude" value={data.dropoff?.lng} />
           </div>
 
         </Section>
@@ -242,7 +257,7 @@ useEffect(() => {
         <Section title="Payment Info">
           <Field label="Method" value={data.payment?.method} />
           <Field label="Status" value={data.payment?.status} />
-          <Field label="Paid Amount" value={data.payment?.paidAmount} />
+          <Field label="Estimated Paid Amount" value={data.payment?.paidAmount} />
           <Field label="Gateway Ref" value={data.payment?.gatewayRef} />
           <Field label="Paid At" value={data.paymentAtIST} />
 

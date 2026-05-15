@@ -357,7 +357,12 @@ const ProfileView = () => {
     );
   }
 
-  const profileImage = user.profileImage ? `${BASE_URL}/${user.profileImage}` : profileFallback;
+  // const profileImage = user.profileImage ? `${BASE_URL}/${user.profileImage}` : profileFallback;
+
+  const profileImage =
+  user?.profileImage && user.profileImage !== ""
+    ? `${BASE_URL}/${user.profileImage}`
+    : profileFallback;
 
   return (
     <Box
@@ -399,6 +404,7 @@ const ProfileView = () => {
               bgcolor: 'background.paper'
             }}
           />
+          
         </Box>
 
         <CardContent sx={{ pt: 10, pb: 4 }}>

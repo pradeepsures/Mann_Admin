@@ -37,13 +37,30 @@ const ProfilePage = () => {
             <div className="max-w-md mx-auto bg-white shadow-lg rounded-2xl p-6">
 
                 {/* Profile Image */}
+                {/* Profile Image */}
                 <div className="flex justify-center mb-4">
+                    <img
+                        src={
+                            profile?.profileImage
+                                ? profile?.profileImage.startsWith("http")
+                                    ? profile.profileImage
+                                    : `${BASE_URL.replace(/\/$/, "")}/${profile.profileImage.replace(/^\//, "")}`
+                                : "/mannFleet2.png"
+                        }
+                        alt="Profile"
+                        className="w-32 h-32 rounded-full object-cover border shadow"
+                        onError={(e) => {
+                            e.target.src = "/mannFleet2.png";
+                        }}
+                    />
+                </div>
+                {/* <div className="flex justify-center mb-4">
                     <img
                         src="/mannFleet2.png"
                         alt="Profile"
                         className="w-32 h-32 rounded-full object-cover border shadow"
                     />
-                </div>
+                </div> */}
 
                 {/* Basic Details */}
                 <div className="space-y-3 text-center">

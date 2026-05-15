@@ -169,9 +169,6 @@ export default function VehicleDetails() {
           {vehicle.carImage?.length > 0 && (
             <ImageCard title="Vehicle Images" images={vehicle.carImage} />
           )}
-          {vehicle.documentImage?.length > 0 && (
-            <ImageCard title="Document Images" images={vehicle.documentImage} />
-          )}
           {vehicle.certificatePhoto && (
             <ImageCard title="Certificate Photo" images={[vehicle.certificatePhoto]} />
           )}
@@ -181,6 +178,29 @@ export default function VehicleDetails() {
           {vehicle.rcBackPhoto && (
             <ImageCard title="RC Back" images={[vehicle.rcBackPhoto]} />
           )}
+          {vehicle.documentImage?.length > 0 && (
+  <div className="flex flex-row gap-6 overflow-x-auto pb-2 whitespace-nowrap">
+    {vehicle.documentImage.map((docImg, idx) => (
+      <div key={idx} className="inline-block flex-shrink-0">
+        <ImageCard
+          title={`Document Image ${idx + 1}`}
+          images={[docImg]}
+        />
+      </div>
+    ))}
+  </div>
+)}
+          {/* {vehicle.documentImage?.length > 0 && (
+            <div className="flex flex-wrap gap-6 overflow-x-auto pb-2">
+              {vehicle.documentImage.map((docImg, idx) => (
+                <ImageCard
+                  key={idx}
+                  title={`Document Image ${idx + 1}`}
+                  images={[docImg]}
+                />
+              ))}
+            </div>
+          )} */}
         </div>
 
         {(!vehicle.carImage?.length &&
@@ -219,14 +239,34 @@ const DetailItem = ({ label, value, small = false }) => (
   </div>
 );
 
-const ImageCard = ({ title, images }) => (
+const handleDownloadImage = async (src, title, idx) => {
+  try {
+    const response = await fetch(src);
+    const blob = await response.blob();
+    const objectUrl = URL.createObjectURL(blob);
+    const extensionMatch = src.split(".").pop().split(/[?#]/)[0] || "jpg";
+    const fileName = `${title.replace(/\s+/g, "_").toLowerCase()}_${idx + 1}.${extensionMatch}`;
+    const link = document.createElement("a");
+    link.href = objectUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(objectUrl);
+  } catch (err) {
+    console.error("Download failed", err);
+    toast.error("Unable to download image");
+  }
+};
+
+const ImageCard = ({ title, images, horizontal = false }) => (
   <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
     <div className="bg-gray-100 px-4 py-2 font-medium text-gray-700 text-center">
       {title}
     </div>
-    <div className="p-3 grid grid-cols-1 gap-3">
+    <div className={`p-3 ${horizontal ? "flex gap-3 overflow-x-auto" : "grid grid-cols-1 gap-3"}`}>
       {images.map((img, idx) => (
-        <div key={idx} className="overflow-hidden rounded-md shadow-sm">
+        <div key={idx} className={`overflow-hidden rounded-md shadow-sm bg-white ${horizontal ? "min-w-[220px]" : ""}`}>
           <img
             src={img}
             alt={`${title} ${idx + 1}`}
@@ -236,6 +276,15 @@ const ImageCard = ({ title, images }) => (
               e.target.alt = "Image not available";
             }}
           />
+          <div className="p-2 bg-gray-50 flex justify-end">
+            <button
+              type="button"
+              onClick={() => handleDownloadImage(img, title, idx)}
+              className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            >
+              Download
+            </button>
+          </div>
         </div>
       ))}
     </div>

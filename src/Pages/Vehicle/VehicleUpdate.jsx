@@ -125,6 +125,7 @@ const UpdateVehicle = () => {
   // ================= FORM INPUT CHANGES =================
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    console.log("Field changed:", name, "Value:", value);
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -193,15 +194,18 @@ const UpdateVehicle = () => {
   // ================= SUBMIT (UPDATE VEHICLE) =================
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Update submit clicked, current formData:", formData);
     setApiError({});
     setLoading(true);
 
     if (!validateForm()) {
+      console.log("Validation failed");
       setLoading(false);
       return;
     }
 
     try {
+      console.log("Validation passed, creating FormData");
       const data = new FormData();
 
       // Append all simple text fields
@@ -342,24 +346,24 @@ const UpdateVehicle = () => {
             )
           )} */}
           {[
-            "Vehicle Brand",
-            "Vehicle Model",
-            "fuel Type",
-            "Manufacturer Year",
-            "Vehicle Number",
-            "color",
-            "bootSpace (Lr)",
-            "Capacity (Seater)",
-            "Certificate Number"
-          ].map((name) => (
-            <div key={name}>
-              <label className="ml-2 mt-5 font-normal block capitalize">{name}</label>
+            { label: "Vehicle Brand *", key: "brand", type: "text" },
+            { label: "Vehicle Model *", key: "model", type: "text" },
+            { label: "Fuel Type *", key: "fuelType", type: "select" },
+            { label: "Manufacturer Year *", key: "year", type: "number" },
+            { label: "Vehicle Number *", key: "carNumber", type: "text" },
+            { label: "Color", key: "color", type: "text" },
+            { label: "Boot Space (Lr)", key: "bootSpace", type: "text" },
+            { label: "Capacity (Seater)", key: "capacity", type: "number" },
+            { label: "Certificate Number", key: "certificateNumber", type: "text" }
+          ].map(({ label, key, type }) => (
+            <div key={key}>
+              <label className="ml-2 mt-5 font-normal block">{label}</label>
 
               {/* ✅ FUEL TYPE DROPDOWN */}
-              {name === "fuel Type" ? (
+              {type === "select" ? (
                 <select
-                  name={name}
-                  value={formData[name] || ""} // ✅ auto prefill works here
+                  name={key}
+                  value={formData[key] || ""}
                   onChange={handleChange}
                   className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
                 >
@@ -369,33 +373,38 @@ const UpdateVehicle = () => {
                 </select>
               ) : (
                 <input
-                  type={name === "Manufacturer Year" ? "number" : "text"}
-                  name={name}
-                  value={formData[name] || ""} // ✅ auto prefill already handled
+                  type={type}
+                  name={key}
+                  value={formData[key] || ""}
                   onChange={handleChange}
                   className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
-                  placeholder={`Enter ${name}`}
+                  placeholder={`Enter ${label}`}
                 />
               )}
 
-              {apiError[name] && (
-                <p className="text-red-500 text-sm ml-2">{apiError[name]}</p>
+              {apiError[key] && (
+                <p className="text-red-500 text-sm ml-2">{apiError[key]}</p>
               )}
             </div>
           ))}
 
           {/* DATE FIELDS */}
-          {["Certificate Expiry", "Insurance Expiry", "Pollution Expiry", "RC Expiry"].map((name) => (
-            <div key={name}>
-              <label className="ml-2 mt-5 font-normal block">{name}</label>
+          {[
+            { label: "Certificate Expiry", key: "certificateExpiry" },
+            { label: "Insurance Expiry", key: "insuranceExpiry" },
+            { label: "Pollution Expiry", key: "pollutionExpiry" },
+            { label: "RC Expiry", key: "rcExpeiry" }
+          ].map(({ label, key }) => (
+            <div key={key}>
+              <label className="ml-2 mt-5 font-normal block">{label}</label>
               <input
                 type="date"
-                name={name}
-                value={formData[name] || ""}
+                name={key}
+                value={formData[key] || ""}
                 onChange={handleChange}
                 className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
               />
-              {apiError[name] && <p className="text-red-500 text-sm ml-2">{apiError[name]}</p>}
+              {apiError[key] && <p className="text-red-500 text-sm ml-2">{apiError[key]}</p>}
             </div>
           ))}
 

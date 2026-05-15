@@ -277,7 +277,7 @@ export default function BookingList() {
     if (!data.length) return toast.error("No bookings");
 
     setIsExporting(true);
-
+ 
     const exportData = [
       {
         sheet: "Bookings",
@@ -563,7 +563,10 @@ export default function BookingList() {
         title="Assign Chauffeur"
         // open={isAssignModalOpen}
         open={isAssignModalOpen || isReassignModalOpen}
-        onCancel={() => setIsAssignModalOpen(false)}
+        onCancel={() => {
+          setIsAssignModalOpen(false);
+          setIsReassignModalOpen(false);
+        }}
         onOk={handleAssignSubmit}
       >
         <Select

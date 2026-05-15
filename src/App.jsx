@@ -24,6 +24,7 @@ import UpdateRole from "./Pages/Roles/UpdateRole";
 //Member
 import MemberList from "./Pages/Member/MemberList";
 
+
 import Login from "./loginpage/Login";
 import ProtectedRoute from "./auth/ProtectedRoute";
 
@@ -123,6 +124,7 @@ import ProfilePage from "./loginpage/MyProfile";
 import SectionNameList from "./Pages/Membermaster/MemberMasterList";
 import CreateMember from "./Pages/Member/CreateMember";
 import HourlyPackageList from "./Pages/HourlyPackages/HourlyPackagesList";
+import UpdateMember from "./Pages/Member/UpdateMember";
 
 // import UserPrivacyPolicyView from "./Pages/PrivacyPolicy/PrivacyPolicyView";
 
@@ -173,6 +175,7 @@ const router = createBrowserRouter([
       //Member route
       { path: "member", element: <MemberList /> },
       { path: "member/createmember", element: <CreateMember /> },
+      { path: "member/edit/:id", element: <UpdateMember /> },
 
       // role
       { path: "role", element: <RoleList /> },

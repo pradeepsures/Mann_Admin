@@ -10,6 +10,7 @@ const contentStyle = {
   borderRadius: 7,
 };
 
+
 const content = <div style={contentStyle} />;
 
 const App = () => (

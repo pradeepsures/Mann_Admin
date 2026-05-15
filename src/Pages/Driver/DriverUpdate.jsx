@@ -176,7 +176,7 @@ const UpdateDriver = () => {
             errors.phone = "Phone number must be 10 digits";
         }
         if (!formData.email.trim()) errors.email = "Email is required.";
-        if (!formData.region) errors.region = "Region is required.";
+        // if (!formData.region) errors.region = "Region is required.";
 
         if (Object.keys(errors).length > 0) {
             setApiError(errors);
@@ -305,7 +305,7 @@ const UpdateDriver = () => {
                         onChange={handleChange}
                     />
 
-                    <label className="ml-2 mt-5 font-normal block">Region *</label>
+                    {/* <label className="ml-2 mt-5 font-normal block">Region *</label>
                     <Select
                         value={formData.region}
                         onChange={(val) => setFormData({ ...formData, region: val })}
@@ -320,7 +320,7 @@ const UpdateDriver = () => {
                             </Option>
                         ))}
                     </Select>
-                    {apiError.region && <p className="text-red-500 text-sm ml-2">{apiError.region}</p>}
+                    {apiError.region && <p className="text-red-500 text-sm ml-2">{apiError.region}</p>} */}
 
                         {/* state */}
                     <label className="ml-2 mt-5 font-normal block">State</label>

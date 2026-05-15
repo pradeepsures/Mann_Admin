@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import { Select, Switch } from "antd";
 const { Option } = Select;
 
+const DEFAULT_REGION_ID = "6a041b845a5ee14acc6f9de1";
+
 const CreateDriver = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -34,7 +36,7 @@ const CreateDriver = () => {
         isVerified: false,
         isOnline: false,
         isAvailable: false,
-        region: "",
+        region: DEFAULT_REGION_ID,
         state: "",
         city: "",
         pincode: "",
@@ -110,7 +112,7 @@ const CreateDriver = () => {
             isVerified: false,
             isOnline: false,
             isAvailable: false,
-            region: "",
+            region: DEFAULT_REGION_ID,
             state: "",
             city: "",
             pincode: "",
@@ -275,7 +277,7 @@ const CreateDriver = () => {
                         <p className="text-red-500 text-sm ml-2">{apiError.alternatePhone}</p>
                     )}
 
-                    <label className="ml-2 mt-5 font-normal block">Region *</label>
+                    {/* <label className="ml-2 mt-5 font-normal block">Region *</label>
                     <Select
                         value={formData.region}
                         onChange={(val) => setFormData({ ...formData, region: val })}
@@ -291,7 +293,7 @@ const CreateDriver = () => {
                         ))}
                     </Select>
                     {apiError.region && <p className="text-red-500 text-sm ml-2">{apiError.region}</p>}
-                      
+                       */}
                       {/* state */}
                     <label className="ml-2 mt-5 font-normal block">State</label>
                     <input

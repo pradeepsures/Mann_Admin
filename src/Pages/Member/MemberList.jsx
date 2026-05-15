@@ -326,6 +326,10 @@ export default function MemberList() {
                       <span className="text-gray-500">Email: </span>
                       {row.email || ""}
                     </div>
+                     <div className="text-xs text-gray-500">
+                      <span className="text-gray-500">Mobile: </span>
+                      {row.mobile || ""}
+                    </div>
                     <div className="mt-2 text-xs text-gray-600"></div>
                   </StyledTableCell>
                   <StyledTableCell>
@@ -345,6 +349,19 @@ export default function MemberList() {
                       open={Boolean(anchorEl) && selectedRowId === row.id}
                       onClose={handleMenuClose}
                     >
+
+                      {hasPermission("Member", "update") && (
+                        <MenuItem
+                          onClick={() => {
+                            navigate(`/home/member/edit/${row.id}`);
+                            handleMenuClose();
+                          }}
+                        >
+                          <PencilIcon className="h-5 w-5 text-blue-600 mr-2" />
+                          Edit
+                        </MenuItem>
+                      )}
+
                       {hasPermission("Member", "delete") && (
                         <MenuItem onClick={() => deleteHandler(row.id)}>
                           <TrashIcon className="h-5 w-5 text-red-600 mr-2" />
