@@ -29,6 +29,35 @@ const FuelLogView = () => {
         }
     };
 
+    /* image download */
+    const handleDownloadImage = async (src, title) => {
+        try {
+            const response = await fetch(src);
+            const blob = await response.blob();
+
+            const objectUrl = window.URL.createObjectURL(blob);
+
+            const extension = src.split(".").pop().split("?")[0] || "jpg";
+
+            const fileName = `${title.replace(/\s+/g, "_").toLowerCase()}.${extension}`;
+
+            const link = document.createElement("a");
+            link.href = objectUrl;
+            link.download = fileName;
+
+            document.body.appendChild(link);
+            link.click();
+
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(objectUrl);
+
+            toast.success("Image downloaded successfully!");
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to download image");
+        }
+    };
+
     if (loading) return <Loader />;
 
     const show = (val) => val || "N/A";
@@ -114,7 +143,7 @@ const FuelLogView = () => {
                             </div>
 
                             {/* IMAGES */}
-                            <div className="grid md:grid-cols-4 gap-4 mt-5">
+                            {/* <div className="grid md:grid-cols-4 gap-4 mt-5">
 
                                 {[
                                     { label: "Odometer", src: data.odometerMeterImage },
@@ -138,6 +167,47 @@ const FuelLogView = () => {
                                     </div>
                                 ))}
 
+                            </div> */}
+                            {/* IMAGES */}
+                            <div className="grid md:grid-cols-4 gap-4 mt-5">
+                                {[
+                                    { label: "Odometer", src: data.odometerMeterImage },
+                                    { label: "Start Meter", src: data.startFuelMeterImage },
+                                    { label: "End Meter", src: data.endFuelMeterImage },
+                                    { label: "Odometer After Fueling" , src: data.odometerAfterFuelImage},
+                                    { label: "Bill", src: data.billImage },
+                                ].map((img, i) => (
+                                    <div key={i}>
+                                        <p className="text-sm text-gray-500 mb-1">
+                                            {img.label}
+                                        </p>
+
+                                        {img.src ? (
+                                            <div>
+                                                <img
+                                                    src={img.src}
+                                                    alt={img.label}
+                                                    className="w-full h-32 object-cover rounded-lg border"
+                                                />
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleDownloadImage(
+                                                            img.src,
+                                                            `${img.label}_${data.carNumber || "fuel_log"}`
+                                                        )
+                                                    }
+                                                    className="mt-2 w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                                >
+                                                    Download
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <p>N/A</p>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
                         </div>
 

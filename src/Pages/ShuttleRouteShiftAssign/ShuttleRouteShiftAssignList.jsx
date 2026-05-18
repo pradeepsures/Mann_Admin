@@ -377,7 +377,7 @@ const { hasPermission } = useAuth();
                 </motion.button> */}
                 {hasPermission("ShuttleRouteShiftAssign", "create") && (
                     <motion.button
-                        onClick={() => navigate("/home/shuttleRoutes/create")}
+                        onClick={() => navigate("/home/shuttleRouteShiftAssign/create")}
                         className="bg-primary text-white px-5 py-2 rounded-lg"
                     >
                         Add Assignment

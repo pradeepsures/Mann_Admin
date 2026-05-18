@@ -36,7 +36,11 @@ const CreateShuttleRoute = () => {
   const handleStoppageChange = (index, e) => {
     const { name, value } = e.target;
     const updated = [...formData.stoppages];
-    updated[index][name] = value;
+    // updated[index][name] = value;
+    updated[index][name] =
+  ["lat", "lng", "distance", "order"].includes(name)
+    ? Number(value)
+    : value;
     setFormData({ ...formData, stoppages: updated });
   };
 

@@ -18,6 +18,7 @@ export const getAllBookings = async ({
   assignmentStatus,
   bookingType,
   region,
+  driverId,
   segment,
   driverName,
   driverPhone,
@@ -43,6 +44,7 @@ export const getAllBookings = async ({
 
     if (region) params.append("region", region);
     if (segment) params.append("segment", segment);
+    if (driverId) params.append("driverId", driverId);
 
     if (driverName) params.append("driverName", driverName);
     if (driverPhone) params.append("driverPhone", driverPhone);

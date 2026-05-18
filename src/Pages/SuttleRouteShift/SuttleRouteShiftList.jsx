@@ -307,7 +307,7 @@ export default function ShuttleRouteShiftList() {
         </motion.button>
         {hasPermission("ShuttleRouteShift", "create") && (
           <motion.button
-            onClick={() => navigate("/home/shuttleRoutes/create")}
+            onClick={() => navigate("/home/shuttleRouteShifts/create")}
             className="bg-primary text-white px-5 py-2 rounded-lg"
           >
             Add Shift

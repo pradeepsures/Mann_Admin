@@ -122,6 +122,7 @@ const CreateDriver = () => {
         setPreviews({
             profilePic: "",
             licensePhoto: "",
+            licenseBackPhoto: "",
             adhaarFrontPhoto: "",
             adhaarBackPhoto: "",
             panFrontPhoto: "",
@@ -163,6 +164,7 @@ const CreateDriver = () => {
 
             if (formData.profilePic) formDataToSend.append("profilePic", formData.profilePic);
             if (formData.licensePhoto) formDataToSend.append("licensePhoto", formData.licensePhoto);
+            if (formData.licenseBackPhoto) formDataToSend.append("licenseBackPhoto", formData.licenseBackPhoto);
             if (formData.adhaarFrontPhoto) formDataToSend.append("adhaarFrontPhoto", formData.adhaarFrontPhoto);
             if (formData.adhaarBackPhoto) formDataToSend.append("adhaarBackPhoto", formData.adhaarBackPhoto);
             if (formData.panFrontPhoto) formDataToSend.append("panFrontPhoto", formData.panFrontPhoto);
@@ -381,7 +383,7 @@ const CreateDriver = () => {
                         onChange={handleChange}
                     />
 
-                    <label className="ml-2 mt-5 font-normal block">License Photo *</label>
+                    <label className="ml-2 mt-5 font-normal block">License Front Photo *</label>
                     {previews.licensePhoto && (
                         <img
                             src={previews.licensePhoto}
@@ -404,6 +406,30 @@ const CreateDriver = () => {
                         onChange={handleFileChange}
                     />
                     {apiError.licensePhoto && <p className="text-red-500 text-sm ml-2">{apiError.licensePhoto}</p>}
+
+                    <label className="ml-2 mt-5 font-normal block">License Back Photo *</label>
+                    {previews.licenseBackPhoto && (
+                        <img
+                            src={previews.licenseBackPhoto}
+                            alt="License Back Preview"
+                            className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
+                        />
+                    )}
+                    <label
+                        htmlFor="license-back-upload"
+                        className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
+                    >
+                        🖼️ Upload License Back Photo
+                    </label>
+                    <input
+                        id="license-back-upload"
+                        className="hidden"
+                        type="file"
+                        name="licenseBackPhoto"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                    />
+                    {apiError.licenseBackPhoto && <p className="text-red-500 text-sm ml-2">{apiError.licenseBackPhoto}</p>}
 
                     {/* Aadhaar */}
                     <label className="ml-2 mt-5 font-normal block">Aadhaar Number *</label>

@@ -416,7 +416,7 @@ export default function DriverDetail() {
       </div>
 
       {/* LICENSE */}
-      {(driver.licenseNumber || driver.licenseExpiry || driver.licensePhoto) && (
+      {/* {(driver.licenseNumber || driver.licenseExpiry || driver.licensePhoto) && (
         <div className="bg-white p-5 rounded-xl shadow mt-6">
           <h4 className="font-semibold text-lg mb-4 text-[#03045E]">
             License Details
@@ -433,13 +433,6 @@ export default function DriverDetail() {
             </p>
           )}
 
-          {/* {driver.licensePhoto && (
-            <img
-              src={driver.licensePhoto}
-              className="w-48 mt-4 rounded-lg border"
-              alt="license"
-            />
-          )} */}
           {driver.licensePhoto && (
             <div className="mt-4">
               <img
@@ -451,6 +444,67 @@ export default function DriverDetail() {
               <button
                 type="button"
                 onClick={() => handleDownloadImage(driver.licensePhoto, "license_photo")}
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Download
+              </button>
+            </div>
+          )}
+        </div>
+      )} */}
+
+      {(driver.licenseNumber || driver.licenseExpiry || driver.licensePhoto || driver.licenseBackPhoto) && (
+        <div className="bg-white p-5 rounded-xl shadow mt-6">
+          <h4 className="font-semibold text-lg mb-4 text-[#03045E]">
+            License Details
+          </h4>
+
+          {driver.licenseNumber && (
+            <p><b>License Number:</b> {driver.licenseNumber}</p>
+          )}
+
+          {driver.licenseExpiry && (
+            <p>
+              <b>Expiry Date:</b>{" "}
+              {new Date(driver.licenseExpiry).toDateString()}
+            </p>
+          )}
+
+          {/* FRONT */}
+          {driver.licensePhoto && (
+            <div className="mt-4">
+              <img
+                src={driver.licensePhoto}
+                className="w-48 rounded-lg border"
+                alt="license front"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleDownloadImage(driver.licensePhoto, "license_front")
+                }
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Download
+              </button>
+            </div>
+          )}
+
+          {/* BACK (NEW) */}
+          {driver.licenseBackPhoto && (
+            <div className="mt-4">
+              <img
+                src={driver.licenseBackPhoto}
+                className="w-48 rounded-lg border"
+                alt="license back"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleDownloadImage(driver.licenseBackPhoto, "license_back")
+                }
                 className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Download

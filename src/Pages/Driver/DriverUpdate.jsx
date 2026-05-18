@@ -51,6 +51,7 @@ const UpdateDriver = () => {
     const [previews, setPreviews] = useState({
         profilePic: "",
         licensePhoto: "",
+        licenseBackPhoto: "",
         adhaarFrontPhoto: "",
         adhaarBackPhoto: "",
         panFrontPhoto: "",
@@ -62,6 +63,7 @@ const UpdateDriver = () => {
     const [existingImages, setExistingImages] = useState({
         profilePic: "",
         licensePhoto: "",
+        licenseBackPhoto: "",
         adhaarFrontPhoto: "",
         adhaarBackPhoto: "",
         panFrontPhoto: "",
@@ -119,6 +121,7 @@ const UpdateDriver = () => {
                     setExistingImages({
                         profilePic: driver.profilePic || "",
                         licensePhoto: driver.licensePhoto || "",
+                        licenseBackPhoto: driver.licenseBackPhoto || "",
                         adhaarFrontPhoto: driver.adhaarFrontPhoto || "",
                         adhaarBackPhoto: driver.adhaarBackPhoto || "",
                         panFrontPhoto: driver.panFrontPhoto || "",
@@ -252,8 +255,8 @@ const UpdateDriver = () => {
                     />
                     {apiError.name && <p className="text-red-500 text-sm ml-2">{apiError.name}</p>}
 
-                       {/* middle name */}
-                        <label className="ml-2 mt-5 font-normal block">Middle Name</label>
+                    {/* middle name */}
+                    <label className="ml-2 mt-5 font-normal block">Middle Name</label>
                     <input
                         className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
                         type="text"
@@ -326,7 +329,7 @@ const UpdateDriver = () => {
                     </Select>
                     {apiError.region && <p className="text-red-500 text-sm ml-2">{apiError.region}</p>} */}
 
-                        {/* state */}
+                    {/* state */}
                     <label className="ml-2 mt-5 font-normal block">State</label>
                     <input
                         className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
@@ -337,7 +340,7 @@ const UpdateDriver = () => {
                         onChange={handleChange}
                     />
 
-                          {/* city */}
+                    {/* city */}
                     <label className="ml-2 mt-5 font-normal block">City</label>
                     <input
                         className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
@@ -347,8 +350,8 @@ const UpdateDriver = () => {
                         value={formData.city}
                         onChange={handleChange}
                     />
-                         
-                         {/* pincode */}
+
+                    {/* pincode */}
                     <label className="ml-2 mt-5 font-normal block">Pincode</label>
                     <input
                         className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
@@ -359,7 +362,7 @@ const UpdateDriver = () => {
                         maxLength={6}
                         onChange={handleChange}
                     />
-                       {/* grade */}
+                    {/* grade */}
                     <label className="ml-2 mt-5 font-normal block">Grade</label>
                     <Select
                         value={formData.grade}
@@ -411,7 +414,7 @@ const UpdateDriver = () => {
                         onChange={handleChange}
                     />
 
-                    <label className="ml-2 mt-5 font-normal block">License Photo *</label>
+                    <label className="ml-2 mt-5 font-normal block">License Front Photo *</label>
                     <div className="mb-2">
                         {previews.licensePhoto ? (
                             <img
@@ -441,6 +444,41 @@ const UpdateDriver = () => {
                         accept="image/*"
                         onChange={handleFileChange}
                     />
+
+                    <label className="ml-2 mt-5 font-normal block">License Back Photo</label>
+                    <div className="mb-2">
+                        {previews.licenseBackPhoto ? (
+                            <img
+                                src={previews.licenseBackPhoto}
+                                alt="New License Back Preview"
+                                className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
+                            />
+                        ) : existingImages.licenseBackPhoto ? (
+                            <img
+                                src={existingImages.licenseBackPhoto}
+                                alt="Current License Back"
+                                className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
+                            />
+                        ) : null}
+                    </div>
+                    <label
+                        htmlFor="license-back-upload"
+                        className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
+                    >
+                        🖼️ {previews.licenseBackPhoto ? "Replace License Back Photo" : "Upload / Replace License Back Photo"
+                        }
+                    </label>
+                    <input
+                        id="license-back-upload"
+                        className="hidden"
+                        type="file"
+                        name="licenseBackPhoto"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                    />
+
+
+
 
                     {/* Aadhaar, PAN, Police Verification, Profile Pic - same pattern */}
 

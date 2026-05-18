@@ -13,7 +13,6 @@ const CreateVehicle = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState({});
-
   const [drivers, setDrivers] = useState([]);
   const [segments, setSegments] = useState([]);
 
@@ -33,7 +32,19 @@ const CreateVehicle = () => {
     insuranceExpiry: "",
     pollutionExpiry: "",
     rcExpeiry: "",
+    rcIssueDate: "",
     capacity: "",
+    insuranceNumber: "",
+    pollutionNumber: "",
+    fitnessNumber: "",
+    permitNumber: "",
+    insuranceIssueDate: "",
+    pollutionStartDate: "",
+    pollutionExpiryDate: "",
+    fitnessStartDate: "",
+    fitnessExpiryDate: "",
+    permitStartDate: "",
+    permitExpiryDate: "",
     isActive: true,
     carImage: [],
     documentImage: [],
@@ -331,7 +342,11 @@ const CreateVehicle = () => {
             { label: "Color", key: "color", type: "text" },
             { label: "Boot Space (Lr)", key: "bootSpace", type: "text" },
             { label: "Capacity (Seater)", key: "capacity", type: "text" },
-            { label: "RC Number", key: "certificateNumber", type: "text" }
+            { label: "RC Number", key: "certificateNumber", type: "text" },
+            { label: "Insurance Number", key: "insuranceNumber", type: "text" },
+            { label: "Pollution Number", key: "pollutionNumber", type: "text" },
+            { label: "fitness Number", key: "fitnessNumber", type: "text" },
+            { label: " All India Permit Number", key: "permitNumber", type: "text" },
           ].map(({ label, key, type }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>
@@ -367,10 +382,18 @@ const CreateVehicle = () => {
 
           {/* DATE FIELDS */}
           {[
-            { label: "Certificate Expiry", key: "certificateExpiry" },
+            // { label: "Certificate Expiry", key: "certificateExpiry" },
+            { label: "RC Issue Date", key: "rcIssueDate" },
             { label: "Insurance Expiry", key: "insuranceExpiry" },
             { label: "Pollution Expiry", key: "pollutionExpiry" },
-            { label: "RC Expiry", key: "rcExpeiry" }
+            { label: "RC Expiry", key: "rcExpeiry" },
+            { label: "Insurance Issue Date", key: "insuranceIssueDate" },
+            { label: "Pollution Start Date", key: "pollutionStartDate" },
+            { label: "Pollution Expiry Date", key: "pollutionExpiryDate" },
+            { label: "Fitness Start Date", key: "fitnessStartDate" },
+            { label: "Fitness Expiry Date", key: "fitnessExpiryDate" },
+            { label: "Permit Start Date", key: "permitStartDate" },
+            { label: "Permit Expiry Date", key: "permitExpiryDate" },
           ].map(({ label, key }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>

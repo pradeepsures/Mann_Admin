@@ -277,16 +277,43 @@ export default function BookingList() {
     if (!data.length) return toast.error("No bookings");
 
     setIsExporting(true);
- 
+
     const exportData = [
       {
         sheet: "Bookings",
         columns: [
           { label: "Booking No", value: "bookingNumber" },
-          { label: "User Name", value: (r) => r.user?.name },
-          { label: "Region", value: (r) => r.region?.name },
-          { label: "Fare", value: "estimatedFare" },
-          { label: "Status", value: "overallStatus" },
+
+          { label: "User Name", value: (r) => r.user?.name || "-" },
+          { label: "User Phone", value: (r) => r.user?.phone || "-" },
+
+          { label: "Pickup Address", value: (r) => r.pickup?.address || "-" },
+          { label: "Drop Address", value: (r) => r.dropoff?.address || "-" },
+
+          { label: "Booking Type", value: "bookingType" },
+          { label: "Trip Status", value: "tripStatus" },
+          { label: "Overall Status", value: "overallStatus" },
+          { label: "Payment Status", value: "paymentStatus" },
+          { label: "Assignment Status", value: "assignmentStatus" },
+
+          { label: "Segment", value: (r) => r.segment?.name || "-" },
+          { label: "Region", value: (r) => r.region?.name || "-" },
+
+          { label: "Vehicle Number", value: (r) => r.vehicle?.carNumber || "-" },
+          { label: "Vehicle Brand", value: (r) => r.vehicle?.brand || "-" },
+          { label: "Vehicle Model", value: (r) => r.vehicle?.model || "-" },
+
+          { label: "Driver Name", value: (r) => r.driver?.name || "-" },
+          { label: "Driver Phone", value: (r) => r.driver?.phone || "-" },
+
+          { label: "Estimated Fare", value: "estimatedFare" },
+          { label: "Final Fare", value: "finalFare" },
+          { label: "Prepaid Amount", value: "prepaidAmount" },
+
+          { label: "Created At", value: "createdAt" },
+          { label: "Scheduled At", value: "scheduledAt" },
+          { label: "Trip Start", value: "tripStartAt" },
+          { label: "Trip End", value: "tripEndAt" },
         ],
         content: data,
       },
@@ -294,9 +321,44 @@ export default function BookingList() {
 
     try {
       xlsx(exportData, { fileName: "Booking_List" });
+    } catch (err) {
+      console.log(err);
+      toast.error("Export failed");
     } finally {
       setIsExporting(false);
     }
+  };
+
+  const getTripStatusColor = (status) => {
+    switch (status) {
+      case "not_started":
+        return "bg-violet-200 text-gray-800";
+
+      case "driver_enroute":
+        return "bg-blue-100 text-blue-700";
+
+      case "arrived":
+        return "bg-indigo-100 text-indigo-700";
+
+      case "in_progress":
+        return "bg-yellow-100 text-yellow-800";
+
+      case "completed":
+        return "bg-green-100 text-green-700";
+
+      case "cancelled":
+        return "bg-red-100 text-red-700";
+
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  const showAssignHint = (row) => {
+    return (
+      row.tripStatus === "not_started" &&
+      !row.driver
+    );
   };
 
   if (loading) return <Loader />;
@@ -439,7 +501,7 @@ export default function BookingList() {
                     </div>
 
                     <div className="text-xs text-blue-600 mt-1">
-                      Pickup Date: {row.tripStartAtIST || "-"}
+                      Pickup Date: {row.scheduledAtIST || "-"}
                     </div>
 
                     <div className="text-xs text-green-600">
@@ -448,7 +510,20 @@ export default function BookingList() {
                   </TableCell>
 
                   <TableCell>{row.bookingType || "-"}</TableCell>
-                  <TableCell>{row.tripStatus || "-"}</TableCell>
+                  {/* <TableCell>{row.tripStatus || "-"}</TableCell> */}
+                  <TableCell>
+                    {row.tripStatus ? (
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getTripStatusColor(
+                          row.tripStatus
+                        )}`}
+                      >
+                        {row.tripStatus.replaceAll("_", " ")}
+                      </span>
+                    ) : (
+                      "-"
+                    )}
+                  </TableCell>
                   <TableCell>{row.segment?.name || "-"}</TableCell>
                   <TableCell>
                     {row.vehicle ? (
@@ -463,13 +538,12 @@ export default function BookingList() {
                   </TableCell>
 
 
-                  <TableCell>
+                  {/* <TableCell>
                     {row.driver ? (
                       <>
                         {row.driver.name || "-"}<br />
                         {row.driver.phone || "-"}<br />
 
-                        {/* ✅ HIDE REASSIGN IF TRIP COMPLETED */}
                         {row.tripStatus?.toLowerCase() !== "completed" && (
                           <button
                             onClick={() =>
@@ -487,22 +561,37 @@ export default function BookingList() {
                     ) : (
                       "-"
                     )}
-                    {/* {row.driver ? (
+                  </TableCell> */}
+                  <TableCell>
+                    {row.driver ? (
                       <>
-                        {row.driver.name || "-"}<br />
-                        {row.driver.phone || "-"}<br />
+                        {row.driver.name || "-"} <br />
+                        {row.driver.phone || "-"} <br />
 
-                       
-                        <button
-                          onClick={() => handleReassignDriver(row._id, row.segment?._id)}
-                          className="mt-1 text-xs bg-red-500 text-white px-2 py-1 rounded"
-                        >
-                          Reassign
-                        </button>
+                        {row.tripStatus?.toLowerCase() !== "completed" && (
+                          <button
+                            onClick={() =>
+                              handleReassignDriver(row._id, row.segment?._id)
+                            }
+                            className="mt-1 text-xs bg-red-500 text-white px-2 py-1 rounded"
+                          >
+                            Reassign
+                          </button>
+                        )}
                       </>
                     ) : (
-                      "-"
-                    )} */}
+                      <>
+                        <span className="text-gray-400">Not Assigned</span>
+
+                        {showAssignHint(row) && (
+                          <div className="mt-2">
+                            <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded animate-pulse">
+                              ⚠ Please assign driver for this trip
+                            </span>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </TableCell>
 
                   <TableCell align="center">

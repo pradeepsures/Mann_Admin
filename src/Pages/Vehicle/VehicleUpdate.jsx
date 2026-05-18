@@ -5,6 +5,7 @@ import { getVehicleById, updateVehicle } from "../../Services/VehicleApi";
 import { getAllDrivers } from "../../Services/DriverApi";
 import { getAllSegment } from "../../Services/SegmentApi";
 import { Select, Switch } from "antd";
+import Breaker from "../../compoents/Breaker";
 
 const { Option } = Select;
 
@@ -33,6 +34,7 @@ const UpdateVehicle = () => {
     insuranceExpiry: "",
     pollutionExpiry: "",
     rcExpeiry: "",
+    rcIssueDate: "",
     capacity: "",
     isActive: true,
     carImage: [],
@@ -72,6 +74,18 @@ const UpdateVehicle = () => {
           insuranceExpiry: data.insuranceExpiry ? data.insuranceExpiry.split("T")[0] : "",
           pollutionExpiry: data.pollutionExpiry ? data.pollutionExpiry.split("T")[0] : "",
           rcExpeiry: data.rcExpeiry ? data.rcExpeiry.split("T")[0] : "",
+          rcIssueDate: data.rcIssueDate ? data.rcIssueDate.split("T")[0] : "",
+          insuranceNumber: data.insuranceNumber || "",
+          pollutionNumber: data.pollutionNumber || "",
+          fitnessNumber: data.fitnessNumber || "",
+          permitNumber: data.permitNumber || "",
+          insureanceIssueDate: data.insuranceIssueDate ? data.insuranceIssueDate.split("T")[0] : "",
+          pollutionStartDate: data.pollutionStartDate ? data.pollutionStartDate.split("T")[0] : "",
+          pollutionExpiryDate: data.pollutionExpiryDate ? data.pollutionExpiryDate.split("T")[0] : "",
+          fitnessStartDate: data.fitnessStartDate ? data.fitnessStartDate.split("T")[0] : "",
+          fitnessExpiryDate: data.fitnessExpiryDate ? data.fitnessExpiryDate.split("T")[0] : "",
+          permitStartDate: data.permitStartDate ? data.permitStartDate.split("T")[0] : "",
+          permitExpiryDate: data.permitExpiryDate ? data.permitExpiryDate.split("T")[0] : "",
           capacity: data.capacity || "",
           isActive: data.isActive !== false,
           carImage: data.carImage ? [...data.carImage] : [],
@@ -279,6 +293,7 @@ const UpdateVehicle = () => {
 
   return (
     <div className="m-3">
+            <Breaker />
       <div className="ml-5 mt-8 bg-white p-6 max-w-9xl rounded-xl shadow-xl">
         <form onSubmit={handleSubmit}>
           {/* DRIVER */}
@@ -354,7 +369,11 @@ const UpdateVehicle = () => {
             { label: "Color", key: "color", type: "text" },
             { label: "Boot Space (Lr)", key: "bootSpace", type: "text" },
             { label: "Capacity (Seater)", key: "capacity", type: "number" },
-            { label: "Certificate Number", key: "certificateNumber", type: "text" }
+            { label: "Rc Number", key: "certificateNumber", type: "text" },
+            { label: "Insurance Number", key: "insuranceNumber", type: "text" },
+            { label: "Pollution Number", key: "pollutionNumber", type: "text" },
+            { label: "fitness Number", key: "fitnessNumber", type: "text" },
+            { label: " All India Permit Number", key: "permitNumber", type: "text" },
           ].map(({ label, key, type }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>
@@ -390,10 +409,19 @@ const UpdateVehicle = () => {
 
           {/* DATE FIELDS */}
           {[
-            { label: "Certificate Expiry", key: "certificateExpiry" },
+            // { label: "Certificate Expiry", key: "certificateExpiry" },
+            { label: "RC Issue Date", key: "rcIssueDate" },
             { label: "Insurance Expiry", key: "insuranceExpiry" },
             { label: "Pollution Expiry", key: "pollutionExpiry" },
-            { label: "RC Expiry", key: "rcExpeiry" }
+            { label: "RC Expiry", key: "rcExpeiry" },
+            { label: "Insurance Issue Date", key: "insuranceIssueDate" },
+            { label: "Pollution Start Date", key: "pollutionStartDate" },
+            { label: "Pollution Expiry Date", key: "pollutionExpiryDate" },
+            { label: "Fitness Start Date", key: "fitnessStartDate" },
+            { label: "Fitness Expiry Date", key: "fitnessExpiryDate" },
+            { label: "Permit Start Date", key: "permitStartDate" },
+            { label: "Permit Expiry Date", key: "permitExpiryDate" },
+
           ].map(({ label, key }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>

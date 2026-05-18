@@ -67,9 +67,9 @@ const ProfilePage = () => {
                     <h2 className="text-xl font-bold">{profile.userName || "N/A"}</h2>
                     <p className="text-gray-600">{profile.email || "N/A"}</p>
 
-                    <p className="text-sm text-gray-500">
+                    {/* <p className="text-sm text-gray-500">
                         Status: {profile.status || "N/A"}
-                    </p>
+                    </p> */}
 
                     <p className="text-sm text-gray-500">
                         Role: {profile.role?.name || "N/A"}

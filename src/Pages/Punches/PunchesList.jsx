@@ -68,17 +68,29 @@ export default function PunchList() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [selectedRowId, setSelectedRowId] = useState(null);
 
-    const formatPunchDate = (dateValue) => {
-        if (!dateValue) return "N/A";
-        const date = new Date(dateValue);
-        if (Number.isNaN(date.getTime())) return dateValue;
+    // const formatPunchDate = (dateValue) => {
+    //     if (!dateValue) return "N/A";
+    //     const date = new Date(dateValue);
+    //     if (Number.isNaN(date.getTime())) return dateValue;
 
-        const day = String(date.getDate()).padStart(2, "0");
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const year = String(date.getFullYear()).slice(-2);
+    //     const day = String(date.getDate()).padStart(2, "0");
+    //     const month = String(date.getMonth() + 1).padStart(2, "0");
+    //     const year = String(date.getFullYear()).slice(-2);
 
-        return `${day}-${month}-${year}`;
-    };
+    //     return `${day}-${month}-${year}`;
+    // };
+
+const formatPunchDate = (value) => {
+    if (!value) return "";
+
+    const [date, time] = value.split(" ");
+    if (!date || !time) return value;
+
+    const [year, month, day] = date.split("-");
+    const [hour, minute] = time.split(":");
+
+    return `${day}-${month}-${year} ${hour}:${minute}`;
+};
 
     // ✅ FETCH DATA
     const fetchData = useCallback(async () => {

@@ -146,22 +146,22 @@ const Sidebar = () => {
           dropdownIcon: RiArrowDropDownLine,
           subMenus: [
             {
-              name: "ShuttleRoute",
+              name: "Shuttle Route",
               link: "/home/shuttleRoutes",
               sectionName: "ShuttleRoute",
             },
             {
-              name: "ShuttleRouteShift",
+              name: "Shuttle Route Shift",
               link: "/home/shuttleRouteShifts",
               sectionName: "ShuttleRouteShift",
             },
             {
-              name: "ShuttleRouteShiftAssign",
+              name: "Shuttle Route Shift Assign",
               link: "/home/shuttleRouteShiftAssign",
               sectionName: "ShuttleRouteShiftAssign",
             },
             {
-              name: "ShuttlePass",
+              name: "Shuttle Pass",
               link: "/home/shuttlePass",
               sectionName: "ShuttlePass",
             },
@@ -184,17 +184,17 @@ const Sidebar = () => {
               sectionName: "EtsRoutes",
             },
             {
-              name: "RouteShifts",
+              name: "Route Shifts",
               link: "/home/etsRouteShifts",
               sectionName: "EtsRouteShifts",
             },
             {
-              name: "RouteShiftAssign",
+              name: "Route Shift Assign",
               link: "/home/etsRouteShiftAssign",
               sectionName: "EtsRouteShiftAssign",
             },
             {
-              name: "UserStopPages",
+              name: "User Stop Pages",
               link: "/home/etsUserStopPages",
               sectionName: "EtsUserStopPages",
             },

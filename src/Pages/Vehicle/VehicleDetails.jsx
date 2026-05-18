@@ -218,11 +218,23 @@ export default function VehicleDetails() {
           Documents & Expiry Information
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <DetailItem label="Certificate Number" value={vehicle.certificateNumber} />
-          <DetailItem label="Certificate Expiry" value={formatDate(vehicle.certificateExpiry)} />
+          <DetailItem label="Rc Number" value={vehicle.certificateNumber} />
+          <DetailItem label="Insurance Number" value={vehicle.insuranceNumber} />
+          <DetailItem label="Pollution Number" value={vehicle.pollutionNumber} />
+          <DetailItem label="Fitness Number" value={vehicle.fitnessNumber} />
+          <DetailItem label=" All India Permit Number" value={vehicle.permitNumber} />
+          {/* <DetailItem label="Certificate Expiry" value={formatDate(vehicle.certificateExpiry)} /> */}
+          <DetailItem label="RC Issue Date" value={formatDate(vehicle.rcIssueDate)} />
           <DetailItem label="Insurance Expiry" value={formatDate(vehicle.insuranceExpiry)} />
           <DetailItem label="Pollution Expiry" value={formatDate(vehicle.pollutionExpiry)} />
           <DetailItem label="RC Expiry" value={formatDate(vehicle.rcExpeiry)} /> {/* note: typo in backend */}
+          <DetailItem label="Insurance Issue Date" value={formatDate(vehicle.insuranceIssueDate)} />
+          <DetailItem label="Pollution Start Date" value={formatDate(vehicle.pollutionStartDate)} />
+          <DetailItem label="Pollution Expiry Date" value={formatDate(vehicle.pollutionExpiryDate)} />
+          <DetailItem label="Fitness Start Date" value={formatDate(vehicle.fitnessStartDate)} />
+          <DetailItem label="Fitness Expiry Date" value={formatDate(vehicle.fitnessExpiryDate)} />
+          <DetailItem label="Permit Start Date" value={formatDate(vehicle.permitStartDate)} />
+          <DetailItem label="Permit Expiry Date" value={formatDate(vehicle.permitExpiryDate)} />
         </div>
       </div>
     </div>

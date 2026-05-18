@@ -99,16 +99,29 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
     }, [driverSearch]);
 
     // APPLY
-    const handleApply = () => {
-    onApply({
-        ...localFilters,
-        startDate: localFilters.startDateFormatted || "",
-        endDate: localFilters.endDateFormatted || "",
-    });
-};
+    // const handleApply = () => {
+    //     onApply({
+    //         ...localFilters,
+    //         startDate: localFilters.startDateFormatted || "",
+    //         endDate: localFilters.endDateFormatted || "",
+    //     });
+    // };
     // const handleApply = () => {
     //     onApply(localFilters);
     // };
+
+    const handleApply = () => {
+        const cleaned = { ...localFilters };
+
+        delete cleaned.driverName;
+        delete cleaned.driverPhone;
+
+        onApply({
+            ...cleaned,
+            startDate: cleaned.startDateFormatted || "",
+            endDate: cleaned.endDateFormatted || "",
+        });
+    };
 
     // RESET
     const handleReset = () => {
@@ -279,13 +292,13 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
                 </Select>
 
                 {/* DRIVER */}
-                <Select
+                {/* <Select
                     showSearch
                     placeholder="Chauffeur"
                     value={localFilters.driverId || undefined}
                     onChange={(val, option) => {
                         handleChange("driverId", val);
-                        handleChange("driverName", option.label);
+                        // handleChange("driverName", option.label);
                     }}
                     className="custom-select w-full "
                     loading={driverLoading}
@@ -296,6 +309,20 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
                             value={d._id}
                             label={`${d.name} ${d.phone}`}
                         >
+                            {d.name} - {d.phone}
+                        </Option>
+                    ))}
+                </Select> */}
+                <Select
+                    showSearch
+                    placeholder="Chauffeur"
+                    value={localFilters.driverId || undefined}
+                    onChange={(val) => handleChange("driverId", val)}
+                    className="custom-select w-full"
+                    loading={driverLoading}
+                >
+                    {drivers.map((d) => (
+                        <Option key={d._id} value={d._id}>
                             {d.name} - {d.phone}
                         </Option>
                     ))}
