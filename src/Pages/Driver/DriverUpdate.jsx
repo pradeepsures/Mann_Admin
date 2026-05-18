@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import { Select, Switch } from "antd";
 const { Option } = Select;
 
+const DEFAULT_REGION_ID = "6a041b845a5ee14acc6f9de1";
+
 const UpdateDriver = () => {
     const { id } = useParams(); // get driver id from URL
     const navigate = useNavigate();
@@ -37,7 +39,8 @@ const UpdateDriver = () => {
         isVerified: false,
         isOnline: false,
         isAvailable: false,
-        region: "",
+        // region: "",
+        region: DEFAULT_REGION_ID,
         state: "",
         city: "",
         pincode: "",
@@ -104,7 +107,8 @@ const UpdateDriver = () => {
                         isVerified: driver.isVerified || false,
                         isOnline: driver.isOnline || false,
                         isAvailable: driver.isAvailable || false,
-                        region: driver.region?._id || driver.region || "", // assuming region is populated or just ID
+                        // region: driver.region?._id || driver.region || "", // assuming region is populated or just ID
+                        region: driver.region?._id || driver.region || DEFAULT_REGION_ID,
                         state: driver.state || "",
                         city: driver.city || "",
                         pincode: driver.pincode || "",
