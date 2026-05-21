@@ -23,7 +23,6 @@ const baseDayNightSchema = z.object({
 });
 nightFare: z.number().min(0).optional();
 
-
 const surgeWindowSchema = z.object({
   label: z.string().min(1, "Label is required"),
   type: z.enum(["time_based", "manual"]),
@@ -71,11 +70,22 @@ const pricingSchema = z
     isActive: z.boolean().default(true),
   })
   .superRefine((data, ctx) => {
-    if (data.bookingType === "hourly" && (!data.hourlyPackage || data.hourlyPackage.length === 0)) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Hourly package is required", path: ["hourlyPackage"] });
+    if (
+      data.bookingType === "hourly" &&
+      (!data.hourlyPackage || data.hourlyPackage.length === 0)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Hourly package is required",
+        path: ["hourlyPackage"],
+      });
     }
     if (data.bookingType === "intercity" && !data.driverFare) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Driver fare is required for intercity", path: ["driverFare"] });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Driver fare is required for intercity",
+        path: ["driverFare"],
+      });
     }
   });
 
@@ -105,8 +115,20 @@ const PricingCreate = () => {
       surgeWindows: [],
       gstPercent: 5,
       isActive: true,
-      day: { baseFare: 50, perKmRate: 12, perMinRate: 1, minFare: 100, cancellationFee: 50 },
-      night: { baseFare: 65, perKmRate: 15, perMinRate: 1.3, minFare: 120, cancellationFee: 60 },
+      day: {
+        baseFare: 50,
+        perKmRate: 12,
+        perMinRate: 1,
+        minFare: 100,
+        cancellationFee: 50,
+      },
+      night: {
+        baseFare: 65,
+        perKmRate: 15,
+        perMinRate: 1.3,
+        minFare: 120,
+        cancellationFee: 60,
+      },
       hourlyPackage: [],
       driverFare: null,
     },
@@ -123,10 +145,13 @@ const PricingCreate = () => {
 
   // Fetch Regions with search
   useEffect(() => {
-
     const fetchRegions = async () => {
       try {
-        const result = await getAllRegions({ page: 1, rowsPerPage: 100, searchQuery: regionSearch });
+        const result = await getAllRegions({
+          page: 1,
+          rowsPerPage: 100,
+          searchQuery: regionSearch,
+        });
         setRegions(result.data || result.regions || result || []);
       } catch (err) {
         console.error(err);
@@ -159,9 +184,9 @@ const PricingCreate = () => {
           nightFare: 500,
           extraPerKm: 12,
           extraPerMin: 1.5,
-        }
+        },
       ]);
-      setValue("driverFare", null);
+      setValue("driverFare", undefined);
     } else if (bookingType === "intercity") {
       setValue("driverFare", {
         perKmRate: 0,
@@ -205,12 +230,24 @@ const PricingCreate = () => {
       surgeWindows: [],
       gstPercent: 5,
       isActive: true,
-      day: { baseFare: 50, perKmRate: 12, perMinRate: 1, minFare: 100, cancellationFee: 50 },
-      night: { baseFare: 65, perKmRate: 15, perMinRate: 1.3, minFare: 120, cancellationFee: 60 },
+      day: {
+        baseFare: 50,
+        perKmRate: 12,
+        perMinRate: 1,
+        minFare: 100,
+        cancellationFee: 50,
+      },
+      night: {
+        baseFare: 65,
+        perKmRate: 15,
+        perMinRate: 1.3,
+        minFare: 120,
+        cancellationFee: 60,
+      },
       hourlyPackage: [],
       driverFare: null,
     });
-  }
+  };
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -227,13 +264,19 @@ const PricingCreate = () => {
       }
 
       const result = await createPricingApi(payload);
-      if (result.success || result._id) {
+      if (result.status || result.success || result.data || result._id) {
         toast.success("Pricing created successfully!");
-        // reset();
         navigate("/home/pricing");
       } else {
         toast.error(result.message || "Failed to create pricing");
       }
+      // if (result.success || result._id) {
+      //   toast.success("Pricing created successfully!");
+      //   // reset();
+      //   navigate("/home/pricing");
+      // } else {
+      //   toast.error(result.message || "Failed to create pricing");
+      // }
     } catch (err) {
       toast.error(err.message || "Something went wrong!");
     } finally {
@@ -244,14 +287,17 @@ const PricingCreate = () => {
   return (
     <div className="max-w-7xl mx-auto p-8 bg-white shadow-xl rounded-2xl">
       <Breaker />
-      <h1 className="text-3xl font-bold mb-10 mt-5 text-gray-800">Create New Pricing</h1>
+      <h1 className="text-3xl font-bold mb-10 mt-5 text-gray-800">
+        Create New Pricing
+      </h1>
 
       {/* <form onSubmit={handleSubmit(onSubmit)} className="space-y-12"> */}
       <form
         onSubmit={handleSubmit(onSubmit, (errors) => {
           console.log("FORM ERRORS:", errors);
-        }
-        )} className="space-12" >
+        })}
+        className="space-12"
+      >
         {/* 1. Basic Info */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Region */}
@@ -267,9 +313,11 @@ const PricingCreate = () => {
                     label: r.name,
                     value: r._id,
                   }))}
-                  value={regions
-                    .map((r) => ({ label: r.name, value: r._id }))
-                    .find((opt) => opt.value === field.value) || null}
+                  value={
+                    regions
+                      .map((r) => ({ label: r.name, value: r._id }))
+                      .find((opt) => opt.value === field.value) || null
+                  }
                   onChange={(selected) => field.onChange(selected?.value)}
                   placeholder="Search & Select Region"
                 />
@@ -296,9 +344,11 @@ const PricingCreate = () => {
                     label: s.name,
                     value: s._id,
                   }))}
-                  value={segments
-                    .map((s) => ({ label: s.name, value: s._id }))
-                    .find((opt) => opt.value === field.value) || null}
+                  value={
+                    segments
+                      .map((s) => ({ label: s.name, value: s._id }))
+                      .find((opt) => opt.value === field.value) || null
+                  }
                   onChange={(selected) => field.onChange(selected?.value)}
                   placeholder="Search & Select Segment"
                 />
@@ -314,7 +364,9 @@ const PricingCreate = () => {
 
           {/* Booking Type */}
           <div>
-            <label className="block text-sm font-medium mb-2">Booking Type *</label>
+            <label className="block text-sm font-medium mb-2">
+              Booking Type *
+            </label>
             <select
               {...register("bookingType")}
               className="w-full border rounded-lg p-1.5 focus:outline-none focus:border-blue-500"
@@ -329,13 +381,19 @@ const PricingCreate = () => {
 
         {/* 2. Day & Night Pricing */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-5">
-          {["day"].map((timeSlot) => (
+          {["day", "night"].map((timeSlot) => (
             <div key={timeSlot}>
               <h2 className="text-xl font-semibold mb-4">
                 {timeSlot === "day" ? "Day Pricing" : "Night Pricing"}
               </h2>
               <div className="grid grid-cols-2 gap-4">
-                {["baseFare", "perKmRate", "perMinRate", "minFare", "cancellationFee"].map((field) => (
+                {[
+                  "baseFare",
+                  "perKmRate",
+                  "perMinRate",
+                  "minFare",
+                  "cancellationFee",
+                ].map((field) => (
                   <div key={field}>
                     <label className="block text-sm capitalize mb-1">
                       {field.replace(/([A-Z])/g, " $1")}
@@ -343,11 +401,15 @@ const PricingCreate = () => {
                     <input
                       type="number"
                       step="0.01"
-                      {...register(`${timeSlot}.${field}`, { valueAsNumber: true })}
+                      {...register(`${timeSlot}.${field}`, {
+                        valueAsNumber: true,
+                      })}
                       className="w-full border rounded-lg p-1.5 focus:outline-none focus:border-blue-500"
                     />
                     {errors[timeSlot]?.[field] && (
-                      <p className="text-red-500 text-sm mt-1">{errors[timeSlot][field].message}</p>
+                      <p className="text-red-500 text-sm mt-1">
+                        {errors[timeSlot][field].message}
+                      </p>
                     )}
                   </div>
                 ))}
@@ -541,8 +603,10 @@ const PricingCreate = () => {
             </div>
 
             {hourlyFields.map((item, index) => (
-              <div key={item.id} className="border p-6 mb-4 rounded-xl relative">
-
+              <div
+                key={item.id}
+                className="border p-6 mb-4 rounded-xl relative"
+              >
                 <button
                   type="button"
                   onClick={() => removeHourly(index)}
@@ -575,7 +639,6 @@ const PricingCreate = () => {
                       />
                     </div>
                   ))}
-
                 </div>
               </div>
             ))}
@@ -585,11 +648,18 @@ const PricingCreate = () => {
         {/* 6. Driver Fare (Intercity) */}
         {bookingType === "intercity" && (
           <div>
-            <h2 className="text-xl font-semibold mb-4">Driver Fare (Intercity)</h2>
+            <h2 className="text-xl font-semibold mb-4">
+              Driver Fare (Intercity)
+            </h2>
             <div className="grid grid-cols-2 gap-4 border p-6 rounded-xl bg-gray-50">
               {[
-                "perKmRate", "flatPerTrip", "minGuarantee", "allowancePerDay",
-                "allowancePerNight", "overTimePerHour", "holidayAllowance",
+                "perKmRate",
+                "flatPerTrip",
+                "minGuarantee",
+                "allowancePerDay",
+                "allowancePerNight",
+                "overTimePerHour",
+                "holidayAllowance",
               ].map((field) => (
                 <div key={field}>
                   <label className="block text-sm capitalize mb-1">
@@ -598,7 +668,9 @@ const PricingCreate = () => {
                   <input
                     type="number"
                     step="0.01"
-                    {...register(`driverFare.${field}`, { valueAsNumber: true })}
+                    {...register(`driverFare.${field}`, {
+                      valueAsNumber: true,
+                    })}
                     className="w-full border rounded-lg p-1.5"
                   />
                 </div>
@@ -627,7 +699,9 @@ const PricingCreate = () => {
         {/* 7. GST & Status (at the bottom) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 border-t">
           <div>
-            <label className="block text-sm font-medium mb-1">GST Percent (%)</label>
+            <label className="block text-sm font-medium mb-1">
+              GST Percent (%)
+            </label>
             <input
               type="number"
               {...register("gstPercent", { valueAsNumber: true })}
@@ -669,9 +743,7 @@ const PricingCreate = () => {
           >
             Back
           </button>
-
         </div>
-
       </form>
     </div>
   );

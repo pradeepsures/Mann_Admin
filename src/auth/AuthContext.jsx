@@ -60,9 +60,20 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    setAuth({ token: null, user: null });
-  };
+  localStorage.removeItem("token");
+
+  setAuth({
+    token: null,
+    user: null,
+  });
+
+  setLoading(false);
+};
+
+  // const logout = () => {
+  //   localStorage.removeItem("token");
+  //   setAuth({ token: null, user: null });
+  // };
 
   const hasPermission = (sectionName, action) => {
     if (!auth.user?.role?.permission) return false;

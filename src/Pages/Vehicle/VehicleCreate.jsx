@@ -269,7 +269,7 @@ const CreateVehicle = () => {
       <div className="ml-5 mt-8 bg-white p-6 max-w-9xl rounded-xl shadow-xl">
         <form onSubmit={handleSubmit}>
           {/* DRIVER */}
-          <label className="ml-2 mt-4 font-normal block">Driver *</label>
+          <label className="ml-2 mt-4 font-normal block">Driver</label>
           <Select
             showSearch
             placeholder="Select chauffer"

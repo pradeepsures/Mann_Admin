@@ -64,7 +64,8 @@ const pricingSchema = z
         surgeWindows: z.array(surgeWindowSchema).optional(),
         // hourlyPackage: z.array(hourlyPackageSchema).optional(),
         hourlyPackage: z.any().optional(),
-        driverFare: driverFareSchema.optional(),
+        // driverFare: driverFareSchema.optional(),
+        driverFare: driverFareSchema.nullable().optional(),
         gstPercent: z.number().min(0).max(100).default(5),
         isActive: z.boolean().default(true),
         nightFare: z.number().min(0).optional(),
@@ -304,10 +305,11 @@ const PricingUpdate = () => {
 
                 {/* 2. Day & Night Pricing - Same as Create */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-5">
-                    {["day"].map((timeSlot) => (
+                    {["day", "night"].map((timeSlot) => (
                         <div key={timeSlot}>
                             <h2 className="text-xl font-semibold mb-4">
-                                {timeSlot === "day" ? "Day" : "Night Pricing"}
+                                {/* {timeSlot === "day" ? "Day" : "Night Pricing"} */}
+                                {timeSlot === "day" ? "Day Pricing" : "Night Pricing"}
                             </h2>
                             <div className="grid grid-cols-2 gap-4">
                                 {["baseFare", "perKmRate", "perMinRate", "minFare", "cancellationFee"].map((field) => (
