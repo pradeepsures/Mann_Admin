@@ -146,7 +146,7 @@ export default function ComplaintList() {
       <Breaker />
 
       {/* FILTER PANEL */}
-      <ComplaintFilter
+      {/* <ComplaintFilter
         appliedFilters={filters} // pass the applied filters to keep visible after apply
         onApply={(newFilters) => {
           setFilters(newFilters); // update applied filters
@@ -166,8 +166,8 @@ export default function ComplaintList() {
           setPage(1);
           fetchComplaints(); // fetch with cleared filters
         }}
-      />
-      {/* <ComplaintFilter
+      /> */}
+      <ComplaintFilter
         onApply={(appliedFilters) => {
           setFilters(appliedFilters);
           setPage(1); // reset page
@@ -182,7 +182,7 @@ export default function ComplaintList() {
           });
           setPage(1);
         }}
-      /> */}
+      />
 
       {/* TOP BAR */}
       <div className="flex justify-between mb-6">

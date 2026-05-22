@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import { Select } from "antd";
 const { Option } = Select;
 
-const formatDate = (value) => {
-  if (!value) return "";
-  const [year, month, day] = value.split("-");
-  return `${day}-${month}-${year}`;
-};
+// const formatDate = (value) => {
+//   if (!value) return "";
+//   const [year, month, day] = value.split("-");
+//   return `${day}-${month}-${year}`;
+// };
 
 export default function ComplaintFilter({ appliedFilters, onApply, onReset }) {
   // Local state for editing before applying
@@ -26,17 +26,17 @@ export default function ComplaintFilter({ appliedFilters, onApply, onReset }) {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  // const handleApply = () => {
-  //   onApply(localFilters); // Only push changes on Apply
-  // };
-
   const handleApply = () => {
-    onApply({
-      ...localFilters,
-      startDate: localFilters.startDateFormatted || "",
-      endDate: localFilters.endDateFormatted || "",
-    });
+    onApply(localFilters); // Only push changes on Apply
   };
+
+  // const handleApply = () => {
+  //   onApply({
+  //     ...localFilters,
+  //     startDate: localFilters.startDateFormatted || "",
+  //     endDate: localFilters.endDateFormatted || "",
+  //   });
+  // };
 
   const handleReset = () => {
     onReset(); // Parent will reset applied filters
@@ -57,7 +57,7 @@ export default function ComplaintFilter({ appliedFilters, onApply, onReset }) {
 
 
         {/* START DATE */}
-        <input
+        {/* <input
           type={localFilters.startDate ? "date" : "text"}
           placeholder="Start Date"
           className="border p-2 rounded-lg"
@@ -71,10 +71,10 @@ export default function ComplaintFilter({ appliedFilters, onApply, onReset }) {
             handleChange("startDate", raw); // UI
             handleChange("startDateFormatted", formatDate(raw)); // API
           }}
-        />
+        /> */}
 
         {/* END DATE */}
-        <input
+        {/* <input
           type={localFilters.endDate ? "date" : "text"}
           placeholder="End Date"
           className="border p-2 rounded-lg"
@@ -88,8 +88,8 @@ export default function ComplaintFilter({ appliedFilters, onApply, onReset }) {
             handleChange("endDate", raw);
             handleChange("endDateFormatted", formatDate(raw));
           }}
-        />
-        {/* <input
+        /> */}
+        <input
           type="date"
           className="border p-2 rounded-lg"
           value={localFilters.startDate}
@@ -100,7 +100,7 @@ export default function ComplaintFilter({ appliedFilters, onApply, onReset }) {
           className="border p-2 rounded-lg"
           value={localFilters.endDate}
           onChange={(e) => handleChange("endDate", e.target.value)}
-        /> */}
+        />
 
         {/* ISSUE CATEGORY */}
         <Select

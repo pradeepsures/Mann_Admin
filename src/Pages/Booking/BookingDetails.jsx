@@ -3,7 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@mui/material";
 import Loader from "../../compoents/Loader";
 import Breaker from "../../compoents/Breaker";
-import { getSingleBooking } from "../../Services/BookingApi";
+import {
+  getSingleBooking,
+  getPickupVerification,
+} from "../../Services/BookingApi";
 import { Modal, Select } from "antd";
 // import { getAllDrivers } from "../../Services/DriverApi";
 import { getUnassignedDriversBySegment } from "../../Services/BookingApi";
@@ -13,29 +16,30 @@ import { toast } from "react-hot-toast";
 const { Option } = Select;
 
 //first letter capital
-const capitalizeFirst = (value) => {
+
+const capitalizeFirst = (value, label) => {
   if (value === null || value === undefined || value === "") return "N/A";
 
-  // if number, return as it is
   if (typeof value !== "string") return value;
 
+  // ❗ keep emails unchanged
+  if (label?.toLowerCase().includes("email")) {
+    return value;
+  }
+
   return value
+    .replace(/[_-]/g, " ") // ✅ remove _ and -
     .toLowerCase()
     .replace(/\b\w/g, (char) => char.toUpperCase());
 };
-
 // ✅ Field (thin divider)
 const Field = ({ label, value }) => (
   <div className="flex justify-between gap-4 py-2 border-b border-gray-100">
     <span className="text-gray-500 text-sm font-medium">{label}</span>
-    {/* <span className="text-gray-800 text-sm text-right">
-      {value !== null && value !== undefined && value !== ""
-        ? value
-        : "N/A"}
-    </span> */}
+
     <span className="text-gray-800 text-sm text-right">
-  {capitalizeFirst(value)}
-</span>
+      {capitalizeFirst(value, label)}
+    </span>
   </div>
 );
 
@@ -49,6 +53,23 @@ const Section = ({ title, children }) => (
   </Card>
 );
 
+const formatDateTime = (value) => {
+  if (!value) return "N/A";
+
+  const date = new Date(value);
+
+  if (isNaN(date.getTime())) return "N/A";
+
+  return date.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
+
 export default function BookingDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -60,6 +81,7 @@ export default function BookingDetails() {
   const [drivers, setDrivers] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [reassignLoading, setReassignLoading] = useState(false);
+  const [pickupVerification, setPickupVerification] = useState(null);
 
   const fetchDetails = async () => {
     try {
@@ -77,34 +99,54 @@ export default function BookingDetails() {
     fetchDetails();
   }, []);
 
-  const fetchDrivers = async () => {
-  try {
-    if (!data?.segment?._id) {
-      toast.error("Segment not found");
-      return;
+  useEffect(() => {
+    if (data?._id) {
+      fetchPickupVerification();
     }
+  }, [data?._id]);
 
-    const res = await getUnassignedDriversBySegment(data.segment._id);
-
-    if (res?.status) {
-      if (!res.data || res.data.length === 0) {
-        toast.error("No drivers available for this segment");
-        setShowReassignModal(false); // close modal
+  const fetchDrivers = async () => {
+    try {
+      if (!data?.segment?._id) {
+        toast.error("Segment not found");
         return;
       }
 
-      setDrivers(res.data);
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
+      const res = await getUnassignedDriversBySegment(data.segment._id);
 
-useEffect(() => {
-  if (showReassignModal) {
-    fetchDrivers();
-  }
-}, [showReassignModal]);
+      if (res?.status) {
+        if (!res.data || res.data.length === 0) {
+          toast.error("No drivers available for this segment");
+          setShowReassignModal(false); // close modal
+          return;
+        }
+
+        setDrivers(res.data);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchPickupVerification = async () => {
+    try {
+      const res = await getPickupVerification(data._id); // use booking id from data
+
+      if (res?.status) {
+        setPickupVerification(res.data);
+      } else {
+        setPickupVerification(null);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    if (showReassignModal) {
+      fetchDrivers();
+    }
+  }, [showReassignModal]);
 
   // useEffect(() => {
   //   const fetchDrivers = async () => {
@@ -118,6 +160,28 @@ useEffect(() => {
 
   //   fetchDrivers();
   // }, []);
+
+  const handleDownload = async (url, label) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = `${label || "image"}.jpg`;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Download failed", err);
+      toast.error("Failed to download image");
+    }
+  };
 
   if (loading || !data) return <Loader />;
 
@@ -135,7 +199,6 @@ useEffect(() => {
         </button>
 
         <div className="flex justify-between items-center mt-2 mb-4">
-
           <h2 className="text-2xl font-semibold text-gray-800">
             Booking Details
           </h2>
@@ -148,27 +211,85 @@ useEffect(() => {
               Reassign Driver
             </button>
           )}
-
         </div>
 
-        <p className="text-gray-500 text-sm mt-1">
-          {data.bookingNumber}
-        </p>
+        <p className="text-gray-500 text-sm mt-1">{data.bookingNumber}</p>
       </div>
 
       <div className="space-y-6">
-
         {/* BOOKING */}
         <Section title="Booking Info">
           <Field label="Booking Type" value={data.bookingType} />
           <Field label="Trip Status" value={data.tripStatus} />
-          <Field label="Overall Status" value={data.overallStatus} />
+          {/* <Field label="Overall Status" value={data.overallStatus} /> */}
+          <Field label="Assignment Status" value={data.assignmentStatus} />
           <Field label="Payment Status" value={data.paymentStatus} />
           <Field label="Trip Start Otp" value={data.tripStartOtp} />
           <Field label="Trip End Otp" value={data.tripEndOtp} />
-          <Field label="Assignment Status" value={data.assignmentStatus} />
         </Section>
 
+        {/* trip start Info */}
+        <Section title="Trip Start Info">
+          <Field label="Pickup Lat" value={data.pickup.lat} />
+          <Field label="Pickup Long" value={data.pickup.lng} />
+          <Field label="Pickup Address" value={data.pickup.address} />
+          <Field label="Pickup Time" value={formatDateTime(data.tripStartAt)} />
+          {/* Images (same section, no new section) */}
+          {/* Images (styled like fields, 2-column layout) */}
+          {pickupVerification && (
+            <>
+              {[
+                { label: "Front View", url: pickupVerification.frontViewImage },
+                { label: "Back View", url: pickupVerification.backViewImage },
+                { label: "Left View", url: pickupVerification.leftViewImage },
+                { label: "Right View", url: pickupVerification.rightViewImage },
+                { label: "Interior", url: pickupVerification.interiorImage },
+                {
+                  label: "Speedometer",
+                  url: pickupVerification.speedometerImage,
+                },
+              ]
+                .filter((img) => img.url)
+                .map((img, i) => (
+                  <div
+                    key={i}
+                    className="flex justify-between items-center py-2 border-b border-gray-100"
+                  >
+                    {/* LABEL (like Field label) */}
+                    <span className="text-gray-500 text-sm font-medium">
+                      {img.label}
+                    </span>
+
+                    {/* RIGHT SIDE IMAGE + ACTIONS */}
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={img.url}
+                        alt={img.label}
+                        className="h-12 w-16 object-cover rounded border"
+                      />
+
+                      {/* DOWNLOAD ICON BUTTON */}
+                      <button
+                        onClick={() => handleDownload(img.url, img.label)}
+                        className="text-blue-600 hover:text-blue-800"
+                        title="Download"
+                      >
+                        ⬇️
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </>
+          )}
+        </Section>
+
+        {/* trip end Info */}
+        <Section title="Trip End Info">
+          <Field label="Drop Lat" value={data.dropoff.lat} />
+          <Field label="Drop Long" value={data.dropoff.lng} />
+          <Field label="Drop Address" value={data.dropoff.address} />
+          <Field label="Drop Time" value={formatDateTime(data.dropoffAt)} />
+        </Section>
 
         {/* USER */}
         <Section title="User Info">
@@ -183,8 +304,14 @@ useEffect(() => {
           <Field label="Phone" value={data.driver?.phone} />
           <Field label="Rating" value={data.driver?.rating} />
           <Field label="Online" value={data.driver?.isOnline ? "Yes" : "No"} />
-          <Field label="Available" value={data.driver?.isAvailable ? "Yes" : "No"} />
-          <Field label="Punched In" value={data.driver?.isPunchedIn ? "Yes" : "No"} />
+          <Field
+            label="Available"
+            value={data.driver?.isAvailable ? "Yes" : "No"}
+          />
+          <Field
+            label="Punched In"
+            value={data.driver?.isPunchedIn ? "Yes" : "No"}
+          />
         </Section>
 
         {/* VEHICLE */}
@@ -196,15 +323,11 @@ useEffect(() => {
           <Field label="Capacity" value={data.vehicle?.capacity} />
         </Section>
 
-
         {/* LOCATION */}
         <Section title="Trip Location">
-
           {/* LEFT SIDE = PICKUP */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">
-              Pickup
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Pickup</h3>
 
             <Field label="Address" value={data.pickup?.address} />
             <Field
@@ -217,19 +340,13 @@ useEffect(() => {
 
           {/* RIGHT SIDE = DROP */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">
-              Drop
-            </h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Drop</h3>
 
             <Field label="Address" value={data.dropoff?.address} />
-            <Field
-              label="Date"
-              value={data.tripEndAtIST || "-"}
-            />
+            <Field label="Date" value={data.tripEndAtIST || "-"} />
             <Field label="Latitude" value={data.dropoff?.lat} />
             <Field label="Longitude" value={data.dropoff?.lng} />
           </div>
-
         </Section>
 
         {/* REGION */}
@@ -245,24 +362,39 @@ useEffect(() => {
         <Section title="Pricing Snapshot">
           <Field label="Base Fare" value={data.pricingSnapshot?.baseFare} />
           <Field label="Per KM Rate" value={data.pricingSnapshot?.perKmRate} />
-          <Field label="Per Min Rate" value={data.pricingSnapshot?.perMinRate} />
+          <Field
+            label="Per Min Rate"
+            value={data.pricingSnapshot?.perMinRate}
+          />
           <Field label="Min Fare" value={data.pricingSnapshot?.minFare} />
           <Field label="Surge" value={data.pricingSnapshot?.surgeMultiplier} />
           <Field label="Time Type" value={data.pricingSnapshot?.timeType} />
           <Field label="GST %" value={data.pricingSnapshot?.gstPercent} />
-          <Field label="Cancellation Fee" value={data.pricingSnapshot?.cancellationFee} />
+          <Field
+            label="Cancellation Fee"
+            value={data.pricingSnapshot?.cancellationFee}
+          />
         </Section>
 
         {/* PAYMENT */}
         <Section title="Payment Info">
           <Field label="Method" value={data.payment?.method} />
           <Field label="Status" value={data.payment?.status} />
-          <Field label="Estimated Paid Amount" value={data.payment?.paidAmount} />
+          <Field
+            label="Estimated Paid Amount"
+            value={data.payment?.paidAmount}
+          />
           <Field label="Gateway Ref" value={data.payment?.gatewayRef} />
           <Field label="Paid At" value={data.paymentAtIST} />
 
-          <Field label="Extra Amount" value={data.payment?.extraPayment?.amount} />
-          <Field label="Extra Status" value={data.payment?.extraPayment?.status} />
+          <Field
+            label="Extra Amount"
+            value={data.payment?.extraPayment?.amount}
+          />
+          <Field
+            label="Extra Status"
+            value={data.payment?.extraPayment?.status}
+          />
         </Section>
 
         {/* FARE */}
@@ -275,11 +407,17 @@ useEffect(() => {
 
         {/* FARE BREAKUP */}
         <Section title="Fare Breakup (Estimated)">
-          <Field label="Total Fare" value={data.fareBreakup?.estimated?.totalFare} />
+          <Field
+            label="Total Fare"
+            value={data.fareBreakup?.estimated?.totalFare}
+          />
         </Section>
 
         <Section title="Fare Breakup (Final)">
-          <Field label="Total Fare" value={data.fareBreakup?.final?.totalFare} />
+          <Field
+            label="Total Fare"
+            value={data.fareBreakup?.final?.totalFare}
+          />
         </Section>
 
         {/* EXTRA */}
@@ -297,7 +435,6 @@ useEffect(() => {
           <Field label="Trip Start" value={data.tripStartAtIST} />
           <Field label="Trip End" value={data.tripEndAtIST} />
         </Section>
-
       </div>
 
       <Modal
@@ -324,7 +461,6 @@ useEffect(() => {
             setTimeout(() => {
               fetchDetails();
             }, 300);
-
           } catch (err) {
             console.error(err);
           } finally {
@@ -347,13 +483,11 @@ useEffect(() => {
               value={d._id}
               disabled={d._id === data?.driver?._id}
             >
-              {d.name} ({d.phone})
-              {d._id === data?.driver?._id && " (Current)"}
+              {d.name} ({d.phone}){d._id === data?.driver?._id && " (Current)"}
             </Option>
           ))}
         </Select>
       </Modal>
-
     </div>
   );
 }

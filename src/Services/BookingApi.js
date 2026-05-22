@@ -181,3 +181,26 @@ export const getUnassignedDriversBySegment = async (segmentId, search = "") => {
     throw err;
   }
 };
+
+export const getPickupVerification = async (bookingId) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/pickupVerification/${bookingId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const result = await res.json();
+    return result;
+
+  } catch (err) {
+    toast.error(err.message || "Failed to fetch pickup verification");
+    throw err;
+  }
+};

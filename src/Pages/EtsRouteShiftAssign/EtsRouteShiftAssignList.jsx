@@ -44,11 +44,11 @@ const StyledTableCell = styled(TableCell)(() => ({
     },
 }));
 
-const formatDate = (value) => {
-    if (!value) return "";
-    const [year, month, day] = value.split("-");
-    return `${day}-${month}-${year}`;
-}
+// const formatDate = (value) => {
+//     if (!value) return "";
+//     const [year, month, day] = value.split("-");
+//     return `${day}-${month}-${year}`;
+// }
 
 export default function EtsRouteShiftAssignList() {
 
@@ -69,8 +69,8 @@ export default function EtsRouteShiftAssignList() {
         vehicle: "",
         startDate: "",
         endDate: "",
-        startDateFormatted: "",
-        endDateFormatted: ""
+        // startDateFormatted: "",
+        // endDateFormatted: ""
 
     });
 
@@ -81,8 +81,8 @@ export default function EtsRouteShiftAssignList() {
         vehicle: undefined,
         startDate: "",
         endDate: "",
-        startDateFormatted: "",
-        endDateFormatted: ""
+        // startDateFormatted: "",
+        // endDateFormatted: ""
     });
 
     const [page, setPage] = useState(1);
@@ -148,28 +148,28 @@ export default function EtsRouteShiftAssignList() {
     }, [fetchData]);
 
     // ✅ APPLY FILTER
-    const handleApply = () => {
-        setFilters({
-            etsRoute: localFilters.etsRoute || "",
-            etsRouteShift: localFilters.etsRouteShift || "",
-            driver: localFilters.driver || "",
-            vehicle: localFilters.vehicle || "",
-            startDate: localFilters.startDateFormatted || "",
-            endDate: localFilters.endDateFormatted || ""
-        });
-        setPage(1);
-    };
     // const handleApply = () => {
     //     setFilters({
     //         etsRoute: localFilters.etsRoute || "",
     //         etsRouteShift: localFilters.etsRouteShift || "",
     //         driver: localFilters.driver || "",
     //         vehicle: localFilters.vehicle || "",
-    //         startDate: localFilters.startDate,
-    //         endDate: localFilters.endDate
+    //         startDate: localFilters.startDateFormatted || "",
+    //         endDate: localFilters.endDateFormatted || ""
     //     });
     //     setPage(1);
     // };
+    const handleApply = () => {
+        setFilters({
+            etsRoute: localFilters.etsRoute || "",
+            etsRouteShift: localFilters.etsRouteShift || "",
+            driver: localFilters.driver || "",
+            vehicle: localFilters.vehicle || "",
+            startDate: localFilters.startDate,
+            endDate: localFilters.endDate
+        });
+        setPage(1);
+    };
 
     // ✅ RESET
     const handleReset = () => {
@@ -180,8 +180,8 @@ export default function EtsRouteShiftAssignList() {
             vehicle: undefined,
             startDate: "",
             endDate: "",
-            startDateFormatted: "",
-            endDateFormatted: ""
+            // startDateFormatted: "",
+            // endDateFormatted: ""
         });
 
         setFilters({
@@ -191,8 +191,8 @@ export default function EtsRouteShiftAssignList() {
             vehicle: "",
             startDate: "",
             endDate: "",
-            startDateFormatted: "",
-            endDateFormatted: ""
+            // startDateFormatted: "",
+            // endDateFormatted: ""
         });
 
         setPage(1);
@@ -303,7 +303,7 @@ export default function EtsRouteShiftAssignList() {
                     </Select>
 
                     {/* START DATE */}
-                    <input
+                    {/* <input
                         type={localFilters.startDate ? "date" : "text"}
                         placeholder="Start Date"
                         className="border p-2 rounded-2xl"
@@ -320,10 +320,10 @@ export default function EtsRouteShiftAssignList() {
                                 startDateFormatted: formatDate(raw),
                             }));
                         }}
-                    />
+                    /> */}
 
                     {/* END DATE */}
-                    <input
+                    {/* <input
                         type={localFilters.endDate ? "date" : "text"}
                         placeholder="End Date"
                         className="border p-2 rounded-2xl"
@@ -340,9 +340,9 @@ export default function EtsRouteShiftAssignList() {
                                 endDateFormatted: formatDate(raw),
                             }));
                         }}
-                    />
+                    /> */}
 
-                    {/* <input
+                    <input
                         type="date"
                         className="border p-2 rounded-2xl"
                         value={localFilters.startDate}
@@ -358,7 +358,7 @@ export default function EtsRouteShiftAssignList() {
                         onChange={(e) =>
                             setLocalFilters({ ...localFilters, endDate: e.target.value })
                         }
-                    /> */}
+                    />
 
                 </div>
 

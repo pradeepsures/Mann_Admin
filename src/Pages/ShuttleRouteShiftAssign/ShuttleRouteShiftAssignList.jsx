@@ -42,11 +42,11 @@ const StyledTableCell = styled(TableCell)(() => ({
     },
 }));
 
-const formatDate = (value) => {
-    if (!value) return "";
-    const [year, month, day] = value.split("-");
-    return `${day}-${month}-${year}`;
-};
+// const formatDate = (value) => {
+//     if (!value) return "";
+//     const [year, month, day] = value.split("-");
+//     return `${day}-${month}-${year}`;
+// };
 
 export default function ShuttleRouteShiftAssignList() {
 
@@ -67,8 +67,8 @@ const { hasPermission } = useAuth();
         vehicle: "",
         startDate: "",
         endDate: "",
-        startDateFormatted: "",
-        endDateFormatted: ""
+        // startDateFormatted: "",
+        // endDateFormatted: ""
     });
 
     const [localFilters, setLocalFilters] = useState({
@@ -78,8 +78,8 @@ const { hasPermission } = useAuth();
         vehicle: undefined,
         startDate: "",
         endDate: "",
-        startDateFormatted: "",
-        endDateFormatted: ""
+        // startDateFormatted: "",
+        // endDateFormatted: ""
     });
 
     const [page, setPage] = useState(1);
@@ -151,8 +151,10 @@ const { hasPermission } = useAuth();
             shuttleRouteShift: localFilters.shuttleRouteShift || "",
             driver: localFilters.driver || "",
             vehicle: localFilters.vehicle || "",
-            startDate: localFilters.startDateFormatted || "",
-            endDate: localFilters.endDateFormatted || ""
+            // startDate: localFilters.startDateFormatted || "",
+            // endDate: localFilters.endDateFormatted || ""
+             startDate: localFilters.startDate,
+            endDate: localFilters.endDate
         });
         setPage(1);
     };
@@ -166,8 +168,8 @@ const { hasPermission } = useAuth();
             vehicle: undefined,
             startDate: "",
             endDate: "",
-            startDateFormatted: "",
-            endDateFormatted: ""
+            // startDateFormatted: "",
+            // endDateFormatted: ""
         });
 
         setFilters({
@@ -177,8 +179,8 @@ const { hasPermission } = useAuth();
             vehicle: "",
             startDate: "",
             endDate: "",
-            startDateFormatted: "",
-            endDateFormatted: ""
+            // startDateFormatted: "",
+            // endDateFormatted: ""
         });
 
         setPage(1);
@@ -294,7 +296,7 @@ const { hasPermission } = useAuth();
                         ))}
                     </Select>
                     {/* START DATE */}
-                    <input
+                    {/* <input
                         type={localFilters.startDate ? "date" : "text"}
                         placeholder="Start Date"
                         className="border p-2 rounded-xl"
@@ -311,10 +313,10 @@ const { hasPermission } = useAuth();
                                 startDateFormatted: formatDate(raw),
                             }));
                         }}
-                    />
+                    /> */}
 
                     {/* END DATE */}
-                    <input
+                    {/* <input
                         type={localFilters.endDate ? "date" : "text"}
                         placeholder="End Date"
                         className="border p-2 rounded-xl"
@@ -331,9 +333,9 @@ const { hasPermission } = useAuth();
                                 endDateFormatted: formatDate(raw),
                             }));
                         }}
-                    />
+                    /> */}
 
-                    {/* <input
+                    <input
                         type="date"
                         className="border p-2 rounded-xl"
                         value={localFilters.startDate}
@@ -349,7 +351,7 @@ const { hasPermission } = useAuth();
                         onChange={(e) =>
                             setLocalFilters({ ...localFilters, endDate: e.target.value })
                         }
-                    /> */}
+                    />
                 </div>
 
                 <div className="flex gap-3 mt-5">

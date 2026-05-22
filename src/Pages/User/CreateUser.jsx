@@ -43,7 +43,12 @@ const CreateAdmin = () => {
     const errors = {};
 
     if (!formData.name) errors.name = "Name is required";
-    if (!formData.email) errors.email = "Email is required";
+    // if (!formData.email) errors.email = "Email is required";
+     if (!formData.email.trim()) {
+      errors.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errors.email = "Enter a valid email address (e.g. Ashwani@Manntours.com)";
+    }
     if (!formData.mobile) errors.mobile = "Mobile number is required";
     if (!formData.dob) errors.dob = "Date of birth is required";
     if (!formData.gender) errors.gender = "Gender is required";

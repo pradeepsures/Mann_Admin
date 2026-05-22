@@ -47,11 +47,11 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     },
 }));
 
-const formatDate = (value) => {
-    if (!value) return "";
-    const [year, month, day] = value.split("-");
-    return `${day}-${month}-${year}`;
-};
+// const formatDate = (value) => {
+//     if (!value) return "";
+//     const [year, month, day] = value.split("-");
+//     return `${day}-${month}-${year}`;
+// };
 
 export default function HolidayList() {
     const { hasPermission, authLoading, auth } = useAuth();
@@ -75,8 +75,8 @@ export default function HolidayList() {
         region: "",
         startDate: "",
         endDate: "",
-        startDateFormatted: "",
-        endDateFormatted: "",
+        // startDateFormatted: "",
+        // endDateFormatted: "",
         isActive: "",
     });
 
@@ -142,18 +142,18 @@ export default function HolidayList() {
     }, [fetchHolidays]);
 
     // ✅ APPLY FILTER
-    const handleApply = () => {
-        setFilters({
-            ...localFilters,
-            startDate: localFilters.startDateFormatted || "",
-            endDate: localFilters.endDateFormatted || "",
-        });
-        setPage(1);
-    };
     // const handleApply = () => {
-    //     setFilters(localFilters);
+    //     setFilters({
+    //         ...localFilters,
+    //         startDate: localFilters.startDateFormatted || "",
+    //         endDate: localFilters.endDateFormatted || "",
+    //     });
     //     setPage(1);
     // };
+    const handleApply = () => {
+        setFilters(localFilters);
+        setPage(1);
+    };
 
     // ✅ RESET FILTER
     const handleReset = () => {
@@ -162,8 +162,8 @@ export default function HolidayList() {
             region: "",
             startDate: "",
             endDate: "",
-            startDateFormatted: "",
-            endDateFormatted: "",
+            // startDateFormatted: "",
+            // endDateFormatted: "",
             isActive: "",
         };
 
@@ -269,7 +269,7 @@ export default function HolidayList() {
                     />
 
                     {/* START DATE */}
-                    <input
+                    {/* <input
                         type={localFilters.startDate ? "date" : "text"}
                         placeholder="Start Date"
                         className="border p-2 rounded-2xl"
@@ -286,10 +286,10 @@ export default function HolidayList() {
                                 startDateFormatted: formatDate(raw),
                             }));
                         }}
-                    />
+                    /> */}
 
                     {/* END DATE */}
-                    <input
+                    {/* <input
                         type={localFilters.endDate ? "date" : "text"}
                         placeholder="End Date"
                         className="border p-2 rounded-2xl"
@@ -306,9 +306,9 @@ export default function HolidayList() {
                                 endDateFormatted: formatDate(raw),
                             }));
                         }}
-                    />
+                    /> */}
 
-                    {/* <input
+                    <input
                         type="date"
                         className="border p-2 rounded-2xl"
                         value={localFilters.startDate}
@@ -324,7 +324,7 @@ export default function HolidayList() {
                         onChange={(e) =>
                             setLocalFilters({ ...localFilters, endDate: e.target.value })
                         }
-                    /> */}
+                    />
 
                     <Select
                         showSearch

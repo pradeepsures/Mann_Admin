@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import { Select } from "antd";
 const { Option } = Select;
 
-import { getAllShuttleRoutes } from "../../Services/ShuttleRouteApi";
+import { getAllShuttleRoutes, getShuttleRouteById, } from "../../Services/ShuttleRouteApi";
 import { createShuttleRouteShiftApi } from "../../Services/SuttleRouteShiftApi";
 
 const CreateShuttleRouteShift = () => {
@@ -51,6 +51,44 @@ const CreateShuttleRouteShift = () => {
 
     fetchRoutes();
   }, []);
+
+  // ✅ AUTO PREFILL STOPPAGES
+const handleRouteChange = async (id) => {
+  try {
+    setFormData((prev) => ({
+      ...prev,
+      shuttleRoute: id,
+    }));
+
+    const res = await getShuttleRouteById(id);
+
+    if (res?.status) {
+
+      const stops = res.data.stoppages.map((s, index) => ({
+        name: s.name || "",
+        lat: s.lat || "",
+        lng: s.lng || "",
+        address: s.address || "",
+        order: index + 1,
+
+        // EMPTY FOR USER INPUT
+        arrivalTime: "",
+        departureTime: "",
+        price: "",
+      }));
+
+      setFormData((prev) => ({
+        ...prev,
+        shuttleRoute: id,
+        stoppageTimes: stops,
+      }));
+    }
+
+  } catch (err) {
+    console.log(err);
+    toast.error("Failed to load route details");
+  }
+};
 
   // ✅ INPUT CHANGE
   const handleChange = (e) => {
@@ -202,9 +240,10 @@ const CreateShuttleRouteShift = () => {
             size="large"
             placeholder="Select Route"
             value={formData.shuttleRoute || undefined}
-            onChange={(val) =>
-              setFormData({ ...formData, shuttleRoute: val })
-            }
+            // onChange={(val) =>
+            //   setFormData({ ...formData, shuttleRoute: val })
+            // }
+            onChange={handleRouteChange}
             loading={routeLoading}
             className="w-full"
           >

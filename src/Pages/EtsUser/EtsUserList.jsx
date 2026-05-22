@@ -25,10 +25,7 @@ import Loader from "../../compoents/Loader";
 import LoderBtn from "../../compoents/LoderBtn";
 import Breaker from "../../compoents/Breaker";
 
-import {
-  getAllEtsUsers,
-  deleteEtsUserApi,
-} from "../../Services/EtsUserApi";
+import { getAllEtsUsers, deleteEtsUserApi } from "../../Services/EtsUserApi";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,14 +35,13 @@ const StyledTableCell = styled(TableCell)(() => ({
   },
 }));
 
-const formatDate = (value) => {
-  if (!value) return "";
-  const [year, month, day] = value.split("-");
-  return `${day}-${month}-${year}`;
-};
+// const formatDate = (value) => {
+//   if (!value) return "";
+//   const [year, month, day] = value.split("-");
+//   return `${day}-${month}-${year}`;
+// };
 
 export default function EtsUserList() {
-
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -62,8 +58,8 @@ export default function EtsUserList() {
     isDeleted: "",
     startDate: "",
     endDate: "",
-    startDateFormatted: "",
-    endDateFormatted: "",
+    // startDateFormatted: "",
+    // endDateFormatted: "",
   });
 
   const [localFilters, setLocalFilters] = useState({ ...filters });
@@ -97,7 +93,6 @@ export default function EtsUserList() {
         setTotalPages(res.totalPage);
         setTotalRecord(res.totalResult);
       }
-
     } catch {
       toast.error("Failed to fetch users");
     } finally {
@@ -171,16 +166,13 @@ export default function EtsUserList() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-
       <Breaker />
 
       {/* ✅ FILTER UI (NEW LIKE HOLIDAY) */}
       <div className="bg-white p-5 rounded-xl shadow mb-6">
-
         <h3 className="text-lg font-semibold mb-4">Search & Filters</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
           <input
             type="text"
             placeholder="Search name / email / mobile"
@@ -202,11 +194,9 @@ export default function EtsUserList() {
               if (!e.target.value) e.target.type = "text";
             }}
             onChange={(e) => {
-              const raw = e.target.value;
               setLocalFilters((prev) => ({
                 ...prev,
-                startDate: raw,
-                startDateFormatted: formatDate(raw),
+                startDate: e.target.value,
               }));
             }}
           />
@@ -222,13 +212,19 @@ export default function EtsUserList() {
               if (!e.target.value) e.target.type = "text";
             }}
             onChange={(e) => {
-              const raw = e.target.value;
               setLocalFilters((prev) => ({
                 ...prev,
-                endDate: raw,
-                endDateFormatted: formatDate(raw),
+                endDate: e.target.value,
               }));
             }}
+            // onChange={(e) => {
+            //   const raw = e.target.value;
+            //   setLocalFilters((prev) => ({
+            //     ...prev,
+            //     endDate: raw,
+            //     endDateFormatted: formatDate(raw),
+            //   }));
+            // }}
           />
 
           {/* <input
@@ -272,25 +268,27 @@ export default function EtsUserList() {
             <option value="true">Deleted</option>
             <option value="false">Active</option>
           </select>
-
         </div>
 
         <div className="flex gap-3 mt-5">
-
           <motion.button
             whileTap={{ scale: 0.95 }}
-            onClick={() => {
-              setFilters({
-                ...localFilters,
-                startDate: localFilters.startDateFormatted || "",
-                endDate: localFilters.endDateFormatted || "",
-              });
-              setPage(1);
-            }}
+            // onClick={() => {
+            //   setFilters({
+            //     ...localFilters,
+            //     startDate: localFilters.startDateFormatted || "",
+            //     endDate: localFilters.endDateFormatted || "",
+            //   });
+            //   setPage(1);
+            // }}
             // onClick={() => {
             //   setFilters(localFilters);
             //   setPage(1);
             // }}
+            onClick={() => {
+              setFilters(localFilters);
+              setPage(1);
+            }}
             className="bg-primary text-white px-5 py-2 rounded-lg"
           >
             Apply Filters
@@ -305,8 +303,8 @@ export default function EtsUserList() {
                 isDeleted: "",
                 startDate: "",
                 endDate: "",
-                startDateFormatted: "",
-                endDateFormatted: "",
+                // startDateFormatted: "",
+                // endDateFormatted: "",
               };
               setLocalFilters(empty);
               setFilters(empty);
@@ -316,14 +314,11 @@ export default function EtsUserList() {
           >
             Reset
           </motion.button>
-
         </div>
-
       </div>
 
       {/* ACTION BUTTONS */}
       <div className="flex justify-end gap-4 mb-6">
-
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={exportExcel}
@@ -348,12 +343,10 @@ export default function EtsUserList() {
         >
           {btnLoading ? <LoderBtn /> : "Add User"}
         </motion.button> */}
-
       </div>
 
       {/* TABLE */}
       <TableContainer component={Paper} className="rounded-xl shadow">
-
         <Table>
           <TableHead>
             <TableRow>
@@ -376,10 +369,7 @@ export default function EtsUserList() {
             ) : (
               data.map((row, index) => (
                 <TableRow key={row.id}>
-
-                  <TableCell>
-                    {(page - 1) * rowsPerPage + index + 1}
-                  </TableCell>
+                  <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
 
                   <TableCell>
                     <img
@@ -392,23 +382,27 @@ export default function EtsUserList() {
                     <div className="flex flex-col">
                       <span className="font-semibold">{row.name}</span>
                       <span className="text-sm text-gray-500">{row.email}</span>
-                      <span className="text-sm text-gray-500">{row.mobile}</span>
+                      <span className="text-sm text-gray-500">
+                        {row.mobile}
+                      </span>
                     </div>
                   </TableCell>
 
                   <TableCell>{row.city || "N/A"}</TableCell>
 
                   <TableCell>
-                    <span className={`px-3 py-1 rounded-full text-sm ${row.isVerified
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
-                      }`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        row.isVerified
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
                       {row.isVerified ? "Verified" : "Not Verified"}
                     </span>
                   </TableCell>
 
                   <TableCell align="center">
-
                     <IconButton onClick={(e) => handleMenuOpen(e, row.id)}>
                       <MoreVertIcon />
                     </IconButton>
@@ -462,16 +456,12 @@ export default function EtsUserList() {
                         </MenuItem>
                       )}
                     </Menu>
-
                   </TableCell>
-
                 </TableRow>
               ))
             )}
           </TableBody>
-
         </Table>
-
       </TableContainer>
 
       {/* PAGINATION */}
@@ -484,7 +474,6 @@ export default function EtsUserList() {
           />
         </Stack>
       )}
-
     </div>
   );
 }

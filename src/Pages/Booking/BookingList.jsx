@@ -27,7 +27,11 @@ import LoderBtn from "../../compoents/LoderBtn";
 
 import BookingFilter from "./BookingFilter";
 
-import { getAllBookings, assignDriver as assignDriverApi, getUnassignedDriversBySegment } from "../../Services/BookingApi";
+import {
+  getAllBookings,
+  assignDriver as assignDriverApi,
+  getUnassignedDriversBySegment,
+} from "../../Services/BookingApi";
 import { getAllDrivers } from "../../Services/DriverApi";
 import { reassignCancelRequestApi } from "../../Services/RequestApi";
 
@@ -201,7 +205,6 @@ export default function BookingList() {
     setAnchorEl(null);
   };
 
-
   const handleAssignDriver = (bookingId, segmentId) => {
     setSelectedRowId(bookingId);
     setSelectedSegment(segmentId); // ✅ now correct
@@ -256,9 +259,7 @@ export default function BookingList() {
 
       if (res?.status) {
         toast.success(
-          isReassignModalOpen
-            ? "Driver reassigned"
-            : "Driver assigned"
+          isReassignModalOpen ? "Driver reassigned" : "Driver assigned",
         );
 
         fetchBookings();
@@ -299,7 +300,10 @@ export default function BookingList() {
           { label: "Segment", value: (r) => r.segment?.name || "-" },
           { label: "Region", value: (r) => r.region?.name || "-" },
 
-          { label: "Vehicle Number", value: (r) => r.vehicle?.carNumber || "-" },
+          {
+            label: "Vehicle Number",
+            value: (r) => r.vehicle?.carNumber || "-",
+          },
           { label: "Vehicle Brand", value: (r) => r.vehicle?.brand || "-" },
           { label: "Vehicle Model", value: (r) => r.vehicle?.model || "-" },
 
@@ -355,10 +359,7 @@ export default function BookingList() {
   };
 
   const showAssignHint = (row) => {
-    return (
-      row.tripStatus === "not_started" &&
-      !row.driver
-    );
+    return row.tripStatus === "not_started" && !row.driver;
   };
 
   if (loading) return <Loader />;
@@ -368,14 +369,12 @@ export default function BookingList() {
       {/* <Breaker /> */}
 
       <div className="flex justify-between items-center mb-4">
-
         {/* LEFT */}
         <Breaker />
 
         {/* RIGHT - BOOKING STATS */}
         {stats && (
           <div className="bg-gradient-to-r from-[#03045E] to-[#0077B6] text-white shadow-md rounded-lg px-4 py-2 text-sm flex items-center gap-3 flex-wrap">
-
             <span>
               <span className="opacity-80">Total:</span>{" "}
               <span className="font-semibold">{stats.totalBookings}</span>
@@ -434,15 +433,13 @@ export default function BookingList() {
                 {stats.pendingPaymentCount}
               </span>
             </span>
-
           </div>
         )}
-
       </div>
 
       {/* ✅ FIXED FILTER */}
       <BookingFilter
-        appliedFilters={filters}   // ⭐ IMPORTANT FIX
+        appliedFilters={filters} // ⭐ IMPORTANT FIX
         onApply={handleApplyFilters}
         onReset={handleResetFilters}
       />
@@ -463,7 +460,7 @@ export default function BookingList() {
           <TableHead>
             <TableRow>
               <StyledTableCell>S.No</StyledTableCell>
-              <StyledTableCell>BOOKING</StyledTableCell>
+              <StyledTableCell>BOOKING & PAYMENT</StyledTableCell>
               <StyledTableCell>INFORMATION</StyledTableCell>
               <StyledTableCell>BOOKING TYPE</StyledTableCell>
               <StyledTableCell>TRIP STATUS</StyledTableCell>
@@ -485,7 +482,29 @@ export default function BookingList() {
               data.map((row, index) => (
                 <TableRow key={row._id}>
                   <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
-                  <TableCell>{row.bookingNumber}</TableCell>
+                  {/* <TableCell>
+                    {row.bookingNumber}<br></br>
+                    {row.paymentStatus}
+                    </TableCell> */}
+                  <TableCell>
+                    <div>{row.bookingNumber}</div>
+
+                    <span
+                      className={`inline-block mt-1 px-2 py-1 text-xs font-semibold rounded-full
+      ${
+        row.paymentStatus === "paid"
+          ? "bg-green-100 text-green-700"
+          : row.paymentStatus === "pending"
+            ? "bg-yellow-100 text-yellow-700"
+            : row.paymentStatus === "failed"
+              ? "bg-red-100 text-red-700"
+              : "bg-gray-100 text-gray-700"
+      }
+    `}
+                    >
+                      {row.paymentStatus}
+                    </span>
+                  </TableCell>
 
                   <TableCell>
                     <div className="font-medium text-gray-800">
@@ -515,7 +534,7 @@ export default function BookingList() {
                     {row.tripStatus ? (
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getTripStatusColor(
-                          row.tripStatus
+                          row.tripStatus,
                         )}`}
                       >
                         {row.tripStatus.replaceAll("_", " ")}
@@ -528,15 +547,16 @@ export default function BookingList() {
                   <TableCell>
                     {row.vehicle ? (
                       <>
-                        {row.vehicle.carNumber || "-"}<br />
-                        {row.vehicle?.brand || "-"}<br />
+                        {row.vehicle.carNumber || "-"}
+                        <br />
+                        {row.vehicle?.brand || "-"}
+                        <br />
                         {row.vehicle?.model || "-"}
                       </>
                     ) : (
                       "-"
                     )}
                   </TableCell>
-
 
                   {/* <TableCell>
                     {row.driver ? (
@@ -567,7 +587,6 @@ export default function BookingList() {
                       <>
                         {row.driver.name || "-"} <br />
                         {row.driver.phone || "-"} <br />
-
                         {row.tripStatus?.toLowerCase() !== "completed" && (
                           <button
                             onClick={() =>
@@ -612,15 +631,11 @@ export default function BookingList() {
                         <EyeIcon className="h-5 w-5 mr-2" /> View
                       </MenuItem>
 
-
                       {row.assignmentStatus === "unassigned" &&
                         row.tripStatus?.toLowerCase() !== "completed" && (
                           <MenuItem
                             onClick={() =>
-                              handleAssignDriver(
-                                row._id,
-                                row.segment?._id
-                              )
+                              handleAssignDriver(row._id, row.segment?._id)
                             }
                           >
                             🚗 Assign Chauffeur
@@ -643,7 +658,11 @@ export default function BookingList() {
 
       {totalPages > 1 && (
         <Stack alignItems="center" mt={5}>
-          <Pagination count={totalPages} page={page} onChange={handlePageChange} />
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+          />
         </Stack>
       )}
 
