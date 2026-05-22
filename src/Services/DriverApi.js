@@ -23,22 +23,26 @@ export const createDriverApi = async (formData) => {
 };
 
 
-// GET ALL DRIVERS
+
 // export const getAllDrivers = async ({ page, rowsPerPage, searchQuery }) => {
 
 //   const token = localStorage.getItem("token");
 
 //   try {
 
-//     const res = await fetch(
-//       `${BASE_URL}/api/admin/drivers?page=${page}&limit=${rowsPerPage}&search=${searchQuery}`,
-//       {
-//         method: "GET",
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }
-//     );
+//     let url = `${BASE_URL}/api/admin/drivers?page=${page}&limit=${rowsPerPage}`;
+
+//     // ✅ only add search if exists
+//     if (searchQuery) {
+//       url += `&search=${searchQuery}`;
+//     }
+
+//     const res = await fetch(url, {
+//       method: "GET",
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
 
 //     const result = await res.json();
 //     return result;
@@ -47,20 +51,100 @@ export const createDriverApi = async (formData) => {
 //     toast.error(err.message || "Failed to fetch drivers");
 //     throw err;
 //   }
-
 // };
-export const getAllDrivers = async ({ page, rowsPerPage, searchQuery }) => {
+
+// GET SINGLE DRIVER
+export const getAllDrivers = async ({
+  page = 1,
+  rowsPerPage = 10,
+  searchQuery = "",
+
+  // NEW FILTERS
+  isVerified,
+  region,
+  isOnline,
+  isPunchedIn,
+  isPunchedOut,
+  startDate,
+  endDate,
+  isOnTrip,
+  isAssigned,
+  isAvailable,
+} = {}) => {
 
   const token = localStorage.getItem("token");
 
   try {
 
-    let url = `${BASE_URL}/api/admin/drivers?page=${page}&limit=${rowsPerPage}`;
+    // ✅ SAFE QUERY PARAMS
+    const params = new URLSearchParams();
 
-    // ✅ only add search if exists
+    params.append("page", page);
+    params.append("limit", rowsPerPage);
+
+    // SEARCH
     if (searchQuery) {
-      url += `&search=${searchQuery}`;
+      params.append("search", searchQuery);
     }
+
+    // FILTERS
+    if (isVerified !== undefined && isVerified !== "") {
+      params.append("isVerified", isVerified);
+    }
+
+    if (region) {
+      params.append("region", region);
+    }
+
+    if (isOnline !== undefined && isOnline !== "") {
+      params.append("isOnline", isOnline);
+    }
+
+    if (
+      isPunchedIn !== undefined &&
+      isPunchedIn !== ""
+    ) {
+      params.append("isPunchedIn", isPunchedIn);
+    }
+
+    if (
+      isPunchedOut !== undefined &&
+      isPunchedOut !== ""
+    ) {
+      params.append("isPunchedOut", isPunchedOut);
+    }
+
+    if (startDate) {
+      params.append("startDate", startDate);
+    }
+
+    if (endDate) {
+      params.append("endDate", endDate);
+    }
+
+    if (
+      isOnTrip !== undefined &&
+      isOnTrip !== ""
+    ) {
+      params.append("isOnTrip", isOnTrip);
+    }
+
+    if (
+      isAssigned !== undefined &&
+      isAssigned !== ""
+    ) {
+      params.append("isAssigned", isAssigned);
+    }
+
+    if (
+      isAvailable !== undefined &&
+      isAvailable !== ""
+    ) {
+      params.append("isAvailable", isAvailable);
+    }
+
+    // ✅ FINAL URL
+    const url = `${BASE_URL}/api/admin/drivers?${params.toString()}`;
 
     const res = await fetch(url, {
       method: "GET",
@@ -70,15 +154,28 @@ export const getAllDrivers = async ({ page, rowsPerPage, searchQuery }) => {
     });
 
     const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        result.message || "Failed to fetch drivers"
+      );
+    }
+
     return result;
 
   } catch (err) {
-    toast.error(err.message || "Failed to fetch drivers");
+
+    console.error("getAllDrivers Error:", err);
+
+    toast.error(
+      err.message || "Failed to fetch drivers"
+    );
+
     throw err;
   }
 };
 
-// GET SINGLE DRIVER
+
 export const getSingleDriver = async (id) => {
 
   const token = localStorage.getItem("token");

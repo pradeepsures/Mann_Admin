@@ -20,7 +20,7 @@ export const getAllFaqs = async ({ page, rowsPerPage, searchQuery, lang }) => {
       }
     );
     const result = await res.json();
-    console.log('getAllAdmins API response:', result);
+    console.log('getAllFaq API response:', result);
     if (!res.ok) {
       throw new Error(result.message || `HTTP error: ${res.status}`);
     }
@@ -29,7 +29,7 @@ export const getAllFaqs = async ({ page, rowsPerPage, searchQuery, lang }) => {
     }
     return result;
   } catch (err) {
-    console.error('Error in getAllAdmins:', err);
+    console.error('Error in getAllFaq:', err);
     throw err; // Let component handle toasts
   }
 };

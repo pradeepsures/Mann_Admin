@@ -125,6 +125,11 @@ import SectionNameList from "./Pages/Membermaster/MemberMasterList";
 import CreateMember from "./Pages/Member/CreateMember";
 import HourlyPackageList from "./Pages/HourlyPackages/HourlyPackagesList";
 import UpdateMember from "./Pages/Member/UpdateMember";
+import AdminList from "./Pages/User/UserList";
+import UserList from "./Pages/User/UserList";
+import UserDetails from "./Pages/User/UserDetails";
+import CreateUser from "./Pages/User/UserCreate";
+import UpdateUser from "./Pages/User/UserUpdate";
 
 // import UserPrivacyPolicyView from "./Pages/PrivacyPolicy/PrivacyPolicyView";
 
@@ -326,6 +331,11 @@ const router = createBrowserRouter([
       //hourly packages
       { path: "hourlyPackages", element: <HourlyPackageList /> },
 
+      //user
+      { path: "user", element: <UserList/> },
+      { path: "users/view/:id", element: <UserDetails/> },
+      { path:"users/create", element: <CreateUser/> },
+      { path: "users/edit/:id", element: <UpdateUser/> }
 
     ],
   },

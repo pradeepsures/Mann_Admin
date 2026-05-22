@@ -1,675 +1,540 @@
+// src/pages/User/UserList.jsx
+
 import * as React from "react";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { styled } from "@mui/material/styles";
+
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, {
+  tableCellClasses,
+} from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
+import Switch from "@mui/material/Switch";
+
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Menu,
-  MenuItem,
-  Pagination,
-  Select,
-} from "@mui/material";
-import { tableCellClasses } from "@mui/material/TableCell";
+  EyeIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+
+import { motion } from "framer-motion";
+
 import toast from "react-hot-toast";
+
+import { Modal } from "antd";
+
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { motion } from "framer-motion";
+
+import Breaker from "../../compoents/Breaker";
 import Loader from "../../compoents/Loader";
 import LoderBtn from "../../compoents/LoderBtn";
-import Breaker from "../../compoents/Breaker";
+
 import {
-  getAllAdmins,
-  deleteAdmin,
-  getAllUserExcell,
+  getAllUsers,
+  deleteUserApi,
+  toggleUserStatusApi,
 } from "../../Services/UserApi";
-import { Modal } from "antd";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import xlsx from "json-as-xlsx";
-import { useAuth } from "../../auth/AuthContext";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { getImageUrl } from "../../utils/imageUtils";
 
-const BASE_URL =
-  import.meta.env.VITE_BASE_URL || "https://your-default-base-url.com";
-
-// Local date format (timezone safe)
-const formatLocalDate = (date) => {
-  if (!date) return null;
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
-
-const StyledTableCell = styled(TableCell)(() => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    background: "linear-gradient(to right, #5F0099, #9F00FF)",
-    color: "white",
+    background:
+      "linear-gradient(90deg, #03045E 0%, #0077B6 50%, #00B4D8 100%)",
+    color: theme.palette.common.white,
     fontWeight: 600,
     fontSize: "0.95rem",
-    padding: "10px 12px",
+    padding: "14px 16px",
     textTransform: "uppercase",
     letterSpacing: "0.05em",
   },
+
   [`&.${tableCellClasses.body}`]: {
-    fontSize: "0.95rem",
+    fontSize: "0.92rem",
     color: "#374151",
-    padding: "8px 10px",
+    padding: "14px 16px",
   },
 }));
 
 const StyledTableRow = styled(TableRow)(() => ({
-  "&:nth-of-type(odd)": { backgroundColor: "#f9fafb" },
+  "&:nth-of-type(odd)": {
+    backgroundColor: "#f9fafb",
+  },
+
   "&:hover": {
     backgroundColor: "#f1f5f9",
-    transition: "background-color 0.2s ease",
+    transition: "0.2s ease",
   },
-  "&:last-child td, &:last-child th": { border: 0 },
+
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
 }));
 
-export default function AdminList() {
-  const { auth, hasPermission, loading: authLoading } = useAuth();
+export default function UserList() {
   const navigate = useNavigate();
 
   const [data, setData] = useState([]);
+
   const [loading, setLoading] = useState(false);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalRecord, setTotalRecord] = useState(0);
-  const [search, setSearch] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [zeroBalance, setZeroBalance] = useState(false);
-  const [notZeroBalance, setNotZeroBalance] = useState(false);
-  const [isDateFilterModalOpen, setIsDateFilterModalOpen] = useState(false);
-  const [tempStartDate, setTempStartDate] = useState(null);
-  const [tempEndDate, setTempEndDate] = useState(null);
-  const [filterAnchorEl, setFilterAnchorEl] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isExporting, setIsExporting] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedRowId, setSelectedRowId] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(7);
 
+  const [rowsPerPage] = useState(10);
 
-  const fetchData = useCallback(async () => {
+  const [totalPages, setTotalPages] = useState(0);
+
+  const [totalRecord, setTotalRecord] = useState(0);
+
+  const [search, setSearch] = useState("");
+
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [gender, setGender] = useState("");
+
+  const [isVerified, setIsVerified] = useState("");
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const [selectedRowId, setSelectedRowId] = useState(null);
+
+  const [btnLoading, setBtnLoading] = useState(false);
+
+  // ─────────────────────────────────────
+  // FETCH USERS
+  // ─────────────────────────────────────
+
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
-      const payload = {
+
+      const result = await getAllUsers({
         page,
         rowsPerPage,
-        searchQuery: searchQuery.trim() || undefined,
-        startDate: startDate ? formatLocalDate(startDate) : undefined,
-        endDate: endDate ? formatLocalDate(endDate) : undefined,
-        zeroBalance: zeroBalance || undefined,
-        notZeroBalance: notZeroBalance || undefined,
-        lang: selectedLanguage,
-      };
-
-      const result = await getAllAdmins(payload);
+        search: searchQuery,
+        gender,
+        isVerified,
+      });
 
       if (result?.status) {
-        const items = result.data || result.users || result.results || [];
-        const transformed = items.map((item) => ({ ...item, id: item._id }));
+        setData(result?.data || []);
 
-        setData(transformed);
+        setTotalPages(result?.totalPage || 0);
 
-        const total =
-          result.total ||
-          result.count ||
-          result.totalRecords ||
-          result.totalDocs ||
-          result.totalResult ||
-          result.totalCount ||
-          items.length ||
-          0;
-
-        const pages =
-          result.totalPages ||
-          result.totalPage ||
-          result.pages ||
-          (rowsPerPage > 0 ? Math.ceil(total / rowsPerPage) : 1) ||
-          1;
-
-        setTotalPages(pages);
-        setTotalRecord(total);
-      } else {
-        toast.error(result?.message || "Failed to load admins");
+        setTotalRecord(result?.totalResult || 0);
       }
     } catch (error) {
-      console.error("Fetch admins error:", error);
-      toast.error("Error loading admin list");
+      console.error(error);
+      toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
     }
-  }, [
-    page,
-    rowsPerPage,
-    searchQuery,
-    startDate,
-    endDate,
-    zeroBalance,
-    notZeroBalance,
-    selectedLanguage,
-
-  ]);
+  }, [page, rowsPerPage, searchQuery, gender, isVerified]);
 
   useEffect(() => {
-    if (!authLoading.profile && auth.user) fetchData();
-  }, [fetchData, authLoading.profile, auth.user]);
+    fetchUsers();
+  }, [fetchUsers]);
 
   useEffect(() => {
-    AOS.init({ duration: 1000, once: true, disable: "mobile" });
-    return () => AOS.refresh();
+    AOS.init({
+      duration: 1000,
+      once: true,
+    });
   }, []);
 
-  const handleSearch = () => {
-    setSearchQuery(search.trim());
-    setPage(1);
+  // ─────────────────────────────────────
+  // PAGINATION
+  // ─────────────────────────────────────
+
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
-  const handleClearFilters = () => {
-    setSearch("");
-    setSearchQuery("");
-    setStartDate(null);
-    setEndDate(null);
-    setZeroBalance(false);
-    setNotZeroBalance(false);
-    setPage(1);
-    toast.success("Filters cleared");
-  };
-
-  const handlePageChange = (e, newPage) => setPage(newPage);
-
-  const handleRowsPerPageChange = (e) => {
-    setRowsPerPage(parseInt(e.target.value, 10));
-    setPage(1);
-  };
+  // ─────────────────────────────────────
+  // MENU
+  // ─────────────────────────────────────
 
   const handleMenuOpen = (event, id) => {
     setAnchorEl(event.currentTarget);
+
     setSelectedRowId(id);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+
     setSelectedRowId(null);
   };
 
-  const handleFilterMenuOpen = (event) =>
-    setFilterAnchorEl(event.currentTarget);
-  const handleFilterMenuClose = () => setFilterAnchorEl(null);
-
-  const applyFilters = () => {
-    setPage(1);
-    fetchData();
-    handleFilterMenuClose();
-    toast.success("Filters applied");
-  };
-
-  const handleDateFilterModalOk = () => {
-    if (!tempStartDate || !tempEndDate) return toast.error("Select both dates");
-    if (tempEndDate < tempStartDate)
-      return toast.error("End date before start date");
-    setStartDate(tempStartDate);
-    setEndDate(tempEndDate);
-    setPage(1);
-    setIsDateFilterModalOpen(false);
-    toast.success("Date range applied");
-  };
+  // ─────────────────────────────────────
+  // DELETE USER
+  // ─────────────────────────────────────
 
   const deleteHandler = (id) => {
     Modal.confirm({
-      title: "Delete Admin",
-      content: "Are you sure? This cannot be undone.",
+      title: "Delete User",
+
+      content:
+        "Are you sure you want to delete this user?",
+
       okText: "Delete",
+
       okType: "danger",
+
       cancelText: "Cancel",
+
       onOk: async () => {
         try {
           setLoading(true);
-          const res = await deleteAdmin(id);
-          if (res?.status) {
-            toast.success("Deleted successfully");
-            fetchData();
-          } else {
-            toast.error(res?.message || "Delete failed");
+
+          const result = await deleteUserApi(id);
+
+          if (result?.status) {
+            toast.success(result?.message);
+
+            fetchUsers();
           }
-        } catch {
-          toast.error("Error deleting admin");
+        } catch (error) {
+          toast.error(error.message);
         } finally {
           setLoading(false);
         }
       },
     });
+
     handleMenuClose();
   };
 
-  const handleAddClick = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      navigate("createuser");
-      setIsLoading(false);
-    }, 300);
-  };
+  // ─────────────────────────────────────
+  // TOGGLE STATUS
+  // ─────────────────────────────────────
 
-  const handleExport = async () => {
+  const toggleStatus = async (id) => {
     try {
-      setIsExporting(true);
-      const exportPayload = {
-        searchQuery: searchQuery || "",
-        startDate: startDate ? formatLocalDate(startDate) : "",
-        endDate: endDate ? formatLocalDate(endDate) : "",
-      };
+      const result = await toggleUserStatusApi(id);
 
-      const usersData = await getAllUserExcell(exportPayload);
+      if (result?.status) {
+        toast.success(result?.message);
 
-      if (!usersData || usersData.length === 0) {
-        toast.error("No data found to export!");
-        return;
+        fetchUsers();
       }
-
-      exportToExcel(usersData);
     } catch (error) {
-      console.error("Export failed:", error);
-      toast.error("Export failed");
-    } finally {
-      setIsExporting(false);
+      toast.error(error.message);
     }
   };
 
-  const exportToExcel = (allUsersData) => {
-    const today = new Date().toISOString().slice(0, 10);
-    const settings = {
-      fileName: `Mann_Admins_${today}`,
-      extraLength: 3,
-      writeMode: "writeFile",
-    };
+  // ─────────────────────────────────────
+  // CREATE USER
+  // ─────────────────────────────────────
 
-    const dataToExport = [
-      {
-        sheet: "Admins",
-        columns: [
-          { label: "Sr. No.", value: (row, index) => index + 1 },
-          { label: "Admin ID", value: (row) => row?._id || "N/A" },
-          { label: "Name", value: (row) => row?.name || "N/A" },
-          { label: "Email", value: (row) => row?.email || "N/A" },
-          { label: "Mobile", value: (row) => row?.mobile || "N/A" },
-          { label: "Gender", value: (row) => row?.gender || "N/A" },
-          {
-            label: "Wallet Balance",
-            value: (row) => row?.wallet?.balance ?? "0",
-          },
-          {
-            label: "Status",
-            value: (row) => (row?.status ? "Active" : "Inactive"),
-          },
-          {
-            label: "Created At",
-            value: (row) =>
-              row?.createdAt
-                ? new Date(row.createdAt).toLocaleString("en-IN")
-                : "N/A",
-          },
-        ],
-        content: allUsersData,
-      },
-    ];
+  const handleCreate = () => {
+    setBtnLoading(true);
 
-    try {
-      xlsx(dataToExport, settings);
-      toast.success("Exported successfully!");
-    } catch (err) {
-      console.error("Excel error:", err);
-      toast.error("Failed to generate Excel");
-    }
+    setTimeout(() => {
+      navigate("/home/users/create");
+
+      setBtnLoading(false);
+    }, 400);
   };
 
-  if (authLoading.profile) return <Loader />;
-  if (!auth.user) {
-    navigate("/login");
-    return null;
-  }
   if (loading) return <Loader />;
 
   return (
-    <div className="p-4 bg-gray-50 min-h-screen">
-      <div className="mb-4">
+    <div className="p-6 bg-gray-50 min-h-screen">
+
+      {/* BREAKER */}
+
+      <div className="mb-6">
         <Breaker />
       </div>
 
-      {/* Search + Buttons */}
-      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-        <div className="flex items-center gap-3 flex-wrap">
+      {/* HEADER */}
+
+      <div className="flex flex-col lg:flex-row justify-between gap-5 mb-8">
+
+        {/* SEARCH + FILTER */}
+
+        <div className="flex flex-wrap items-center gap-4">
+
+          {/* SEARCH */}
+
           <input
             type="text"
-            placeholder="Search by name, email, mobile..."
+            placeholder="Search by name/email/mobile"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="min-w-[280px] max-w-md w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-80 px-4 py-2.5 border border-gray-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+
           <button
-            onClick={handleSearch}
-            className="bg-gradient-to-l from-[#5F0099] to-[#9F00FF] text-white px-6 py-2.5 rounded-lg font-medium shadow hover:brightness-105"
+            onClick={() => {
+              setSearchQuery(search);
+
+              setPage(1);
+            }}
+            className="bg-primary text-white px-5 py-2.5 rounded-lg"
           >
             Search
           </button>
-          <button
-            onClick={handleClearFilters}
-            className="bg-gradient-to-r from-gray-600 to-gray-800 text-white px-6 py-2.5 rounded-lg font-medium shadow hover:brightness-105"
+
+          {/* GENDER FILTER */}
+
+          <select
+            value={gender}
+            onChange={(e) => {
+              setGender(e.target.value);
+              setPage(1);
+            }}
+            className="px-4 py-2.5 border rounded-lg"
           >
-            Clear
-          </button>
+            <option value="">All Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+
+          {/* VERIFIED FILTER */}
+
+          <select
+            value={isVerified}
+            onChange={(e) => {
+              setIsVerified(e.target.value);
+              setPage(1);
+            }}
+            className="px-4 py-2.5 border rounded-lg"
+          >
+            <option value="">All Status</option>
+            <option value="true">Verified</option>
+            <option value="false">Unverified</option>
+          </select>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        {/* CREATE BUTTON */}
 
-       <Select
-  value={selectedLanguage}
-  onChange={(e) => {
-    setSelectedLanguage(e.target.value);
-    setPage(1);
-  }}
-  size="small"
-  sx={{ minWidth: 120 }}
->
-  <MenuItem value="en">English</MenuItem>
-  <MenuItem value="hi">Hindi</MenuItem>
-  <MenuItem value="pa">Punjabi</MenuItem>
-  <MenuItem value="bn">Bengali</MenuItem>
-  <MenuItem value="ta">Tamil</MenuItem>
-  <MenuItem value="te">Telugu</MenuItem>
-  <MenuItem value="gu">Gujarati</MenuItem>
-  <MenuItem value="mr">Marathi</MenuItem>
-</Select>
-
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={handleFilterMenuOpen}
-            className="bg-gradient-to-l from-[#5F0099] to-[#9F00FF] text-white px-6 py-2.5 rounded-lg font-medium shadow hover:brightness-105"
-          >
-            Filters
-          </motion.button>
-
-          <Menu
-            anchorEl={filterAnchorEl}
-            open={Boolean(filterAnchorEl)}
-            onClose={handleFilterMenuClose}
-            PaperProps={{ sx: { minWidth: 280 } }}
-          >
-            <div className="px-4 py-3 border-b">
-              <h6 className="font-semibold  text-gray-800">Filters</h6>
-            </div>
-
-            <MenuItem
-              onClick={() => {
-                setTempStartDate(startDate);
-                setTempEndDate(endDate);
-                setIsDateFilterModalOpen(true);
-                handleFilterMenuClose();
-              }}
-            >
-              Date Range{" "}
-              {startDate && endDate && (
-                <span className="ml-2 text-xs text-green-600">(Active)</span>
-              )}
-            </MenuItem>
-
-            <div className="px-4 py-3 border-t mt-2">
-              <p className="text-sm font-medium text-gray-700 mb-2">
-                Wallet Balance
-              </p>
-              <label className="flex items-center gap-2 py-1 cursor-pointer hover:bg-gray-50 px-2 rounded">
-                <input
-                  type="checkbox"
-                  checked={zeroBalance}
-                  onChange={(e) => {
-                    setZeroBalance(e.target.checked);
-                    if (e.target.checked) setNotZeroBalance(false);
-                    setPage(1);
-                    fetchData();
-                  }}
-                  className="h-4 w-4 text-red-600"
-                />
-                <span>Zero Balance</span>
-              </label>
-              <label className="flex items-center gap-2 py-1 cursor-pointer hover:bg-gray-50 px-2 rounded">
-                <input
-                  type="checkbox"
-                  checked={notZeroBalance}
-                  onChange={(e) => {
-                    setNotZeroBalance(e.target.checked);
-                    if (e.target.checked) setZeroBalance(false);
-                    setPage(1);
-                    fetchData();
-                  }}
-                  className="h-4 w-4 text-red-600"
-                />
-                <span>Has Balance</span>
-              </label>
-            </div>
-
-            <div className="p-3 border-t flex gap-2">
-              {/* <button
-                onClick={applyFilters}
-                className="flex-1 bg-gradient-to-r from-red-600 to-red-700 text-white py-2 rounded font-medium"
-              >
-                Apply
-              </button> */}
-              <button
-                onClick={() => {
-                  setZeroBalance(false);
-                  setNotZeroBalance(false);
-                  setPage(1);
-                  fetchData();
-                  handleFilterMenuClose();
-                }}
-                className="flex-1 bg-gray-200 text-gray-800 py-2 rounded font-medium hover:bg-gray-300"
-              >
-                Clear Balance
-              </button>
-            </div>
-          </Menu>
-
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={handleExport}
-            disabled={isExporting}
-            className={`px-6 py-2.5 rounded-lg font-medium shadow transition ${isExporting
-              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-              : "bg-green-600 text-white hover:bg-green-700"
-              }`}
-          >
-            {isExporting ? (
-              <span className="flex items-center gap-2">
-                <LoderBtn /> Exporting...
-              </span>
-            ) : (
-              "Export Excel"
-            )}
-          </motion.button>
-
-          {hasPermission("User", "create") && (
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={handleAddClick}
-              className="bg-gradient-to-l from-[#5F0099] to-[#9F00FF] text-white px-6 py-2.5 rounded-lg font-medium shadow hover:brightness-105"
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <LoderBtn /> Add Admin
-                </span>
-              ) : (
-                "Add Admin"
-              )}
-            </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={handleCreate}
+          className="bg-primary text-white px-5 py-2.5 rounded-lg font-medium shadow"
+        >
+          {btnLoading ? (
+            <span className="flex items-center gap-2">
+              <LoderBtn />
+              Creating...
+            </span>
+          ) : (
+            "Create User"
           )}
-        </div>
+        </motion.button>
       </div>
 
-      {/* Date Modal */}
-      <Modal
-        title="Select Date Range"
-        open={isDateFilterModalOpen}
-        onOk={handleDateFilterModalOk}
-        onCancel={() => setIsDateFilterModalOpen(false)}
-        okText="Apply"
-        cancelText="Cancel"
-      >
-        <div className="flex flex-col sm:flex-row gap-6 p-4">
-          <div className="flex-1">
-            <label className="block text-sm font-medium mb-1">Start Date</label>
-            <DatePicker
-              selected={tempStartDate}
-              onChange={setTempStartDate}
-              selectsStart
-              startDate={tempStartDate}
-              endDate={tempEndDate}
-              dateFormat="yyyy-MM-dd"
-              className="w-full px-3 py-2 border rounded-lg"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="block text-sm font-medium mb-1">End Date</label>
-            <DatePicker
-              selected={tempEndDate}
-              onChange={setTempEndDate}
-              selectsEnd
-              startDate={tempStartDate}
-              endDate={tempEndDate}
-              minDate={tempStartDate}
-              dateFormat="yyyy-MM-dd"
-              className="w-full px-3 py-2 border rounded-lg"
-              disabled={!tempStartDate}
-            />
-          </div>
-        </div>
-      </Modal>
+      {/* TABLE */}
 
-      {/* Table */}
       <TableContainer
         component={Paper}
-        className="shadow-lg rounded-lg overflow-hidden"
+        className="rounded-xl shadow-lg overflow-hidden"
       >
-        <Table stickyHeader>
+        <Table sx={{ minWidth: 900 }}>
+
+          {/* HEAD */}
+
           <TableHead>
             <TableRow>
               <StyledTableCell>S.No</StyledTableCell>
-              <StyledTableCell>Name & Contact</StyledTableCell>
-              <StyledTableCell>Wallet Balance</StyledTableCell>
+
+              <StyledTableCell>User</StyledTableCell>
+
+              <StyledTableCell>Details</StyledTableCell>
+
               <StyledTableCell>Gender</StyledTableCell>
-              <StyledTableCell>Created At</StyledTableCell>
+
               <StyledTableCell>Status</StyledTableCell>
-              <StyledTableCell align="center">Actions</StyledTableCell>
+
+              <StyledTableCell align="center">
+                Actions
+              </StyledTableCell>
             </TableRow>
           </TableHead>
+
+          {/* BODY */}
+
           <TableBody>
+
             {data.length === 0 ? (
               <StyledTableRow>
                 <StyledTableCell
-                  colSpan={7}
+                  colSpan={6}
                   align="center"
-                  className="py-12 text-gray-500"
+                  className="py-10"
                 >
-                  No admins found
+                  No Users Found
                 </StyledTableCell>
               </StyledTableRow>
             ) : (
               data.map((row, index) => (
-                <StyledTableRow key={row.id}>
+                <StyledTableRow key={row._id}>
+
+                  {/* SERIAL */}
+
                   <StyledTableCell>
                     {(page - 1) * rowsPerPage + index + 1}
                   </StyledTableCell>
+
+                  {/* USER */}
+
                   <StyledTableCell>
-                    <div className="font-medium text-gray-900">
-                      {row.name || "—"}
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      {row.email || "—"}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {row.mobile || "—"}
+
+                    <div className="flex items-center gap-3">
+
+                      <Avatar
+                        src={row?.profilePic}
+                        alt={row?.name}
+                        sx={{
+                          width: 50,
+                          height: 50,
+                        }}
+                      />
                     </div>
                   </StyledTableCell>
-                  <StyledTableCell className="font-medium">
-                    {row.wallet?.balance != null
-                      ? `₹${row.wallet.balance}`
-                      : "—"}
-                  </StyledTableCell>
-                  <StyledTableCell>{row.gender || "—"}</StyledTableCell>
+
+                  {/* DETAILS */}
+
                   <StyledTableCell>
-                    {row.createdAt
-                      ? new Date(row.createdAt).toLocaleString("en-IN")
-                      : "—"}
+
+                    <div className="space-y-1">
+
+                      <p className="text-sm">
+                        <p className="text-sm">
+                        <span className="font-semibold">
+                          Name:
+                        </span>{" "}
+                        {row?.name || "N/A"}
+                      </p>
+                        <span className="font-semibold">
+                          Email:
+                        </span>{" "}
+                        {row?.email || "N/A"}
+                      </p>
+
+                      <p className="text-sm">
+                        <span className="font-semibold">
+                          Phone:
+                        </span>{" "}
+                        {row?.countryCode} {row?.mobile}
+                      </p>
+                    </div>
                   </StyledTableCell>
+
+                  {/* GENDER */}
+
                   <StyledTableCell>
-                    <span
-                      className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${row.status
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
+                    {row?.gender || "N/A"}
+                  </StyledTableCell>
+
+                  {/* STATUS */}
+
+                  <StyledTableCell>
+
+                    <div className="flex items-center gap-2">
+
+                      <Switch
+                        checked={row?.isVerified}
+                        onChange={() =>
+                          toggleStatus(row?._id)
+                        }
+                      />
+
+                      <span
+                        className={`text-sm font-medium ${
+                          row?.isVerified
+                            ? "text-green-600"
+                            : "text-red-500"
                         }`}
-                    >
-                      {row.status ? "Active" : "Inactive"}
-                    </span>
+                      >
+                        {row?.isVerified
+                          ? "Verified"
+                          : "Unverified"}
+                      </span>
+                    </div>
                   </StyledTableCell>
+
+                  {/* ACTIONS */}
+
                   <StyledTableCell align="center">
-                    {(hasPermission("User", "read") ||
-                      hasPermission("User", "update") ||
-                      hasPermission("User", "delete")) && (
-                        <>
-                          <IconButton
-                            onClick={(e) => handleMenuOpen(e, row.id)}
-                            size="small"
-                          >
-                            <MoreVertIcon fontSize="small" />
-                          </IconButton>
-                          <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl) && selectedRowId === row.id}
-                            onClose={handleMenuClose}
-                          >
-                            {hasPermission("User", "read") && (
-                              <MenuItem
-                                onClick={() => {
-                                  navigate(`viewuser/${row.id}`);
-                                  handleMenuClose();
-                                }}
-                              >
-                                <EyeIcon className="h-5 w-5 text-blue-600 mr-2" />{" "}
-                                View
-                              </MenuItem>
-                            )}
-                            {hasPermission("User", "update") && (
-                              <MenuItem
-                                onClick={() => {
-                                  navigate(`updateuser/${row.id}`);
-                                  handleMenuClose();
-                                }}
-                              >
-                                <PencilIcon className="h-5 w-5 text-green-600 mr-2" />{" "}
-                                Edit
-                              </MenuItem>
-                            )}
-                            {hasPermission("User", "delete") && (
-                              <MenuItem onClick={() => deleteHandler(row.id)}>
-                                <TrashIcon className="h-5 w-5 text-red-600 mr-2" />{" "}
-                                Delete
-                              </MenuItem>
-                            )}
-                          </Menu>
-                        </>
-                      )}
+
+                    <Tooltip title="Actions">
+
+                      <IconButton
+                        onClick={(e) =>
+                          handleMenuOpen(e, row._id)
+                        }
+                      >
+                        <MoreVertIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={
+                        Boolean(anchorEl) &&
+                        selectedRowId === row._id
+                      }
+                      onClose={handleMenuClose}
+                    >
+
+                      {/* VIEW */}
+
+                      <MenuItem
+                        onClick={() => {
+                          navigate(
+                            `/home/users/view/${row._id}`
+                          );
+
+                          handleMenuClose();
+                        }}
+                      >
+                        <EyeIcon className="h-5 w-5 text-blue-500 mr-2" />
+                        View
+                      </MenuItem>
+
+                      {/* EDIT */}
+
+                      <MenuItem
+                        onClick={() => {
+                          navigate(
+                            `/home/users/edit/${row._id}`
+                          );
+
+                          handleMenuClose();
+                        }}
+                      >
+                        <PencilIcon className="h-5 w-5 text-green-500 mr-2" />
+                        Edit
+                      </MenuItem>
+
+                      {/* DELETE */}
+
+                      <MenuItem
+                        onClick={() =>
+                          deleteHandler(row._id)
+                        }
+                      >
+                        <TrashIcon className="h-5 w-5 text-red-500 mr-2" />
+                        Delete
+                      </MenuItem>
+                    </Menu>
                   </StyledTableCell>
                 </StyledTableRow>
               ))
@@ -678,35 +543,22 @@ export default function AdminList() {
         </Table>
       </TableContainer>
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-4">
-          <div className="flex items-center gap-3">
-            <span className="text-gray-700 font-medium">Rows per page:</span>
-            <Select
-              value={rowsPerPage}
-              onChange={handleRowsPerPageChange}
-              size="small"
-              sx={{ minWidth: 80 }}
-            >
-              {[7, 15, 25, 50, 100, 500].map((num) => (
-                <MenuItem key={num} value={num}>
-                  {num}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
+      {/* PAGINATION */}
+
+      {totalRecord > rowsPerPage && (
+        <Stack
+          spacing={2}
+          alignItems="center"
+          marginTop={5}
+        >
           <Pagination
             count={totalPages}
             page={page}
             onChange={handlePageChange}
-            color="primary"
             variant="outlined"
-            shape="rounded"
-            showFirstButton
-            showLastButton
+            color="primary"
           />
-        </div>
+        </Stack>
       )}
     </div>
   );

@@ -27,6 +27,7 @@ import Breaker from "../../compoents/Breaker";
 
 import { getAllDrivers, deleteDriver } from "../../Services/DriverApi";
 import { useAuth } from "../../auth/AuthContext";
+import DriverFilter from "./DriverFilter";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -45,8 +46,8 @@ export default function DriverList() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecord, setTotalRecord] = useState(0);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [search, setSearch] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
+  // const [search, setSearch] = useState("");
 
   const [page, setPage] = useState(1);
   const [rowsPerPage] = useState(7);
@@ -57,8 +58,37 @@ export default function DriverList() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [stats, setStats] = useState(null);
+  const [filters, setFilters] = useState({});
   const navigate = useNavigate();
 
+  // const fetchDrivers = useCallback(async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     const result = await getAllDrivers({
+  //       page,
+  //       rowsPerPage,
+  //       // searchQuery,
+  //         ...filters,
+  //     });
+
+  //     if (result?.status) {
+  //       const formatted = result.data.map((item) => ({
+  //         ...item,
+  //         id: item._id,
+  //       }));
+
+  //       setData(formatted);
+  //       setTotalPages(result.totalPage);
+  //       setTotalRecord(result.totalResult);
+  //       setStats(result.stats || null);
+  //     }
+  //   } catch (err) {
+  //     toast.error("Error fetching drivers");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [page, rowsPerPage, searchQuery]);
   const fetchDrivers = useCallback(async () => {
     try {
       setLoading(true);
@@ -66,30 +96,52 @@ export default function DriverList() {
       const result = await getAllDrivers({
         page,
         rowsPerPage,
-        searchQuery,
+        ...filters,
       });
 
       if (result?.status) {
-        const formatted = result.data.map((item) => ({
-          ...item,
-          id: item._id,
-        }));
-
-        setData(formatted);
+        setData(result.data.map((i) => ({ ...i, id: i._id })));
         setTotalPages(result.totalPage);
         setTotalRecord(result.totalResult);
         setStats(result.stats || null);
       }
-    } catch (err) {
-      toast.error("Error fetching drivers");
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, searchQuery]);
+  }, [page, rowsPerPage, filters]);
 
+  // useEffect(() => {
+  //   fetchDrivers();
+  // }, [fetchDrivers]);
   useEffect(() => {
     fetchDrivers();
-  }, [fetchDrivers]);
+  }, [page, rowsPerPage, filters]);
+
+  // const handleApplyFilters = (f) => {
+  //   setPage(1);
+  //   setFilters(f);
+  // };
+  const handleApplyFilters = (f) => {
+    setPage(1);
+
+    const cleaned = {
+      ...f,
+      isVerified: f.isVerified || "",
+      isOnline: f.isOnline || "",
+      isOnTrip: f.isOnTrip || "",
+      isAssigned: f.isAssigned || "",
+      isAvailable: f.isAvailable || "",
+      isPunchedIn: f.isPunchedIn || "",
+      isPunchedOut: f.isPunchedOut || "",
+    };
+
+    setFilters(cleaned);
+  };
+
+  const handleResetFilters = () => {
+    setFilters({});
+    setPage(1);
+  };
 
   const handleMenuOpen = (event, id) => {
     setAnchorEl(event.currentTarget);
@@ -173,23 +225,44 @@ export default function DriverList() {
           { label: "State", value: "state" },
           { label: "Pincode", value: "pincode" },
           { label: "Region", value: (row) => row?.region?.name || "N/A" },
-          { label: "Punch Region", value: (row) => row?.punchRegion?.name || "N/A", },
-          { label: "Permanent Address", value: "permanentAddress", },
-          { label: "Current Address", value: "currentAddress",  },
+          {
+            label: "Punch Region",
+            value: (row) => row?.punchRegion?.name || "N/A",
+          },
+          { label: "Permanent Address", value: "permanentAddress" },
+          { label: "Current Address", value: "currentAddress" },
           { label: "License Number", value: "licenseNumber" },
           { label: "PAN Number", value: "panNumber" },
           { label: "Adhaar Number", value: "adhaarNumber" },
-          { label: "Online", value: (row) => (row?.isOnline ? "Yes" : "No"), },
-          { label: "Available", value: (row) => (row?.isAvailable ? "Yes" : "No"), },
-          { label: "Verified", value: (row) => (row?.isVerified ? "Yes" : "No"), },
-          { label: "On Trip",  value: (row) => (row?.isOnTrip ? "Yes" : "No"), },
-          { label: "Assigned", value: (row) => (row?.isAssigned ? "Yes" : "No"), },
-          { label: "Punched In", value: (row) => (row?.isPunchedIn ? "Yes" : "No"), },
-          { label: "Punched Out", value: (row) => (row?.isPunchedOut ? "Yes" : "No"), },
+          { label: "Online", value: (row) => (row?.isOnline ? "Yes" : "No") },
+          {
+            label: "Available",
+            value: (row) => (row?.isAvailable ? "Yes" : "No"),
+          },
+          {
+            label: "Verified",
+            value: (row) => (row?.isVerified ? "Yes" : "No"),
+          },
+          { label: "On Trip", value: (row) => (row?.isOnTrip ? "Yes" : "No") },
+          {
+            label: "Assigned",
+            value: (row) => (row?.isAssigned ? "Yes" : "No"),
+          },
+          {
+            label: "Punched In",
+            value: (row) => (row?.isPunchedIn ? "Yes" : "No"),
+          },
+          {
+            label: "Punched Out",
+            value: (row) => (row?.isPunchedOut ? "Yes" : "No"),
+          },
           { label: "Grade", value: "grade" },
           { label: "Rating", value: "rating" },
           { label: "Total Rides", value: "totalRides" },
-          { label: "Created At", value: (row) => new Date(row.createdAt).toLocaleString(), },
+          {
+            label: "Created At",
+            value: (row) => new Date(row.createdAt).toLocaleString(),
+          },
         ],
         content: data,
       },
@@ -307,27 +380,15 @@ export default function DriverList() {
 
       {/* TOP BAR */}
 
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="Search name / email / phone"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-80 px-4 py-2 border rounded-lg"
-          />
+      {/* ✅ ADD FILTER HERE */}
+      <DriverFilter
+        appliedFilters={filters}
+        onApply={handleApplyFilters}
+        onReset={handleResetFilters}
+      />
 
-          <button
-            onClick={() => {
-              setSearchQuery(search);
-              setPage(1);
-            }}
-            className="bg-primary text-white px-4 py-2 rounded-lg"
-          >
-            Search
-          </button>
-        </div>
-
+           {/* main */}
+       <div className="flex justify-between items-center mb-8">
         <div className="flex gap-4">
           <motion.button
             whileTap={{ scale: 0.95 }}

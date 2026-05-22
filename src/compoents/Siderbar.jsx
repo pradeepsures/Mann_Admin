@@ -49,6 +49,7 @@ import { BsFillFuelPumpFill } from "react-icons/bs";
 import { GiPunchingBag } from "react-icons/gi";
 import { GiHumanTarget } from "react-icons/gi";
 import { MdOutlineSettingsSuggest } from "react-icons/md";
+import { FaUserGroup } from "react-icons/fa6";
 const Sidebar = () => {
   const { hasPermission } = useAuth();
   const [open, setOpen] = useState(true);
@@ -69,7 +70,7 @@ const Sidebar = () => {
           link: "/home/driver",
           sectionName: "Driver",
         },
-         {
+        {
           name: "Attendance",
           link: "/home/punches",
           sectionName: "Punches",
@@ -79,7 +80,6 @@ const Sidebar = () => {
           link: "/home/punches/today-summary",
           sectionName: "PunchesTodaySummary",
         },
-
       ],
     },
 
@@ -98,7 +98,6 @@ const Sidebar = () => {
           link: "/home/fuelLogs",
           sectionName: "FuelLogs",
         },
-
       ],
     },
 
@@ -126,6 +125,13 @@ const Sidebar = () => {
           sectionName: "CancelRequest",
         },
       ],
+    },
+
+    {
+      name: "User",
+      link: "/home/user",
+      icon: FaUserGroup,
+      sectionName: "User",
     },
 
     {
@@ -203,7 +209,7 @@ const Sidebar = () => {
       ],
     },
 
-      {
+    {
       name: "Settings",
       icon: MdOutlineSettingsSuggest,
       dropdownIcon: RiArrowDropDownLine,
@@ -262,54 +268,53 @@ const Sidebar = () => {
           sectionName: "PunchRegion",
         },
 
-          {
+        {
           name: "Hourly Packages",
           link: "/home/hourlyPackages",
           icon: GiPunch,
           sectionName: "HourlyPackages",
         },
 
-         {
-      name: "CMS",
-      icon: IoMdHome,
-      dropdownIcon: RiArrowDropDownLine,
-      subMenus: [
-        { name: "Banner", link: "/home/banner", sectionName: "Banner" },
+        {
+          name: "CMS",
+          icon: IoMdHome,
+          dropdownIcon: RiArrowDropDownLine,
+          subMenus: [
+            { name: "Banner", link: "/home/banner", sectionName: "Banner" },
 
-        //Term And Condition
-        {
-          name: "Term And Conditions",
-          link: "/home/TermAndCondition",
-          sectionName: "Term And Condition",
-        }, //PrivacyPolicy
-        {
-          name: "Privacy Policy",
-          link: "/home/PrivacyPolicy",
-          sectionName: "PrivacyPolicy",
-        },
-        {
-          name: "About Us",
-          link: "/home/AboutUs",
-          icon: FaBlog,
-          sectionName: "AboutUs",
-        },
+            //Term And Condition
+            {
+              name: "Term And Conditions",
+              link: "/home/TermAndCondition",
+              sectionName: "Term And Condition",
+            }, //PrivacyPolicy
+            {
+              name: "Privacy Policy",
+              link: "/home/PrivacyPolicy",
+              sectionName: "PrivacyPolicy",
+            },
+            {
+              name: "About Us",
+              link: "/home/AboutUs",
+              icon: FaBlog,
+              sectionName: "AboutUs",
+            },
 
-        {
-          name: "Refund Policy",
-          link: "/home/RefundPolicy",
-          icon: FaBlog,
-          sectionName: "RefundPolicy",
-        },
+            {
+              name: "Refund Policy",
+              link: "/home/RefundPolicy",
+              icon: FaBlog,
+              sectionName: "RefundPolicy",
+            },
 
-        {
-          name: "FAQ",
-          link: "/home/Faq",
-          icon: FaBlog,
-          sectionName: "Faq",
+            {
+              name: "FAQ",
+              link: "/home/Faq",
+              icon: FaBlog,
+              sectionName: "Faq",
+            },
+          ],
         },
-      ],
-    },
-
       ],
     },
   ];
@@ -333,28 +338,28 @@ const Sidebar = () => {
   //   .filter(Boolean); // Remove nulls
 
   const filterMenu = (items) => {
-  return items
-    .map((item) => {
-      // If has children → recurse
-      if (item.subMenus) {
-        const filteredChildren = filterMenu(item.subMenus);
+    return items
+      .map((item) => {
+        // If has children → recurse
+        if (item.subMenus) {
+          const filteredChildren = filterMenu(item.subMenus);
 
-        if (filteredChildren.length === 0) return null;
+          if (filteredChildren.length === 0) return null;
 
-        return { ...item, subMenus: filteredChildren };
-      }
+          return { ...item, subMenus: filteredChildren };
+        }
 
-      // If leaf node → check permission
-      if (item.sectionName) {
-        return hasPermission(item.sectionName, "read") ? item : null;
-      }
+        // If leaf node → check permission
+        if (item.sectionName) {
+          return hasPermission(item.sectionName, "read") ? item : null;
+        }
 
-      return item;
-    })
-    .filter(Boolean);
-};
+        return item;
+      })
+      .filter(Boolean);
+  };
 
-const filteredMenus = filterMenu(menus);
+  const filteredMenus = filterMenu(menus);
 
   const handleMenuClick = (index) => {
     setActiveMenu(activeMenu === index ? null : index);
@@ -379,16 +384,18 @@ const filteredMenus = filterMenu(menus);
         <div className="relative  ">
           {/* Sidebar */}
           <div
-            className={`bg-[#03045E] h-screen ${open ? "w-[260px]" : "w-16"
-              } duration-500 text-gray-100 px-4 flex flex-col`}
+            className={`bg-[#03045E] h-screen ${
+              open ? "w-[260px]" : "w-16"
+            } duration-500 text-gray-100 px-4 flex flex-col`}
           >
             {/* Logo */}
             <div className="flex items-center justify-center -ml-8 py-3  overflow-hidden">
               <img
                 src="/images/mannFleet2.png"
                 alt="Logo"
-                className={`object-contain transition-all duration-500 ${open ? "w-48 h-28" : "w-13 h-13"
-                  }`}
+                className={`object-contain transition-all duration-500 ${
+                  open ? "w-48 h-28" : "w-13 h-13"
+                }`}
               />
             </div>
             {/* <div className="flex flex-col items-center justify-center py-1 mt-2 overflow-hidden">
@@ -417,11 +424,11 @@ const filteredMenus = filterMenu(menus);
                   <div key={index}>
                     {menu.subMenus ? (
                       <div
-                        className={`group flex items-center justify-between text-sm gap-3.5 font-medium p-2 rounded-md cursor-pointer ${activeMenu === index
-
-                          ? "bg-[#070708]"
-                          : "hover:bg-gray-900"
-                          }`}
+                        className={`group flex items-center justify-between text-sm gap-3.5 font-medium p-2 rounded-md cursor-pointer ${
+                          activeMenu === index
+                            ? "bg-[#070708]"
+                            : "hover:bg-gray-900"
+                        }`}
                         onClick={() => handleMenuClick(index)}
                       >
                         <div className="flex items-center gap-3">
@@ -430,9 +437,10 @@ const filteredMenus = filterMenu(menus);
                           </div>
                           <h2
                             style={{ transitionDelay: `${index + 3}00ms` }}
-                            className={`whitespace-pre duration-500 ${!open &&
+                            className={`whitespace-pre duration-500 ${
+                              !open &&
                               "opacity-0 translate-x-28 overflow-hidden"
-                              }`}
+                            }`}
                           >
                             {menu.name}
                           </h2>
@@ -441,14 +449,16 @@ const filteredMenus = filterMenu(menus);
                         {open && menu.dropdownIcon && (
                           <menu.dropdownIcon
                             size={24}
-                            className={`text-white transition-transform duration-300 ${activeMenu === index ? "rotate-180" : "rotate-0"
-                              }`}
+                            className={`text-white transition-transform duration-300 ${
+                              activeMenu === index ? "rotate-180" : "rotate-0"
+                            }`}
                           />
                         )}
 
                         <h2
-                          className={`${open && "hidden"
-                            } absolute left-48 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit`}
+                          className={`${
+                            open && "hidden"
+                          } absolute left-48 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit`}
                         >
                           {menu.name}
                         </h2>
@@ -456,12 +466,11 @@ const filteredMenus = filterMenu(menus);
                     ) : (
                       <Link
                         to={menu.link}
-                        className={`group flex items-center text-sm gap-3.5 font-medium p-2 rounded-md ${activeMenu === index
-
-                          ? "bg-[#090908]"
-
-                          : "hover:bg-gray-900"
-                          }`}
+                        className={`group flex items-center text-sm gap-3.5 font-medium p-2 rounded-md ${
+                          activeMenu === index
+                            ? "bg-[#090908]"
+                            : "hover:bg-gray-900"
+                        }`}
                         onClick={() => setActiveMenu(index)}
                       >
                         <div>
@@ -469,15 +478,17 @@ const filteredMenus = filterMenu(menus);
                         </div>
                         <h2
                           style={{ transitionDelay: `${index + 3}00ms` }}
-                          className={`whitespace-pre duration-500 ${!open && "opacity-0 translate-x-28 overflow-hidden"
-                            }`}
+                          className={`whitespace-pre duration-500 ${
+                            !open && "opacity-0 translate-x-28 overflow-hidden"
+                          }`}
                         >
                           {menu.name}
                         </h2>
 
                         <h2
-                          className={`${open && "hidden"
-                            } absolute left-48 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit`}
+                          className={`${
+                            open && "hidden"
+                          } absolute left-48 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit`}
                         >
                           {menu.name}
                         </h2>
@@ -487,8 +498,9 @@ const filteredMenus = filterMenu(menus);
                     {/* Submenus */}
                     {menu.subMenus && (
                       <div
-                        className={`overflow-hidden transition-all duration-300 ${activeMenu === index ? "max-h-[500px]" : "max-h-0"
-                          }`}
+                        className={`overflow-hidden transition-all duration-300 ${
+                          activeMenu === index ? "max-h-[500px]" : "max-h-0"
+                        }`}
                       >
                         {/* {menu.subMenus.map((subMenu, subIndex) => (
                           <Link
@@ -512,22 +524,30 @@ const filteredMenus = filterMenu(menus);
                               <>
                                 <div
                                   className="flex items-center justify-between text-sm py-1.5 pl-9 pr-4 cursor-pointer hover:bg-gray-800 rounded-md"
-                                  onClick={() => handleSubMenuClick(index, subIndex)}
+                                  onClick={() =>
+                                    handleSubMenuClick(index, subIndex)
+                                  }
                                 >
                                   {subMenu.name}
 
                                   {subMenu.dropdownIcon && (
                                     <subMenu.dropdownIcon
-                                      className={`transition-transform ${activeSubMenu === `${index}-${subIndex}` ? "rotate-180" : ""
-                                        }`}
+                                      className={`transition-transform ${
+                                        activeSubMenu === `${index}-${subIndex}`
+                                          ? "rotate-180"
+                                          : ""
+                                      }`}
                                     />
                                   )}
                                 </div>
 
                                 {/* 🔽 Nested submenu */}
                                 <div
-                                  className={`overflow-hidden transition-all duration-300 ${activeSubMenu === `${index}-${subIndex}` ? "max-h-96" : "max-h-0"
-                                    }`}
+                                  className={`overflow-hidden transition-all duration-300 ${
+                                    activeSubMenu === `${index}-${subIndex}`
+                                      ? "max-h-96"
+                                      : "max-h-0"
+                                  }`}
                                 >
                                   {subMenu.subMenus.map((child, childIndex) => (
                                     <Link
