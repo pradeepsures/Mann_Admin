@@ -68,7 +68,7 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
     const cleaned = { ...localFilters };
 
     onApply({
-      search: cleaned.search || "",
+      searchQuery: cleaned.search || "",
       isVerified: cleaned.isVerified || "",
       isOnline: cleaned.isOnline || "",
       region: cleaned.region || "",

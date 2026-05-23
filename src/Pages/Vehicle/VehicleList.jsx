@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -32,10 +31,12 @@ import { Select } from "antd";
 const { Option } = Select;
 import {
   getAllVehicles,
-  deleteVehicle, assignDriverToVehicle
+  deleteVehicle,
+  assignDriverToVehicle,
 } from "../../Services/VehicleApi";
 // import { assignDriver } from "../../Services/BookingApi";
 import { reassignCancelRequestApi } from "../../Services/RequestApi";
+import VehicleFilter from "./VehicleFilter";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -56,7 +57,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": { backgroundColor: "#f9fafb" },
-  "&:hover": { backgroundColor: "#f1f5f9", transition: "background-color 0.2s ease" },
+  "&:hover": {
+    backgroundColor: "#f1f5f9",
+    transition: "background-color 0.2s ease",
+  },
   "&:last-child td, &:last-child th": { border: 0 },
 }));
 
@@ -68,8 +72,9 @@ export default function VehicleList() {
   const [totalRecord, setTotalRecord] = useState(0);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(7);
-  const [search, setSearch] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  // const [search, setSearch] = useState("");
+  // const [searchQuery, setSearchQuery] = useState("");
+  const [filters, setFilters] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -90,11 +95,16 @@ export default function VehicleList() {
       const result = await getAllVehicles({
         page,
         limit: rowsPerPage,
-        search: searchQuery.trim(),
+        ...filters,
       });
+      // const result = await getAllVehicles({
+      //   page,
+      //   limit: rowsPerPage,
+      //   search: searchQuery.trim(),
+      // });
 
       if (result?.status) {
-        const transformed = (result.data || []).map(item => ({
+        const transformed = (result.data || []).map((item) => ({
           ...item,
           id: item._id,
         }));
@@ -111,7 +121,7 @@ export default function VehicleList() {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, searchQuery]);
+  }, [page, rowsPerPage, filters]);
 
   useEffect(() => {
     if (!authLoading.profile && auth.user) {
@@ -123,12 +133,35 @@ export default function VehicleList() {
     AOS.init({ duration: 1000, once: true });
   }, []);
 
-  const handleSearch = () => {
-    setSearchQuery(search);
-    setPage(1);
-  };
+  // const handleSearch = () => {
+  //   setSearchQuery(search);
+  //   setPage(1);
+  // };
 
   const handlePageChange = (event, newPage) => setPage(newPage);
+
+  const handleApplyFilters = (f) => {
+    setPage(1);
+
+    setFilters({
+      search: f.search || "",
+
+      driverId: f.driverId || "",
+      segmentId: f.segmentId || "",
+
+      brand: f.brand || "",
+      fuelType: f.fuelType || "",
+
+      isActive: f.isActive || "",
+      isOnTrip: f.isOnTrip || "",
+      isAvailable: f.isAvailable || "",
+    });
+  };
+
+  const handleResetFilters = () => {
+    setFilters({});
+    setPage(1);
+  };
 
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -193,22 +226,34 @@ export default function VehicleList() {
       RTL: false,
     };
 
-    const data = [{
-      sheet: "Vehicles",
-      columns: [
-        { label: "ID", value: row => row?._id || "" },
-        { label: "Car Number", value: row => row?.carNumber || "" },
-        { label: "Brand", value: row => row?.brand || "" },
-        { label: "Model", value: row => row?.model || "" },
-        { label: "Driver Name", value: row => row?.driver?.name || "N/A" },
-        { label: "Driver Phone", value: row => row?.driver?.phone || "N/A" },
-        { label: "Color", value: row => row?.color || "" },
-        { label: "Fuel Type", value: row => row?.fuelType || "" },
-        { label: "Status", value: row => row?.isActive ? "Active" : "Inactive" },
-        { label: "Created At", value: row => row?.createdAt ? new Date(row.createdAt).toLocaleString() : "" },
-      ],
-      content: vehiclesData,
-    }];
+    const data = [
+      {
+        sheet: "Vehicles",
+        columns: [
+          { label: "ID", value: (row) => row?._id || "" },
+          { label: "Car Number", value: (row) => row?.carNumber || "" },
+          { label: "Brand", value: (row) => row?.brand || "" },
+          { label: "Model", value: (row) => row?.model || "" },
+          { label: "Driver Name", value: (row) => row?.driver?.name || "N/A" },
+          {
+            label: "Driver Phone",
+            value: (row) => row?.driver?.phone || "N/A",
+          },
+          { label: "Color", value: (row) => row?.color || "" },
+          { label: "Fuel Type", value: (row) => row?.fuelType || "" },
+          {
+            label: "Status",
+            value: (row) => (row?.isActive ? "Active" : "Inactive"),
+          },
+          {
+            label: "Created At",
+            value: (row) =>
+              row?.createdAt ? new Date(row.createdAt).toLocaleString() : "",
+          },
+        ],
+        content: vehiclesData,
+      },
+    ];
 
     try {
       xlsx(data, settings);
@@ -224,7 +269,7 @@ export default function VehicleList() {
   const openAssignModal = (row) => {
     setSelectedVehicle(row);
     setSelectedDriver(row?.driver?._id || "");
-     setSearchDriver(""); 
+    setSearchDriver("");
     setAssignModal(true);
   };
 
@@ -262,37 +307,35 @@ export default function VehicleList() {
   // };
 
   const handleAssignSubmit = async () => {
-  if (!selectedDriver) {
-    toast.error("Please select driver");
-    return;
-  }
+    if (!selectedDriver) {
+      toast.error("Please select driver");
+      return;
+    }
 
-  try {
-    setAssignLoading(true);
+    try {
+      setAssignLoading(true);
 
-    const res = await assignDriverToVehicle(
-      selectedVehicle._id,
-      selectedDriver
-    );
-
-    if (res?.status) {
-      toast.success(
-        selectedVehicle?.driver
-          ? "Driver reassigned"
-          : "Driver assigned"
+      const res = await assignDriverToVehicle(
+        selectedVehicle._id,
+        selectedDriver,
       );
 
-      setAssignModal(false);
-      fetchData();
-    } else {
-      toast.error(res?.message || "Failed");
+      if (res?.status) {
+        toast.success(
+          selectedVehicle?.driver ? "Driver reassigned" : "Driver assigned",
+        );
+
+        setAssignModal(false);
+        fetchData();
+      } else {
+        toast.error(res?.message || "Failed");
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+    } finally {
+      setAssignLoading(false);
     }
-  } catch (err) {
-    toast.error("Something went wrong");
-  } finally {
-    setAssignLoading(false);
-  }
-};
+  };
 
   const fetchDrivers = useCallback(async (search) => {
     setDriversLoading(true);
@@ -328,12 +371,12 @@ export default function VehicleList() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between mb-6"><Breaker />
+      <div className="flex justify-between mb-6">
+        <Breaker />
 
         {stats && (
           <div className="flex justify-end mb-2">
             <div className="bg-gradient-to-r from-[#03045E] to-[#0077B6] text-white shadow-md rounded-lg px-4 py-2 text-sm flex items-center gap-3">
-
               <span>
                 <span className="opacity-80">Total:</span>{" "}
                 <span className="font-semibold">{stats.total}</span>
@@ -366,7 +409,6 @@ export default function VehicleList() {
                 </span>
               </span>
 
-
               <span className="opacity-50">|</span>
 
               <span>
@@ -375,17 +417,22 @@ export default function VehicleList() {
                   {stats.activeCount}
                 </span>
               </span>
-
             </div>
           </div>
         )}
       </div>
 
+      <VehicleFilter
+        appliedFilters={filters}
+        onApply={handleApplyFilters}
+        onReset={handleResetFilters}
+      />
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
         <h1 className="text-2xl font-bold text-gray-800">Vehicle Management</h1>
-
+        
         <div className="flex flex-wrap gap-3">
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <input
               type="text"
               placeholder="Search Vehicle number or model..."
@@ -401,7 +448,7 @@ export default function VehicleList() {
             >
               Search
             </motion.button>
-          </div>
+          </div> */}
 
           <div className="flex gap-3">
             <motion.button
@@ -437,14 +484,20 @@ export default function VehicleList() {
         </div>
       </div>
 
-      <TableContainer component={Paper} className="rounded-xl shadow-lg overflow-hidden">
+      <TableContainer
+        component={Paper}
+        className="rounded-xl shadow-lg overflow-hidden"
+      >
         <Table sx={{ minWidth: 1000 }} aria-label="vehicle table">
           <TableHead>
             <TableRow>
               <StyledTableCell>S.No.</StyledTableCell>
               <StyledTableCell>Vehicle Image</StyledTableCell>
               <StyledTableCell>Information</StyledTableCell>
-              <StyledTableCell>Capacity<br></br><span>(Seater)</span> </StyledTableCell>
+              <StyledTableCell>
+                Capacity<br></br>
+                <span>(Seater)</span>{" "}
+              </StyledTableCell>
               <StyledTableCell>Fuel Type</StyledTableCell>
               <StyledTableCell>Chauffeur</StyledTableCell>
               <StyledTableCell>Trip</StyledTableCell>
@@ -455,14 +508,20 @@ export default function VehicleList() {
           <TableBody>
             {data.length === 0 ? (
               <StyledTableRow>
-                <StyledTableCell colSpan={8} align="center" className="py-12 text-gray-500 text-lg">
+                <StyledTableCell
+                  colSpan={8}
+                  align="center"
+                  className="py-12 text-gray-500 text-lg"
+                >
                   No vehicles found
                 </StyledTableCell>
               </StyledTableRow>
             ) : (
               data.map((row, index) => (
                 <StyledTableRow key={row.id}>
-                  <StyledTableCell>{(page - 1) * rowsPerPage + index + 1}</StyledTableCell>
+                  <StyledTableCell>
+                    {(page - 1) * rowsPerPage + index + 1}
+                  </StyledTableCell>
 
                   {/* Car Image */}
                   <StyledTableCell>
@@ -485,10 +544,12 @@ export default function VehicleList() {
 
                   {/* Information */}
                   <StyledTableCell>
-                    {row.carNumber || "—"}<br />
+                    {row.carNumber || "—"}
+                    <br />
                     <span className="text-xs text-gray-500">
                       {row.model || "—"}
-                    </span><br></br>
+                    </span>
+                    <br></br>
                     <span className="text-xs text-gray-500">
                       {row.brand || "—"}
                     </span>
@@ -498,7 +559,9 @@ export default function VehicleList() {
                   <StyledTableCell>{row.capacity || "—"}</StyledTableCell>
 
                   {/* Fuel */}
-                  <StyledTableCell className="capitalize">{row.fuelType || "—"}</StyledTableCell>
+                  <StyledTableCell className="capitalize">
+                    {row.fuelType || "—"}
+                  </StyledTableCell>
 
                   {/* DRIVER */}
                   {/* <StyledTableCell>
@@ -512,12 +575,14 @@ export default function VehicleList() {
                   <StyledTableCell>
                     {row.driver ? (
                       <>
-                        {row.driver.name}<br />
+                        {row.driver.name}
+                        <br />
                         <span className="text-xs text-gray-500">
-                          {row.driver.phone}<br />
+                          {row.driver.phone}
+                          <br />
                           {row.driver.licenseNumber}
                         </span>
-                         <br></br>
+                        <br></br>
                         <button
                           onClick={() => openAssignModal(row)}
                           className="mt-2 text-xs bg-yellow-500 text-white px-2 py-1 rounded"
@@ -527,7 +592,8 @@ export default function VehicleList() {
                       </>
                     ) : (
                       <>
-                        <span className="text-gray-400 text-sm">No Driver</span><br />
+                        <span className="text-gray-400 text-sm">No Driver</span>
+                        <br />
 
                         <button
                           onClick={() => openAssignModal(row)}
@@ -542,17 +608,19 @@ export default function VehicleList() {
                   {/* TRIP */}
                   <StyledTableCell>
                     <MenuItem
-                      onClick={() => { navigate(`vehicleBooking/${row.id}`); handleMenuClose(); }}
+                      onClick={() => {
+                        navigate(`vehicleBooking/${row.id}`);
+                        handleMenuClose();
+                      }}
                       className="flex items-center gap-2 text-gray-700"
                     >
-                      <EyeIcon className="h-5 w-5 text-blue-600" />View
+                      <EyeIcon className="h-5 w-5 text-blue-600" />
+                      View
                     </MenuItem>
                   </StyledTableCell>
 
                   {/* Segment */}
-                  <StyledTableCell>
-                    {row.segment?.name || "—"}
-                  </StyledTableCell>
+                  <StyledTableCell>{row.segment?.name || "—"}</StyledTableCell>
                   {/* <StyledTableCell>
                     <span
                       className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${row.isActive
@@ -563,8 +631,6 @@ export default function VehicleList() {
                       {row.isActive ? "Active" : "Inactive"}
                     </span>
                   </StyledTableCell> */}
-
-
 
                   {/* Actions */}
                   <StyledTableCell align="center">
@@ -582,15 +648,22 @@ export default function VehicleList() {
                     >
                       {hasPermission("Vehicle", "read") && (
                         <MenuItem
-                          onClick={() => { navigate(`vehicledetails/${row.id}`); handleMenuClose(); }}
+                          onClick={() => {
+                            navigate(`vehicledetails/${row.id}`);
+                            handleMenuClose();
+                          }}
                           className="flex items-center gap-2 text-gray-700"
                         >
-                          <EyeIcon className="h-5 w-5 text-blue-600" />View
+                          <EyeIcon className="h-5 w-5 text-blue-600" />
+                          View
                         </MenuItem>
                       )}
                       {hasPermission("Vehicle", "update") && (
                         <MenuItem
-                          onClick={() => { navigate(`updateVehicle/${row.id}`); handleMenuClose(); }}
+                          onClick={() => {
+                            navigate(`updateVehicle/${row.id}`);
+                            handleMenuClose();
+                          }}
                           className="flex items-center gap-2 text-gray-700"
                         >
                           <PencilIcon className="h-5 w-5 text-green-600" /> Edit
@@ -614,7 +687,9 @@ export default function VehicleList() {
       </TableContainer>
 
       <Modal
-        title={selectedVehicle?.driver ? "Reassign Chauffeur" : "Assign Chauffeur"}
+        title={
+          selectedVehicle?.driver ? "Reassign Chauffeur" : "Assign Chauffeur"
+        }
         open={assignModal}
         onCancel={() => setAssignModal(false)}
         onOk={handleAssignSubmit}

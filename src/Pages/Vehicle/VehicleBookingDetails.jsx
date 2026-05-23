@@ -31,6 +31,21 @@
 //     fetchDetails();
 //   }, [id]);
 
+//   const getStatusColor = (status) => {
+//     switch (status) {
+//       case "completed":
+//         return "bg-green-100 text-green-700";
+//       case "cancelled":
+//         return "bg-red-100 text-red-700";
+//       case "in_progress":
+//         return "bg-yellow-100 text-yellow-700";
+//       case "not_started":
+//         return "bg-gray-100 text-gray-700";
+//       default:
+//         return "bg-blue-100 text-blue-700";
+//     }
+//   };
+
 //   if (loading) return <Loader />;
 
 //   return (
@@ -42,8 +57,7 @@
 
 //         {/* STATS */}
 //         {stats && (
-//           <div className="bg-gradient-to-r from-[#03045E] to-[#0077B6] text-white px-4 py-2 rounded-lg flex gap-4 text-sm">
-
+//           <div className="bg-gradient-to-r from-[#03045E] to-[#0077B6] text-white px-5 py-3 rounded-lg flex flex-wrap gap-4 text-sm shadow">
 //             <span>Total: <b>{stats.totalBookings}</b></span>
 //             <span>|</span>
 //             <span className="text-yellow-300">On Trip: <b>{stats.onTripCount}</b></span>
@@ -52,106 +66,125 @@
 //             <span>|</span>
 //             <span className="text-red-300">Cancelled: <b>{stats.cancelledCount}</b></span>
 //             <span>|</span>
-//             <span className="text-orange-300">Pending Payment: <b>{stats.pendingPaymentCount}</b></span>
-
+//             <span className="text-orange-300">Pending: <b>{stats.pendingPaymentCount}</b></span>
 //           </div>
 //         )}
 //       </div>
 
-//       {/* BOOKINGS LIST */}
-//       <div className="grid gap-5">
+//       {/* EMPTY */}
+//       {!loading && data.length === 0 && (
+//         <div className="text-center py-20 text-gray-500 bg-white rounded-xl shadow">
+//           No bookings found
+//         </div>
+//       )}
 
-    
-//         {data.map((item) => (
+//       {/* TABLE */}
+//       <div className="bg-white rounded-xl shadow overflow-x-auto">
 
-//           <div
-//             key={item._id}
-//             className="bg-white rounded-xl shadow-md p-5 border hover:shadow-lg transition"
-//           >
+//         <table className="min-w-full text-sm text-left">
+          
+//           {/* HEADER */}
+//           <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+//             <tr>
+//               <th className="px-4 py-3">Booking</th>
+//               <th className="px-4 py-3">User</th>
+//               <th className="px-4 py-3">Driver</th>
+//               <th className="px-4 py-3">Route</th>
+//               <th className="px-4 py-3">Fare</th>
+//               <th className="px-4 py-3">Payment</th>
+//               <th className="px-4 py-3">Trip</th>
+//               <th className="px-4 py-3">Schedule</th>
+//               <th className="px-4 py-3">Status</th>
+//             </tr>
+//           </thead>
 
-//             {/* TOP ROW */}
-//             <div className="flex justify-between items-center mb-3">
+//           {/* BODY */}
+//           <tbody className="divide-y">
 
-//               <div>
-//                 <h2 className="font-semibold text-lg text-gray-800">
-//                   {item.bookingNumber}
-//                 </h2>
-//                 <p className="text-sm text-gray-500">
-//                   {item.createdAtIST}
-//                 </p>
-//               </div>
+//             {data.map((item) => (
+//               <tr key={item._id} className="hover:bg-gray-50 transition">
 
-//               <span className="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-//                 {item.tripStatus}
-//               </span>
+//                 {/* BOOKING */}
+//                 <td className="px-4 py-3">
+//                   <div className="font-semibold text-gray-800">
+//                     {item.bookingNumber}
+//                   </div>
+//                   <div className="text-xs text-gray-500">
+//                     {item.createdAtIST}
+//                   </div>
+//                 </td>
 
-//             </div>
+//                 {/* USER */}
+//                 <td className="px-4 py-3">
+//                   {item.user?.name || "—"}
+//                 </td>
 
-//             {/* USER + DRIVER */}
-//             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+//                 {/* DRIVER */}
+//                 <td className="px-4 py-3">
+//                   <div>{item.driver?.name || "Not Assigned"}</div>
+//                   <div className="text-xs text-gray-500">
+//                     {item.driver?.phone || ""}
+//                   </div>
+//                 </td>
 
-//               <div>
-//                 <p className="text-xs text-gray-500">User</p>
-//                 <p className="font-medium">{item.user?.name}</p>
-//               </div>
+//                 {/* ROUTE */}
+//                 <td className="px-4 py-3">
+//                   <div className="text-xs text-gray-500">From:</div>
+//                   <div>{item.pickup?.address}</div>
 
-//               <div>
-//                 <p className="text-xs text-gray-500">Driver</p>
-//                 <p className="font-medium">{item.driver?.name || "Not Assigned"}</p>
-//               </div>
+//                   <div className="text-xs text-gray-500 mt-1">To:</div>
+//                   <div>{item.dropoff?.address}</div>
+//                 </td>
 
-//               <div>
-//                 <p className="text-xs text-gray-500">Segment</p>
-//                 <p className="font-medium">{item.segment?.name}</p>
-//               </div>
+//                 {/* FARE */}
+//                 <td className="px-4 py-3">
+//                   <div>₹ {item.estimatedFare}</div>
+//                   {/* <div className="text-xs text-gray-500">
+//                     Paid: ₹ {item.prepaidAmount}
+//                   </div> */}
+//                 </td>
 
-//             </div>
+//                 {/* PAYMENT */}
+//                 <td className="px-4 py-3 capitalize">
+//                   {item.paymentStatus}
+//                 </td>
 
-//             {/* LOCATIONS */}
-//             <div className="mb-4">
+//                 {/* TRIP */}
+//                 <td className="px-4 py-3 text-xs">
+//                   <div>{item.estimatedKm || "—"}km</div>
+//                   <div>{item.estimatedMins || "—"}mins</div>
+//                 </td>
 
-//               <p className="text-xs text-gray-500">Pickup</p>
-//               <p className="text-sm">{item.pickup?.address}</p>
+//                 {/* SCHEDULE */}
+//                 <td className="px-4 py-3 text-xs">
+//                   <div>{item.scheduledAtIST || "—"}</div>
+//                   <div className="text-gray-400">
+//                     {item.bookingType}
+//                   </div>
+//                 </td>
 
-//               <p className="text-xs text-gray-500 mt-2">Drop</p>
-//               <p className="text-sm">{item.dropoff?.address}</p>
+//                 {/* STATUS */}
+//                 <td className="px-4 py-3">
+//                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.tripStatus)}`}>
+//                     {item.tripStatus}
+//                   </span>
 
-//             </div>
+//                   <div className="text-xs text-gray-500 mt-1">
+//                     {item.assignmentStatus}
+//                   </div>
+//                 </td>
 
-//             {/* DETAILS */}
-//             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+//               </tr>
+//             ))}
 
-//               <div>
-//                 <p className="text-gray-500 text-xs">Fare</p>
-//                 <p className="font-medium">₹ {item.estimatedFare}</p>
-//               </div>
-
-//               <div>
-//                 <p className="text-gray-500 text-xs">Payment</p>
-//                 <p className="font-medium">{item.paymentStatus}</p>
-//               </div>
-
-//               <div>
-//                 <p className="text-gray-500 text-xs">Assignment</p>
-//                 <p className="font-medium">{item.assignmentStatus}</p>
-//               </div>
-
-//               <div>
-//                 <p className="text-gray-500 text-xs">Booking Type</p>
-//                 <p className="font-medium">{item.bookingType}</p>
-//               </div>
-
-//             </div>
-
-//           </div>
-
-//         ))}
-
+//           </tbody>
+//         </table>
 //       </div>
-
 //     </div>
 //   );
 // }
+
+// ========================== PAGE / VehicleBookingDetails.jsx ==========================
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -164,16 +197,71 @@ export default function VehicleBookingDetails() {
 
   const [data, setData] = useState([]);
   const [stats, setStats] = useState(null);
+
   const [loading, setLoading] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPage, setTotalPage] = useState(1);
+
+  // FILTERS
+  const [filters, setFilters] = useState({
+    overallStatus: "",
+    tripStatus: "",
+    paymentStatus: "",
+    assignmentStatus: "",
+    bookingType: "",
+    startDate: "",
+    endDate: "",
+    search: "",
+  });
+
+  // FORMAT TEXT
+  const formatText = (text) => {
+    if (!text) return "—";
+
+    return text
+      .replace(/[_-]/g, " ")
+      .replace(/\b\w/g, (char) => char.toUpperCase());
+  };
+
+  // STATUS COLOR
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "completed":
+        return "bg-green-100 text-green-700";
+
+      case "cancelled":
+        return "bg-red-100 text-red-700";
+
+      case "in_progress":
+        return "bg-yellow-100 text-yellow-700";
+
+      case "not_started":
+        return "bg-gray-100 text-gray-700";
+
+      default:
+        return "bg-blue-100 text-blue-700";
+    }
+  };
+
+  // FETCH DATA
   const fetchDetails = async () => {
     try {
       setLoading(true);
-      const res = await getVehicleBookingById(id);
+
+      const params = {
+        ...filters,
+        page,
+        limit,
+      };
+
+      const res = await getVehicleBookingById(id, params);
 
       if (res?.status) {
         setData(res.data || []);
         setStats(res.stats || null);
+        setTotalPage(res.totalPage || 1);
       }
     } catch (err) {
       console.error(err);
@@ -182,23 +270,35 @@ export default function VehicleBookingDetails() {
     }
   };
 
+  // API CALL
   useEffect(() => {
     fetchDetails();
-  }, [id]);
+  }, [id, page, filters]);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "completed":
-        return "bg-green-100 text-green-700";
-      case "cancelled":
-        return "bg-red-100 text-red-700";
-      case "in_progress":
-        return "bg-yellow-100 text-yellow-700";
-      case "not_started":
-        return "bg-gray-100 text-gray-700";
-      default:
-        return "bg-blue-100 text-blue-700";
-    }
+  // HANDLE FILTER CHANGE
+  const handleFilterChange = (e) => {
+    setPage(1);
+
+    setFilters({
+      ...filters,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // RESET FILTERS
+  const resetFilters = () => {
+    setPage(1);
+
+    setFilters({
+      overallStatus: "",
+      tripStatus: "",
+      paymentStatus: "",
+      assignmentStatus: "",
+      bookingType: "",
+      startDate: "",
+      endDate: "",
+      search: "",
+    });
   };
 
   if (loading) return <Loader />;
@@ -207,23 +307,166 @@ export default function VehicleBookingDetails() {
     <div className="p-6 bg-gray-50 min-h-screen">
 
       {/* HEADER */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
         <Breaker />
 
         {/* STATS */}
         {stats && (
           <div className="bg-gradient-to-r from-[#03045E] to-[#0077B6] text-white px-5 py-3 rounded-lg flex flex-wrap gap-4 text-sm shadow">
-            <span>Total: <b>{stats.totalBookings}</b></span>
-            <span>|</span>
-            <span className="text-yellow-300">On Trip: <b>{stats.onTripCount}</b></span>
-            <span>|</span>
-            <span className="text-green-300">Completed: <b>{stats.completedCount}</b></span>
-            <span>|</span>
-            <span className="text-red-300">Cancelled: <b>{stats.cancelledCount}</b></span>
-            <span>|</span>
-            <span className="text-orange-300">Pending: <b>{stats.pendingPaymentCount}</b></span>
+
+            <span>
+              Total: <b>{stats.totalBookings}</b>
+            </span>
+
+            <span>
+              Not Started: <b>{stats.notStartedCount}</b>
+            </span>
+
+            <span>
+              Enroute: <b>{stats.driverEnrouteCount}</b>
+            </span>
+
+            <span>
+              Arrived: <b>{stats.arrivedCount}</b>
+            </span>
+
+            <span>
+              In Progress: <b>{stats.inProgressCount}</b>
+            </span>
+
+            <span>
+              On Trip: <b>{stats.onTripCount}</b>
+            </span>
+
+            <span>
+              Completed: <b>{stats.completedCount}</b>
+            </span>
+
+            <span>
+              Cancelled: <b>{stats.cancelledCount}</b>
+            </span>
+
+            <span>
+              Paid: <b>{stats.paidCount}</b>
+            </span>
+
+            <span>
+              Pending Payment: <b>{stats.pendingPaymentCount}</b>
+            </span>
+
           </div>
         )}
+      </div>
+
+      {/* FILTERS */}
+      <div className="bg-white rounded-xl shadow p-4 mb-6">
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+          {/* SEARCH */}
+          <input
+            type="text"
+            name="search"
+            placeholder="Search booking/address"
+            value={filters.search}
+            onChange={handleFilterChange}
+            className="border rounded-lg px-3 py-2 outline-none"
+          />
+
+          {/* TRIP STATUS */}
+          <select
+            name="tripStatus"
+            value={filters.tripStatus}
+            onChange={handleFilterChange}
+            className="border rounded-lg px-3 py-2 outline-none"
+          >
+            <option value="">All Trip Status</option>
+            <option value="not_started">Not Started</option>
+            <option value="driver_enroute">Driver Enroute</option>
+            <option value="arrived">Arrived</option>
+            <option value="in_progress">In Progress</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+
+          {/* PAYMENT STATUS */}
+          <select
+            name="paymentStatus"
+            value={filters.paymentStatus}
+            onChange={handleFilterChange}
+            className="border rounded-lg px-3 py-2 outline-none"
+          >
+            <option value="">All Payment Status</option>
+            <option value="paid">Paid</option>
+            <option value="pending">Pending</option>
+          </select>
+
+          {/* ASSIGNMENT STATUS */}
+          <select
+            name="assignmentStatus"
+            value={filters.assignmentStatus}
+            onChange={handleFilterChange}
+            className="border rounded-lg px-3 py-2 outline-none"
+          >
+            <option value="">All Assignment Status</option>
+            <option value="assigned">Assigned</option>
+            <option value="unassigned">Unassigned</option>
+          </select>
+
+          {/* OVERALL STATUS */}
+          <select
+            name="overallStatus"
+            value={filters.overallStatus}
+            onChange={handleFilterChange}
+            className="border rounded-lg px-3 py-2 outline-none"
+          >
+            <option value="">All Overall Status</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+
+          {/* BOOKING TYPE */}
+          <select
+            name="bookingType"
+            value={filters.bookingType}
+            onChange={handleFilterChange}
+            className="border rounded-lg px-3 py-2 outline-none"
+          >
+            <option value="">All Booking Type</option>
+            <option value="instant">Instant</option>
+            <option value="scheduled">Scheduled</option>
+          </select>
+
+          {/* START DATE */}
+          <input
+            type="date"
+            name="startDate"
+            value={filters.startDate}
+            onChange={handleFilterChange}
+            className="border rounded-lg px-3 py-2 outline-none"
+          />
+
+          {/* END DATE */}
+          <input
+            type="date"
+            name="endDate"
+            value={filters.endDate}
+            onChange={handleFilterChange}
+            className="border rounded-lg px-3 py-2 outline-none"
+          />
+
+        </div>
+
+        {/* RESET BUTTON */}
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={resetFilters}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+          >
+            Reset Filters
+          </button>
+        </div>
       </div>
 
       {/* EMPTY */}
@@ -234,107 +477,202 @@ export default function VehicleBookingDetails() {
       )}
 
       {/* TABLE */}
-      <div className="bg-white rounded-xl shadow overflow-x-auto">
+      {data.length > 0 && (
+        <div className="bg-white rounded-xl shadow overflow-x-auto">
 
-        <table className="min-w-full text-sm text-left">
-          
-          {/* HEADER */}
-          <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
-            <tr>
-              <th className="px-4 py-3">Booking</th>
-              <th className="px-4 py-3">User</th>
-              <th className="px-4 py-3">Driver</th>
-              <th className="px-4 py-3">Route</th>
-              <th className="px-4 py-3">Fare</th>
-              <th className="px-4 py-3">Payment</th>
-              <th className="px-4 py-3">Trip</th>
-              <th className="px-4 py-3">Schedule</th>
-              <th className="px-4 py-3">Status</th>
-            </tr>
-          </thead>
+          <table className="min-w-full text-sm text-left">
 
-          {/* BODY */}
-          <tbody className="divide-y">
-
-            {data.map((item) => (
-              <tr key={item._id} className="hover:bg-gray-50 transition">
-
-                {/* BOOKING */}
-                <td className="px-4 py-3">
-                  <div className="font-semibold text-gray-800">
-                    {item.bookingNumber}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {item.createdAtIST}
-                  </div>
-                </td>
-
-                {/* USER */}
-                <td className="px-4 py-3">
-                  {item.user?.name || "—"}
-                </td>
-
-                {/* DRIVER */}
-                <td className="px-4 py-3">
-                  <div>{item.driver?.name || "Not Assigned"}</div>
-                  <div className="text-xs text-gray-500">
-                    {item.driver?.phone || ""}
-                  </div>
-                </td>
-
-                {/* ROUTE */}
-                <td className="px-4 py-3">
-                  <div className="text-xs text-gray-500">From:</div>
-                  <div>{item.pickup?.address}</div>
-
-                  <div className="text-xs text-gray-500 mt-1">To:</div>
-                  <div>{item.dropoff?.address}</div>
-                </td>
-
-                {/* FARE */}
-                <td className="px-4 py-3">
-                  <div>₹ {item.estimatedFare}</div>
-                  {/* <div className="text-xs text-gray-500">
-                    Paid: ₹ {item.prepaidAmount}
-                  </div> */}
-                </td>
-
-                {/* PAYMENT */}
-                <td className="px-4 py-3 capitalize">
-                  {item.paymentStatus}
-                </td>
-
-                {/* TRIP */}
-                <td className="px-4 py-3 text-xs">
-                  <div>{item.estimatedKm || "—"}km</div>
-                  <div>{item.estimatedMins || "—"}mins</div>
-                </td>
-
-                {/* SCHEDULE */}
-                <td className="px-4 py-3 text-xs">
-                  <div>{item.scheduledAtIST || "—"}</div>
-                  <div className="text-gray-400">
-                    {item.bookingType}
-                  </div>
-                </td>
-
-                {/* STATUS */}
-                <td className="px-4 py-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(item.tripStatus)}`}>
-                    {item.tripStatus}
-                  </span>
-
-                  <div className="text-xs text-gray-500 mt-1">
-                    {item.assignmentStatus}
-                  </div>
-                </td>
-
+            {/* HEADER */}
+            <thead className="bg-gray-100 text-gray-600 uppercase text-xs">
+              <tr>
+                <th className="px-4 py-3">Booking</th>
+                <th className="px-4 py-3">User</th>
+                <th className="px-4 py-3">Driver</th>
+                <th className="px-4 py-3">Route</th>
+                <th className="px-4 py-3">Fare</th>
+                <th className="px-4 py-3">Payment</th>
+                <th className="px-4 py-3">Trip</th>
+                <th className="px-4 py-3">Schedule</th>
+                <th className="px-4 py-3">Status</th>
               </tr>
-            ))}
+            </thead>
 
-          </tbody>
-        </table>
-      </div>
+            {/* BODY */}
+            <tbody className="divide-y">
+
+              {data.map((item) => (
+                <tr key={item._id} className="hover:bg-gray-50 transition">
+
+                  {/* BOOKING */}
+                  <td className="px-4 py-3">
+                    <div className="font-semibold text-gray-800">
+                      {item.bookingNumber}
+                    </div>
+
+                    <div className="text-xs text-gray-500">
+                      {item.createdAtIST}
+                    </div>
+                  </td>
+
+                  {/* USER */}
+                  <td className="px-4 py-3">
+                    <div className="font-medium">
+                      {item.user?.name || "—"}
+                    </div>
+
+                    <div className="text-xs text-gray-500">
+                      {item.user?.phone || "—"}
+                    </div>
+                  </td>
+
+                  {/* DRIVER */}
+                  <td className="px-4 py-3">
+
+                    <div>
+                      {item.driver?.name || "Not Assigned"}
+                    </div>
+
+                    <div className="text-xs text-gray-500">
+                      {item.driver?.phone || ""}
+                    </div>
+
+                    {item.driver?.rating && (
+                      <div className="text-xs text-yellow-600">
+                        ⭐ {item.driver?.rating}
+                      </div>
+                    )}
+                  </td>
+
+                  {/* ROUTE */}
+                  <td className="px-4 py-3">
+
+                    <div className="text-xs text-gray-500">
+                      From:
+                    </div>
+
+                    <div>
+                      {item.pickup?.address}
+                    </div>
+
+                    <div className="text-xs text-gray-500 mt-1">
+                      To:
+                    </div>
+
+                    <div>
+                      {item.dropoff?.address}
+                    </div>
+                  </td>
+
+                  {/* FARE */}
+                  <td className="px-4 py-3">
+                    <div>
+                      ₹ {item.estimatedFare}
+                    </div>
+                  </td>
+
+                  {/* PAYMENT */}
+                  <td className="px-4 py-3">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium
+                      ${
+                        item.paymentStatus === "paid"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-orange-100 text-orange-700"
+                      }`}
+                    >
+                      {formatText(item.paymentStatus)}
+                    </span>
+                  </td>
+
+                  {/* TRIP */}
+                  <td className="px-4 py-3 text-xs">
+
+                    <div>
+                      {item.estimatedKm || "—"} Km
+                    </div>
+
+                    <div>
+                      {item.estimatedMins || "—"} Mins
+                    </div>
+                  </td>
+
+                  {/* SCHEDULE */}
+                  <td className="px-4 py-3 text-xs">
+
+                    <div>
+                      {item.scheduledAtIST || "—"}
+                    </div>
+
+                    <div className="text-gray-400 mt-1">
+                      {formatText(item.bookingType)}
+                    </div>
+                  </td>
+
+                  {/* STATUS */}
+                  <td className="px-4 py-3">
+
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                        item.tripStatus
+                      )}`}
+                    >
+                      {formatText(item.tripStatus)}
+                    </span>
+
+                    <div className="text-xs text-gray-500 mt-1">
+                      {formatText(item.assignmentStatus)}
+                    </div>
+
+                    <div className="text-xs text-gray-400 mt-1">
+                      {formatText(item.overallStatus)}
+                    </div>
+
+                  </td>
+
+                </tr>
+              ))}
+
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* PAGINATION */}
+      {totalPage > 1 && (
+        <div className="flex justify-center items-center gap-3 mt-6">
+
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+            className={`px-4 py-2 rounded-lg text-white
+            ${
+              page === 1
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#03045E]"
+            }`}
+          >
+            Prev
+          </button>
+
+          <span className="font-medium">
+            Page {page} of {totalPage}
+          </span>
+
+          <button
+            disabled={page === totalPage}
+            onClick={() => setPage((prev) => prev + 1)}
+            className={`px-4 py-2 rounded-lg text-white
+            ${
+              page === totalPage
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#0077B6]"
+            }`}
+          >
+            Next
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }

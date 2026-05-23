@@ -428,13 +428,13 @@ export default function BookingDetails() {
         </Section>
 
         {/* TIMELINE */}
-        <Section title="Timeline">
+        {/* <Section title="Timeline">
           <Field label="Created At" value={data.createdAtIST} />
           <Field label="Payment At" value={data.paymentAtIST} />
           <Field label="Assigned At" value={data.assignedAtIST} />
           <Field label="Trip Start" value={data.tripStartAtIST} />
           <Field label="Trip End" value={data.tripEndAtIST} />
-        </Section>
+        </Section> */}
       </div>
 
       <Modal

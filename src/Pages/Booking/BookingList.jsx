@@ -45,6 +45,14 @@ const StyledTableCell = styled(TableCell)(() => ({
   },
 }));
 
+const formatText = (text) => {
+  if (!text) return "-";
+
+  return text
+    .replace(/[_-]/g, " ") // remove _ and -
+    .replace(/\b\w/g, (char) => char.toUpperCase()); // capitalize
+};
+
 export default function BookingList() {
   const navigate = useNavigate();
 
@@ -52,7 +60,7 @@ export default function BookingList() {
   const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(7);
+  const [rowsPerPage] = useState(50);
   const [totalPages, setTotalPages] = useState(0);
 
   const [selectedSegment, setSelectedSegment] = useState("");
@@ -502,7 +510,8 @@ export default function BookingList() {
       }
     `}
                     >
-                      {row.paymentStatus}
+                      {/* {row.paymentStatus} */}
+                      {formatText(row.paymentStatus)}
                     </span>
                   </TableCell>
 
@@ -528,7 +537,8 @@ export default function BookingList() {
                     </div>
                   </TableCell>
 
-                  <TableCell>{row.bookingType || "-"}</TableCell>
+                  {/* <TableCell>{row.bookingType || "-"}</TableCell> */}
+                  <TableCell>{formatText(row.bookingType)}</TableCell>
                   {/* <TableCell>{row.tripStatus || "-"}</TableCell> */}
                   <TableCell>
                     {row.tripStatus ? (
@@ -537,7 +547,8 @@ export default function BookingList() {
                           row.tripStatus,
                         )}`}
                       >
-                        {row.tripStatus.replaceAll("_", " ")}
+                        {/* {row.tripStatus.replaceAll("_", " ")} */}
+                        {formatText(row.tripStatus)}
                       </span>
                     ) : (
                       "-"

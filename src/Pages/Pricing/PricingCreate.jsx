@@ -21,6 +21,13 @@ const baseDayNightSchema = z.object({
   minFare: z.number().min(0),
   cancellationFee: z.number().min(0).default(50),
 });
+// const baseDayNightSchema = z.object({
+//   baseFare: z.number().optional(),
+//   perKmRate: z.number().optional(),
+//   perMinRate: z.number().optional(),
+//   minFare: z.number().optional(),
+//   cancellationFee: z.number().optional(),
+// });
 nightFare: z.number().min(0).optional();
 
 const surgeWindowSchema = z.object({
@@ -33,6 +40,16 @@ const surgeWindowSchema = z.object({
   isActive: z.boolean().optional(),
   multiplier: z.number().min(1).max(5, "Multiplier must be between 1 and 5"),
 });
+// const surgeWindowSchema = z.object({
+//   label: z.string().optional(),
+//   type: z.enum(["time_based", "manual"]).optional(),
+//   fromHour: z.number().nullable().optional(),
+//   fromMin: z.number().nullable().optional(),
+//   toHour: z.number().nullable().optional(),
+//   toMin: z.number().nullable().optional(),
+//   isActive: z.boolean().optional(),
+//   multiplier: z.number().optional(),
+// });
 
 const hourlyPackageSchema = z.object({
   hours: z.number().min(1),
@@ -42,6 +59,14 @@ const hourlyPackageSchema = z.object({
   extraPerKm: z.number().min(0),
   extraPerMin: z.number().min(0),
 });
+// const hourlyPackageSchema = z.object({
+//   hours: z.number().optional(),
+//   includedKms: z.number().optional(),
+//   dayFare: z.number().optional(),
+//   nightFare: z.number().optional(),
+//   extraPerKm: z.number().optional(),
+//   extraPerMin: z.number().optional(),
+// });
 
 const driverFareSchema = z.object({
   perKmRate: z.number().min(0),
@@ -53,6 +78,16 @@ const driverFareSchema = z.object({
   holidayAllowance: z.number().min(0),
   tollIncluded: z.boolean().default(false),
 });
+// const driverFareSchema = z.object({
+//   perKmRate: z.number().optional(),
+//   flatPerTrip: z.number().nullable().optional(),
+//   minGuarantee: z.number().optional(),
+//   allowancePerDay: z.number().optional(),
+//   allowancePerNight: z.number().optional(),
+//   overTimePerHour: z.number().optional(),
+//   holidayAllowance: z.number().optional(),
+//   tollIncluded: z.boolean().optional(),
+// });
 
 const pricingSchema = z
   .object({
@@ -380,59 +415,63 @@ const PricingCreate = () => {
         </div>
 
         {/* 2. Day & Night Pricing */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-5">
-          {["day", "night"].map((timeSlot) => (
-            <div key={timeSlot}>
-              <h2 className="text-xl font-semibold mb-4">
-                {timeSlot === "day" ? "Day Pricing" : "Night Pricing"}
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  "baseFare",
-                  "perKmRate",
-                  "perMinRate",
-                  "minFare",
-                  "cancellationFee",
-                ].map((field) => (
-                  <div key={field}>
-                    <label className="block text-sm capitalize mb-1">
-                      {field.replace(/([A-Z])/g, " $1")}
-                    </label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      {...register(`${timeSlot}.${field}`, {
-                        valueAsNumber: true,
-                      })}
-                      className="w-full border rounded-lg p-1.5 focus:outline-none focus:border-blue-500"
-                    />
-                    {errors[timeSlot]?.[field] && (
-                      <p className="text-red-500 text-sm mt-1">
-                        {errors[timeSlot][field].message}
-                      </p>
-                    )}
-                  </div>
-                ))}
+        {bookingType !== "hourly" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-5">
+            {["day", "night"].map((timeSlot) => (
+              <div key={timeSlot}>
+                <h2 className="text-xl font-semibold mb-4">
+                  {timeSlot === "day" ? "Day Pricing" : "Night Pricing"}
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    "baseFare",
+                    "perKmRate",
+                    "perMinRate",
+                    "minFare",
+                    "cancellationFee",
+                  ].map((field) => (
+                    <div key={field}>
+                      <label className="block text-sm capitalize mb-1">
+                        {field.replace(/([A-Z])/g, " $1")}
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        {...register(`${timeSlot}.${field}`, {
+                          valueAsNumber: true,
+                        })}
+                        className="w-full border rounded-lg p-1.5 focus:outline-none focus:border-blue-500"
+                      />
+                      {errors[timeSlot]?.[field] && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors[timeSlot][field].message}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* ✅Night Fare Full Width */}
-        <div className="mt-4">
-          <label className="block text-sm mb-1">Night Fare</label>
-          <input
-            type="number"
-            step="0.01"
-            {...register("nightFare", { valueAsNumber: true })}
-            className="w-full border rounded-lg p-1.5 focus:outline-none focus:border-blue-500"
-          />
-          {errors.nightFare && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.nightFare.message}
-            </p>
-          )}
-        </div>
+        {bookingType !== "hourly" && (
+          <div className="mt-4">
+            <label className="block text-sm mb-1">Night Fare</label>
+            <input
+              type="number"
+              step="0.01"
+              {...register("nightFare", { valueAsNumber: true })}
+              className="w-full border rounded-lg p-1.5 focus:outline-none focus:border-blue-500"
+            />
+            {errors.nightFare && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.nightFare.message}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* 3. Surge Active */}
 

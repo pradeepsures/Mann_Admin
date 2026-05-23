@@ -217,3 +217,88 @@ export const toggleUserStatusApi = async (id) => {
     throw err;
   }
 };
+
+// ─────────────────────────────────────────────
+// GET BOOKINGS BY USER
+// ─────────────────────────────────────────────
+
+export const getBookingsByUserApi = async ({
+  userId,
+  page = 1,
+  rowsPerPage = 10,
+
+  overallStatus = "",
+  tripStatus = "",
+  paymentStatus = "",
+  assignmentStatus = "",
+  bookingType = "",
+
+  startDate = "",
+  endDate = "",
+
+  search = "",
+}) => {
+
+  const token = localStorage.getItem("token");
+
+  try {
+
+    const query = new URLSearchParams();
+
+    query.append("page", page);
+    query.append("limit", rowsPerPage);
+
+    if (overallStatus)
+      query.append("overallStatus", overallStatus);
+
+    if (tripStatus)
+      query.append("tripStatus", tripStatus);
+
+    if (paymentStatus)
+      query.append("paymentStatus", paymentStatus);
+
+    if (assignmentStatus)
+      query.append("assignmentStatus", assignmentStatus);
+
+    if (bookingType)
+      query.append("bookingType", bookingType);
+
+    if (startDate)
+      query.append("startDate", startDate);
+
+    if (endDate)
+      query.append("endDate", endDate);
+
+    if (search)
+      query.append("search", search);
+
+    const res = await fetch(
+      `${BASE_URL}/api/admin/getBookingByUser/${userId}?${query.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        result.message || "Failed to fetch bookings"
+      );
+    }
+
+    return result;
+
+  } catch (err) {
+
+    toast.error(
+      err.message || "Something went wrong!"
+    );
+
+    throw err;
+  }
+};

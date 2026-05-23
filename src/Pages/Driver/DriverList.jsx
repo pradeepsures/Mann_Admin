@@ -387,8 +387,12 @@ export default function DriverList() {
         onReset={handleResetFilters}
       />
 
-           {/* main */}
-       <div className="flex justify-between items-center mb-8">
+      {/* main */}
+      <div className="flex justify-between items-center mb-4">
+        {/* LEFT SIDE HEADING */}
+        <h1 className="text-2xl font-bold text-gray-800">Driver Management</h1>
+
+        {/* RIGHT SIDE BUTTONS */}
         <div className="flex gap-4">
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -397,14 +401,6 @@ export default function DriverList() {
           >
             {isExporting ? <LoderBtn /> : "Export Excel"}
           </motion.button>
-
-          {/* <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={handleAddDriver}
-                        className="bg-primary text-white px-5 py-2 rounded-lg"
-                    >
-                        {isLoading ? <LoderBtn /> : "Add Chauffeur"}
-                    </motion.button> */}
 
           {hasPermission(SECTION, "create") && (
             <motion.button
@@ -417,6 +413,28 @@ export default function DriverList() {
           )}
         </div>
       </div>
+      {/* <div className="flex justify-between items-center mb-8">
+        <div className="flex gap-4 justyfy-end">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={exportExcel}
+            className="bg-green-600 text-white px-5 py-2 rounded-lg"
+          >
+            {isExporting ? <LoderBtn /> : "Export Excel"}
+          </motion.button>
+
+
+          {hasPermission(SECTION, "create") && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={handleAddDriver}
+              className="bg-primary text-white px-5 py-2 rounded-lg"
+            >
+              {isLoading ? <LoderBtn /> : "Add Chauffeur"}
+            </motion.button>
+          )}
+        </div>
+      </div> */}
 
       {/* TABLE */}
 

@@ -8,9 +8,7 @@ import { styled } from "@mui/material/styles";
 
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, {
-  tableCellClasses,
-} from "@mui/material/TableCell";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
@@ -30,6 +28,7 @@ import {
   EyeIcon,
   PencilIcon,
   TrashIcon,
+  TruckIcon,
 } from "@heroicons/react/24/outline";
 
 import { motion } from "framer-motion";
@@ -53,8 +52,7 @@ import {
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    background:
-      "linear-gradient(90deg, #03045E 0%, #0077B6 50%, #00B4D8 100%)",
+    background: "linear-gradient(90deg, #03045E 0%, #0077B6 50%, #00B4D8 100%)",
     color: theme.palette.common.white,
     fontWeight: 600,
     fontSize: "0.95rem",
@@ -188,8 +186,7 @@ export default function UserList() {
     Modal.confirm({
       title: "Delete User",
 
-      content:
-        "Are you sure you want to delete this user?",
+      content: "Are you sure you want to delete this user?",
 
       okText: "Delete",
 
@@ -255,7 +252,6 @@ export default function UserList() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-
       {/* BREAKER */}
 
       <div className="mb-6">
@@ -265,11 +261,9 @@ export default function UserList() {
       {/* HEADER */}
 
       <div className="flex flex-col lg:flex-row justify-between gap-5 mb-8">
-
         {/* SEARCH + FILTER */}
 
         <div className="flex flex-wrap items-center gap-4">
-
           {/* SEARCH */}
 
           <input
@@ -347,7 +341,6 @@ export default function UserList() {
         className="rounded-xl shadow-lg overflow-hidden"
       >
         <Table sx={{ minWidth: 900 }}>
-
           {/* HEAD */}
 
           <TableHead>
@@ -360,32 +353,26 @@ export default function UserList() {
 
               <StyledTableCell>Gender</StyledTableCell>
 
+              <StyledTableCell>Trips</StyledTableCell>
+
               <StyledTableCell>Status</StyledTableCell>
 
-              <StyledTableCell align="center">
-                Actions
-              </StyledTableCell>
+              <StyledTableCell align="center">Actions</StyledTableCell>
             </TableRow>
           </TableHead>
 
           {/* BODY */}
 
           <TableBody>
-
             {data.length === 0 ? (
               <StyledTableRow>
-                <StyledTableCell
-                  colSpan={6}
-                  align="center"
-                  className="py-10"
-                >
+                <StyledTableCell colSpan={6} align="center" className="py-10">
                   No Users Found
                 </StyledTableCell>
               </StyledTableRow>
             ) : (
               data.map((row, index) => (
                 <StyledTableRow key={row._id}>
-
                   {/* SERIAL */}
 
                   <StyledTableCell>
@@ -395,9 +382,7 @@ export default function UserList() {
                   {/* USER */}
 
                   <StyledTableCell>
-
                     <div className="flex items-center gap-3">
-
                       <Avatar
                         src={row?.profilePic}
                         alt={row?.name}
@@ -412,26 +397,18 @@ export default function UserList() {
                   {/* DETAILS */}
 
                   <StyledTableCell>
-
                     <div className="space-y-1">
-
                       <p className="text-sm">
                         <p className="text-sm">
-                        <span className="font-semibold">
-                          Name:
-                        </span>{" "}
-                        {row?.name || "N/A"}
-                      </p>
-                        <span className="font-semibold">
-                          Email:
-                        </span>{" "}
+                          <span className="font-semibold">Name:</span>{" "}
+                          {row?.name || "N/A"}
+                        </p>
+                        <span className="font-semibold">Email:</span>{" "}
                         {row?.email || "N/A"}
                       </p>
 
                       <p className="text-sm">
-                        <span className="font-semibold">
-                          Phone:
-                        </span>{" "}
+                        <span className="font-semibold">Phone:</span>{" "}
                         {row?.countryCode} {row?.mobile}
                       </p>
                     </div>
@@ -439,33 +416,35 @@ export default function UserList() {
 
                   {/* GENDER */}
 
+                  <StyledTableCell>{row?.gender || "N/A"}</StyledTableCell>
+
                   <StyledTableCell>
-                    {row?.gender || "N/A"}
+                    <Tooltip title="View Trips">
+                      <IconButton
+                        onClick={() =>
+                          navigate(`/home/user/bookings/${row._id}`)
+                        }
+                      >
+                        <TruckIcon className="h-5 w-5 text-blue-600" />
+                      </IconButton>
+                    </Tooltip>
                   </StyledTableCell>
 
                   {/* STATUS */}
 
                   <StyledTableCell>
-
                     <div className="flex items-center gap-2">
-
                       <Switch
                         checked={row?.isVerified}
-                        onChange={() =>
-                          toggleStatus(row?._id)
-                        }
+                        onChange={() => toggleStatus(row?._id)}
                       />
 
                       <span
                         className={`text-sm font-medium ${
-                          row?.isVerified
-                            ? "text-green-600"
-                            : "text-red-500"
+                          row?.isVerified ? "text-green-600" : "text-red-500"
                         }`}
                       >
-                        {row?.isVerified
-                          ? "Verified"
-                          : "Unverified"}
+                        {row?.isVerified ? "Verified" : "Unverified"}
                       </span>
                     </div>
                   </StyledTableCell>
@@ -473,34 +452,22 @@ export default function UserList() {
                   {/* ACTIONS */}
 
                   <StyledTableCell align="center">
-
                     <Tooltip title="Actions">
-
-                      <IconButton
-                        onClick={(e) =>
-                          handleMenuOpen(e, row._id)
-                        }
-                      >
+                      <IconButton onClick={(e) => handleMenuOpen(e, row._id)}>
                         <MoreVertIcon />
                       </IconButton>
                     </Tooltip>
 
                     <Menu
                       anchorEl={anchorEl}
-                      open={
-                        Boolean(anchorEl) &&
-                        selectedRowId === row._id
-                      }
+                      open={Boolean(anchorEl) && selectedRowId === row._id}
                       onClose={handleMenuClose}
                     >
-
                       {/* VIEW */}
 
                       <MenuItem
                         onClick={() => {
-                          navigate(
-                            `/home/users/view/${row._id}`
-                          );
+                          navigate(`/home/users/view/${row._id}`);
 
                           handleMenuClose();
                         }}
@@ -513,9 +480,7 @@ export default function UserList() {
 
                       <MenuItem
                         onClick={() => {
-                          navigate(
-                            `/home/users/edit/${row._id}`
-                          );
+                          navigate(`/home/users/edit/${row._id}`);
 
                           handleMenuClose();
                         }}
@@ -526,11 +491,7 @@ export default function UserList() {
 
                       {/* DELETE */}
 
-                      <MenuItem
-                        onClick={() =>
-                          deleteHandler(row._id)
-                        }
-                      >
+                      <MenuItem onClick={() => deleteHandler(row._id)}>
                         <TrashIcon className="h-5 w-5 text-red-500 mr-2" />
                         Delete
                       </MenuItem>
@@ -546,11 +507,7 @@ export default function UserList() {
       {/* PAGINATION */}
 
       {totalRecord > rowsPerPage && (
-        <Stack
-          spacing={2}
-          alignItems="center"
-          marginTop={5}
-        >
+        <Stack spacing={2} alignItems="center" marginTop={5}>
           <Pagination
             count={totalPages}
             page={page}

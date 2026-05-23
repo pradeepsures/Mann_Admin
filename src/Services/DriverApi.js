@@ -252,12 +252,54 @@ export const deleteDriver = async (id) => {
 
 
 // ✅ GET VEHICLE BOOKING DETAILS
-export const getDriverBooking = async (id) => {
+// export const getDriverBooking = async (id) => {
+//   const token = localStorage.getItem("token");
+
+//   try {
+//     const res = await fetch(
+//       `${BASE_URL}/api/admin/getDriverBooking/${id}`,
+//       {
+//         method: "GET",
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     const result = await res.json();
+
+//     if (!res.ok) {
+//       throw new Error(result.message || "Booking details not found");
+//     }
+
+//     return result;
+
+//   } catch (err) {
+//     toast.error(err.message || "Error fetching booking details");
+//     throw err;
+//   }
+// };
+// ========================== SERVICES / DriverApi.js ==========================
+
+export const getDriverBooking = async (id, params = {}) => {
   const token = localStorage.getItem("token");
 
   try {
+    const query = new URLSearchParams();
+
+    Object.keys(params).forEach((key) => {
+      if (
+        params[key] !== undefined &&
+        params[key] !== null &&
+        params[key] !== ""
+      ) {
+        query.append(key, params[key]);
+      }
+    });
+
     const res = await fetch(
-      `${BASE_URL}/api/admin/getDriverBooking/${id}`,
+      `${BASE_URL}/api/admin/getDriverBooking/${id}?${query.toString()}`,
       {
         method: "GET",
         headers: {
@@ -274,7 +316,6 @@ export const getDriverBooking = async (id) => {
     }
 
     return result;
-
   } catch (err) {
     toast.error(err.message || "Error fetching booking details");
     throw err;

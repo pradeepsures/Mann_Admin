@@ -156,12 +156,26 @@ export const deleteVehicle = async (id) => {
 };
 
 // ✅ GET VEHICLE BOOKING DETAILS
-export const getVehicleBookingById = async (id) => {
+// ========================== SERVICES / VehicleApi.js ==========================
+
+export const getVehicleBookingById = async (id, params = {}) => {
   const token = localStorage.getItem("token");
 
   try {
+    const query = new URLSearchParams();
+
+    Object.keys(params).forEach((key) => {
+      if (
+        params[key] !== undefined &&
+        params[key] !== null &&
+        params[key] !== ""
+      ) {
+        query.append(key, params[key]);
+      }
+    });
+
     const res = await fetch(
-      `${BASE_URL}/api/admin/getVechicleBooking/${id}`,
+      `${BASE_URL}/api/admin/getVechicleBooking/${id}?${query.toString()}`,
       {
         method: "GET",
         headers: {
@@ -178,12 +192,39 @@ export const getVehicleBookingById = async (id) => {
     }
 
     return result;
-
   } catch (err) {
     toast.error(err.message || "Error fetching booking details");
     throw err;
   }
 };
+// export const getVehicleBookingById = async (id) => {
+//   const token = localStorage.getItem("token");
+
+//   try {
+//     const res = await fetch(
+//       `${BASE_URL}/api/admin/getVechicleBooking/${id}`,
+//       {
+//         method: "GET",
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     const result = await res.json();
+
+//     if (!res.ok) {
+//       throw new Error(result.message || "Booking details not found");
+//     }
+
+//     return result;
+
+//   } catch (err) {
+//     toast.error(err.message || "Error fetching booking details");
+//     throw err;
+//   }
+// };
 
 export const assignDriverToVehicle = async (vehicleId, driverId) => {
   const token = localStorage.getItem("token");

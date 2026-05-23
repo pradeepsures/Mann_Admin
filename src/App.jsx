@@ -130,6 +130,7 @@ import UserList from "./Pages/User/UserList";
 import UserDetails from "./Pages/User/UserDetails";
 import CreateUser from "./Pages/User/UserCreate";
 import UpdateUser from "./Pages/User/UserUpdate";
+import UserBookingList from "./Pages/User/UserBookingList";
 
 // import UserPrivacyPolicyView from "./Pages/PrivacyPolicy/PrivacyPolicyView";
 
@@ -335,7 +336,8 @@ const router = createBrowserRouter([
       { path: "user", element: <UserList/> },
       { path: "users/view/:id", element: <UserDetails/> },
       { path:"users/create", element: <CreateUser/> },
-      { path: "users/edit/:id", element: <UpdateUser/> }
+      { path: "users/edit/:id", element: <UpdateUser/> },
+      { path: "user/bookings/:id", element: <UserBookingList/> }
 
     ],
   },
