@@ -132,6 +132,7 @@ import CreateUser from "./Pages/User/UserCreate";
 import UpdateUser from "./Pages/User/UserUpdate";
 import UserBookingList from "./Pages/User/UserBookingList";
 import DriverAttendanceList from "./Pages/Driver/DriverAttendenceList";
+import InterCityPincodeList from "./Pages/Pincode/IntercityPincodeList";
 
 // import UserPrivacyPolicyView from "./Pages/PrivacyPolicy/PrivacyPolicyView";
 
@@ -339,7 +340,10 @@ const router = createBrowserRouter([
       { path: "users/view/:id", element: <UserDetails/> },
       { path:"users/create", element: <CreateUser/> },
       { path: "users/edit/:id", element: <UpdateUser/> },
-      { path: "user/bookings/:id", element: <UserBookingList/> }
+      { path: "user/bookings/:id", element: <UserBookingList/> },
+
+      //intercity pin ComplaintDetails
+      { path: "pincode", element: <InterCityPincodeList/> }
 
     ],
   },

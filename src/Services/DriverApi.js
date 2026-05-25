@@ -346,7 +346,7 @@ export const getDriverAttendance = async (driverId, params = {}) => {
 
     // ✅ API CALL
     const res = await fetch(
-      `${BASE_URL}/api/admin/punches/${driverId}?${query.toString()}`,
+      `${BASE_URL}/api/admin/punches/driver/${driverId}?${query.toString()}`,
       {
         method: "GET",
         headers: {

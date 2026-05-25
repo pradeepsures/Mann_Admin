@@ -410,8 +410,8 @@ const Dashboard = () => {
       path: "/home/user",
     },
     {
-      title: "Deleted User",
-      value: userStats?.deletedUsers || 0,
+      title: "On Trip User",
+      value: userStats?.totalOnTripUsers || 0,
       icon: <TiUserDelete />,
       path: "/home/user",
     },

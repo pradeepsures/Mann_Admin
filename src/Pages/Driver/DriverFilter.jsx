@@ -89,7 +89,6 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
       <h3 className="text-xl font-semibold mb-4">Driver Filters</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
         {/* SEARCH */}
         <input
           className="border p-2 rounded-xl"
@@ -180,7 +179,32 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
         </select>
 
         {/* DATE FILTERS */}
+        {/* START DATE */}
         <input
+          type={localFilters.startDate ? "date" : "text"}
+          className="border p-2 rounded-xl w-full"
+          placeholder="Start Date"
+          value={localFilters.startDate || ""}
+          onFocus={(e) => (e.target.type = "date")}
+          onBlur={(e) => {
+            if (!e.target.value) e.target.type = "text";
+          }}
+          onChange={(e) => handleChange("startDate", e.target.value)}
+        />
+
+        {/* END DATE */}
+        <input
+          type={localFilters.endDate ? "date" : "text"}
+          className="border p-2 rounded-xl w-full"
+          placeholder="End Date"
+          value={localFilters.endDate || ""}
+          onFocus={(e) => (e.target.type = "date")}
+          onBlur={(e) => {
+            if (!e.target.value) e.target.type = "text";
+          }}
+          onChange={(e) => handleChange("endDate", e.target.value)}
+        />
+        {/* <input
           type="date"
           className="border p-2 rounded-xl"
           value={localFilters.startDate || ""}
@@ -192,7 +216,7 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
           className="border p-2 rounded-xl"
           value={localFilters.endDate || ""}
           onChange={(e) => handleChange("endDate", e.target.value)}
-        />
+        /> */}
       </div>
 
       {/* BUTTONS */}

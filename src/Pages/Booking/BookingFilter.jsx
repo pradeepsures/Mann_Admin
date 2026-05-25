@@ -135,36 +135,29 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
 
         <input
           type={localFilters.startDate ? "date" : "text"}
+          className="border p-2 rounded-2xl w-full"
           placeholder="Start Date"
-          className="border p-2 rounded-2xl"
-          value={localFilters.startDate}
+          value={localFilters.startDate || ""}
           onFocus={(e) => (e.target.type = "date")}
           onBlur={(e) => {
             if (!e.target.value) e.target.type = "text";
           }}
-          onChange={(e) => {
-            const raw = e.target.value; // yyyy-mm-dd
-            handleChange("startDate", raw); // keep raw for input
-            handleChange("startDateFormatted", raw); // dd-mm-yyyy for API....
+          onChange={(e) => handleChange("startDate", e.target.value)}
+        />
+
+        <input
+          type={localFilters.endDate ? "date" : "text"}
+          className="border p-2 rounded-2xl w-full"
+          placeholder="End Date"
+          value={localFilters.endDate || ""}
+          onFocus={(e) => (e.target.type = "date")}
+          onBlur={(e) => {
+            if (!e.target.value) e.target.type = "text";
           }}
+          onChange={(e) => handleChange("endDate", e.target.value)}
         />
 
         {/* <input
-                    type={localFilters.endDate ? "date" : "text"}
-                    placeholder="End Date"
-                    className="border p-2 rounded-2xl"
-                    value={localFilters.endDate}
-                    onFocus={(e) => (e.target.type = "date")}
-                    onBlur={(e) => {
-                        if (!e.target.value) e.target.type = "text";
-                    }}
-                    onChange={(e) => {
-                        const raw = e.target.value;
-                        handleChange("endDate", raw);
-                        handleChange("endDateFormatted", (raw)); // ....
-                    }}
-                /> */}
-        <input
           type="date"
           className="border p-2 rounded-2xl"
           value={localFilters.startDate || ""}
@@ -176,7 +169,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           className="border p-2 rounded-2xl"
           value={localFilters.endDate || ""}
           onChange={(e) => handleChange("endDate", e.target.value)}
-        />
+        /> */}
 
         {/* BOOKING TYPE */}
         <select

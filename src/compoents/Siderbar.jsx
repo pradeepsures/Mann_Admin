@@ -75,11 +75,11 @@ const Sidebar = () => {
           link: "/home/punches",
           sectionName: "Punches",
         },
-        {
-          name: "Today Attendance",
-          link: "/home/punches/today-summary",
-          sectionName: "PunchesTodaySummary",
-        },
+        // {
+        //   name: "Today Attendance",
+        //   link: "/home/punches/today-summary",
+        //   sectionName: "PunchesTodaySummary",
+        // },
       ],
     },
 
@@ -120,7 +120,7 @@ const Sidebar = () => {
         },
 
         {
-          name: "Vehicle Status Request",
+          name: "Driver Cancel Request",
           link: "/home/cancelRequest",
           sectionName: "CancelRequest",
         },
@@ -273,6 +273,11 @@ const Sidebar = () => {
           link: "/home/hourlyPackages",
           icon: GiPunch,
           sectionName: "HourlyPackages",
+        },
+        {
+          name: "Pincode",
+          link: "/home/pincode",
+          sectionName: "Pincode",
         },
 
         {

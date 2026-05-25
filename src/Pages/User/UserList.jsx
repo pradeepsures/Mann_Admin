@@ -425,7 +425,7 @@ export default function UserList() {
                           navigate(`/home/user/bookings/${row._id}`)
                         }
                       >
-                        <TruckIcon className="h-5 w-5 text-blue-600" />
+                        <EyeIcon className="h-5 w-5 text-blue-600" />
                       </IconButton>
                     </Tooltip>
                   </StyledTableCell>
