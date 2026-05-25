@@ -131,6 +131,7 @@ import UserDetails from "./Pages/User/UserDetails";
 import CreateUser from "./Pages/User/UserCreate";
 import UpdateUser from "./Pages/User/UserUpdate";
 import UserBookingList from "./Pages/User/UserBookingList";
+import DriverAttendanceList from "./Pages/Driver/DriverAttendenceList";
 
 // import UserPrivacyPolicyView from "./Pages/PrivacyPolicy/PrivacyPolicyView";
 
@@ -203,6 +204,7 @@ const router = createBrowserRouter([
       { path: "driver/driverView/:id", element: <DriverDetail /> },
       { path: "driver/driverBookingView/:id", element: <DriverBookingDetails /> },
       { path: "driver/updateDriver/:id", element: <UpdateDriver /> },
+      { path: "driver/driverAttendance/:id", element: <DriverAttendanceList/> },
 
 
       //terms and condition, privacy policy, about us   

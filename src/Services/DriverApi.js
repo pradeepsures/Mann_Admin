@@ -321,3 +321,60 @@ export const getDriverBooking = async (id, params = {}) => {
     throw err;
   }
 };
+
+//driver attendence
+export const getDriverAttendance = async (driverId, params = {}) => {
+
+  const token = localStorage.getItem("token");
+
+  try {
+
+    const query = new URLSearchParams();
+
+    // ✅ ADD QUERY PARAMS
+    Object.keys(params).forEach((key) => {
+
+      if (
+        params[key] !== undefined &&
+        params[key] !== null &&
+        params[key] !== ""
+      ) {
+        query.append(key, params[key]);
+      }
+
+    });
+
+    // ✅ API CALL
+    const res = await fetch(
+      `${BASE_URL}/api/admin/punches/${driverId}?${query.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = await res.json();
+
+    // ✅ ERROR HANDLE
+    if (!res.ok) {
+      throw new Error(
+        result.message || "Attendance details not found"
+      );
+    }
+
+    return result;
+
+  } catch (err) {
+
+    console.error("getDriverAttendance Error:", err);
+
+    toast.error(
+      err.message || "Error fetching attendance details"
+    );
+
+    throw err;
+  }
+};

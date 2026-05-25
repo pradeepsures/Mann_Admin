@@ -20,6 +20,7 @@ import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { motion } from "framer-motion";
 import { Modal } from "antd";
 import xlsx from "json-as-xlsx";
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 
 import Loader from "../../compoents/Loader";
 import LoderBtn from "../../compoents/LoderBtn";
@@ -448,7 +449,7 @@ export default function DriverList() {
 
               <StyledTableCell>DETAILS</StyledTableCell>
 
-              <StyledTableCell>TRIP</StyledTableCell>
+              <StyledTableCell>TRIP & ATTENDENCE</StyledTableCell>
 
               <StyledTableCell>REGION</StyledTableCell>
 
@@ -499,7 +500,7 @@ export default function DriverList() {
                   </TableCell>
 
                   {/* Trip */}
-                  <TableCell>
+                  {/* <TableCell>
                     <MenuItem
                       onClick={() => {
                         navigate(`driverBookingView/${row.id}`);
@@ -507,6 +508,31 @@ export default function DriverList() {
                     >
                       <EyeIcon className="h-5 w-5 text-blue-600 mr-2" />
                     </MenuItem>
+                  </TableCell> */}
+                  <TableCell>
+                    <div className="flex flex-col">
+                      {/* Trip */}
+                      <MenuItem
+                        onClick={() => {
+                          navigate(`driverBookingView/${row.id}`);
+                        }}
+                        className="flex items-center"
+                      >
+                        <EyeIcon className="h-5 w-5 text-blue-600 mr-2" />
+                        <span>Trip</span>
+                      </MenuItem>
+
+                      {/* Attendance */}
+                      <MenuItem
+                        onClick={() => {
+                          navigate(`driverAttendance/${row.id}`);
+                        }}
+                        className="flex items-center"
+                      >
+                        <CalendarDaysIcon className="h-5 w-5 text-green-600 mr-2" />
+                        <span>Attendance</span>
+                      </MenuItem>
+                    </div>
                   </TableCell>
 
                   {/* REGION ADDRESS */}
