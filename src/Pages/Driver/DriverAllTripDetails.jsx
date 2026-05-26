@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import { getDriverBooking } from "../../Services/DriverApi";
 import Loader from "../../compoents/Loader";
 import Breaker from "../../compoents/Breaker";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 export default function DriverBookingDetails() {
   const { id } = useParams();
@@ -91,6 +93,95 @@ export default function DriverBookingDetails() {
       endDate: "",
       search: "",
     });
+  };
+
+  // EXPORT EXCEL
+  const exportToExcel = async () => {
+    try {
+      setLoading(true);
+
+      // FETCH ALL DATA
+      const params = {
+        ...filters,
+        page: 1,
+        limit: 5000, // LARGE LIMIT FOR ALL DATA
+      };
+
+      const res = await getDriverBooking(id, params);
+
+      if (!res?.status) return;
+
+      const exportData = (res.data || []).map((item, index) => ({
+        SrNo: index + 1,
+
+        BookingNumber: item.bookingNumber || "-",
+
+        BookingDate: item.createdAtIST || "-",
+
+        UserName: item.user?.name || "-",
+
+        UserPhone: item.user?.phone || "-",
+
+        Vehicle: `${item.vehicle?.brand || ""} ${item.vehicle?.model || ""}`,
+
+        CarNumber: item.vehicle?.carNumber || "-",
+
+        FuelType: item.vehicle?.fuelType || "-",
+
+        Color: item.vehicle?.color || "-",
+
+        PickupAddress: item.pickup?.address || "-",
+
+        DropAddress: item.dropoff?.address || "-",
+
+        EstimatedFare: item.estimatedFare || 0,
+
+        EstimatedKm: item.estimatedKm || 0,
+
+        EstimatedMins: item.estimatedMins || 0,
+
+        TripStatus: formatText(item.tripStatus),
+
+        PaymentStatus: formatText(item.paymentStatus),
+
+        AssignmentStatus: formatText(item.assignmentStatus),
+
+        OverallStatus: formatText(item.overallStatus),
+
+        BookingType: formatText(item.bookingType),
+
+        ScheduledAt: item.scheduledAtIST || "-",
+
+        TripStartAt: item.tripStartAtIST || "-",
+
+        TripEndAt: item.tripEndAtIST || "-",
+      }));
+
+      // CREATE WORKSHEET
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+      // CREATE WORKBOOK
+      const workbook = XLSX.utils.book_new();
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Driver Bookings");
+
+      // GENERATE BUFFER
+      const excelBuffer = XLSX.write(workbook, {
+        bookType: "xlsx",
+        type: "array",
+      });
+
+      // CREATE FILE
+      const fileData = new Blob([excelBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+      });
+
+      saveAs(fileData, `driver-bookings-${Date.now()}.xlsx`);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) return <Loader />;
@@ -272,7 +363,14 @@ export default function DriverBookingDetails() {
         </div>
 
         {/* RESET */}
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex justify-end gap-3">
+          <button
+            onClick={exportToExcel}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+          >
+            Export Excel
+          </button>
+
           <button
             onClick={resetFilters}
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"

@@ -104,6 +104,94 @@ export default function DriverAttendanceList() {
     });
   };
 
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+
+      // Fetch all data without pagination
+      const params = {
+        page: 1,
+        limit: 100000,
+      };
+
+      if (filters.status) params.status = filters.status;
+      if (filters.startDate) params.startDate = filters.startDate;
+      if (filters.endDate) params.endDate = filters.endDate;
+
+      const res = await getDriverAttendance(id, params);
+
+      if (!res?.status || !res?.data?.length) {
+        toast.error("No data found for export");
+        return;
+      }
+
+      const excelData = res.data.map((item, index) => ({
+        Sr_No: index + 1,
+
+        Driver_Name: item.driver?.name || "N/A",
+        Driver_Phone: item.driver?.phone || "N/A",
+
+        Region: item.region?.name || "N/A",
+        Region_State: item.region?.state || "N/A",
+
+        Punch_Region: item.punchRegion?.name || "N/A",
+        Punch_Address: item.punchRegion?.address || "N/A",
+
+        Punch_In_Time: formatDateTime(item.punchInAtIST),
+        Punch_Out_Time: formatDateTime(item.punchOutAtIST),
+
+        Punch_In_Valid: item.punchInValid ? "Valid" : "Invalid",
+        Punch_Out_Valid:
+          item.punchOutValid === null
+            ? "N/A"
+            : item.punchOutValid
+              ? "Valid"
+              : "Invalid",
+
+        Total_Minutes: item.totalMinutes || "N/A",
+
+        Punch_In_Distance: item.punchInDistanceFromZone ?? "N/A",
+        Punch_Out_Distance: item.punchOutDistanceFromZone ?? "N/A",
+
+        Punch_In_Lat: item.punchInLocation?.lat || "N/A",
+        Punch_In_Lng: item.punchInLocation?.lng || "N/A",
+
+        Punch_Out_Lat: item.punchOutLocation?.lat || "N/A",
+        Punch_Out_Lng: item.punchOutLocation?.lng || "N/A",
+
+        Status: formatText(item.status),
+
+        Admin_Override: item.adminOverride ? "Yes" : "No",
+      }));
+
+      const data = [
+        {
+          sheet: "Driver Attendance",
+          columns: Object.keys(excelData[0]).map((key) => ({
+            label: key,
+            value: key,
+          })),
+          content: excelData,
+        },
+      ];
+
+      const settings = {
+        fileName: `Driver_Attendance_${Date.now()}`,
+        extraLength: 3,
+        writeOptions: {},
+      };
+
+      xlsx(data, settings);
+
+      toast.success("Excel exported successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to export excel");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   useEffect(() => {
     fetchAttendance();
   }, [page, filters]);
@@ -171,13 +259,22 @@ export default function DriverAttendanceList() {
         </div>
 
         {/* RESET BUTTON */}
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex justify-end gap-3">
           <button
             onClick={resetFilters}
             className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
           >
             Reset Filters
           </button>
+
+          <button
+            onClick={handleExportExcel}
+            disabled={isExporting}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow"
+          >
+            {isExporting ? "Exporting..." : "Export Excel"}
+          </button>
+    
         </div>
       </div>
 

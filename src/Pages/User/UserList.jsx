@@ -21,6 +21,7 @@ import Stack from "@mui/material/Stack";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Switch from "@mui/material/Switch";
+import xlsx from "json-as-xlsx";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
@@ -48,8 +49,7 @@ import {
   getAllUsers,
   deleteUserApi,
   toggleUserStatusApi,
-} from "../../Services/UserApi";
-
+} from "../../Services/UserApi"
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     background: "linear-gradient(90deg, #03045E 0%, #0077B6 50%, #00B4D8 100%)",
@@ -111,6 +111,8 @@ export default function UserList() {
   const [selectedRowId, setSelectedRowId] = useState(null);
 
   const [btnLoading, setBtnLoading] = useState(false);
+
+  const [isExporting, setIsExporting] = useState(false);
 
   // ─────────────────────────────────────
   // FETCH USERS
@@ -248,6 +250,75 @@ export default function UserList() {
     }, 400);
   };
 
+  const handleExportExcel = async () => {
+    try {
+      setIsExporting(true);
+
+      // FETCH ALL USERS
+      const result = await getAllUsers({
+        page: 1,
+        rowsPerPage: 100000,
+        search: searchQuery,
+        gender,
+        isVerified,
+      });
+
+      if (!result?.status || !result?.data?.length) {
+        toast.error("No users found");
+        return;
+      }
+
+      const excelData = result.data.map((row, index) => ({
+        Sr_No: index + 1,
+
+        Name: row?.name || "N/A",
+
+        Email: row?.email || "N/A",
+
+        Mobile: `${row?.countryCode || ""} ${row?.mobile || ""}`,
+
+        Gender: row?.gender || "N/A",
+
+        Verified: row?.isVerified ? "Yes" : "No",
+
+        Paid_Bookings: row?.paidBookingCount || 0,
+
+        Created_At: row?.createdAt
+          ? new Date(row.createdAt).toLocaleString("en-IN")
+          : "N/A",
+      }));
+
+      const data = [
+        {
+          sheet: "Users",
+
+          columns: Object.keys(excelData[0]).map((key) => ({
+            label: key,
+            value: key,
+          })),
+
+          content: excelData,
+        },
+      ];
+
+      const settings = {
+        fileName: `Users_${Date.now()}`,
+        extraLength: 3,
+        writeOptions: {},
+      };
+
+      xlsx(data, settings);
+
+      toast.success("Excel exported successfully");
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to export excel");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -318,7 +389,7 @@ export default function UserList() {
 
         {/* CREATE BUTTON */}
 
-        <motion.button
+        {/* <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={handleCreate}
           className="bg-primary text-white px-5 py-2.5 rounded-lg font-medium shadow"
@@ -331,7 +402,35 @@ export default function UserList() {
           ) : (
             "Create User"
           )}
-        </motion.button>
+        </motion.button> */}
+
+        <div className="flex gap-3 flex-wrap">
+          {/* EXPORT BUTTON */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleExportExcel}
+            disabled={isExporting}
+            className="bg-green-600 text-white px-5 py-2.5 rounded-lg font-medium shadow"
+          >
+            {isExporting ? "Exporting..." : "Export Excel"}
+          </motion.button>
+
+          {/* CREATE BUTTON */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={handleCreate}
+            className="bg-primary text-white px-5 py-2.5 rounded-lg font-medium shadow"
+          >
+            {btnLoading ? (
+              <span className="flex items-center gap-2">
+                <LoderBtn />
+                Creating...
+              </span>
+            ) : (
+              "Create User"
+            )}
+          </motion.button>
+        </div>
       </div>
 
       {/* TABLE */}
