@@ -22,6 +22,7 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Switch from "@mui/material/Switch";
 import xlsx from "json-as-xlsx";
+import { useLocation } from "react-router-dom";
 
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
@@ -113,6 +114,9 @@ export default function UserList() {
   const [btnLoading, setBtnLoading] = useState(false);
 
   const [isExporting, setIsExporting] = useState(false);
+  const location = useLocation();
+
+const filterType = new URLSearchParams(location.search).get("filter");
 
   // ─────────────────────────────────────
   // FETCH USERS
@@ -128,6 +132,7 @@ export default function UserList() {
         search: searchQuery,
         gender,
         isVerified,
+         filterType,
       });
 
       if (result?.status) {
@@ -142,8 +147,8 @@ export default function UserList() {
       toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
-    }
-  }, [page, rowsPerPage, searchQuery, gender, isVerified]);
+    } 
+  }, [page, rowsPerPage, searchQuery, gender, isVerified, filterType]);
 
   useEffect(() => {
     fetchUsers();
@@ -370,21 +375,6 @@ export default function UserList() {
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-
-          {/* VERIFIED FILTER */}
-
-          <select
-            value={isVerified}
-            onChange={(e) => {
-              setIsVerified(e.target.value);
-              setPage(1);
-            }}
-            className="px-4 py-2.5 border rounded-lg"
-          >
-            <option value="">All Status</option>
-            <option value="true">Verified</option>
-            <option value="false">Unverified</option>
-          </select>
         </div>
 
         {/* CREATE BUTTON */}
@@ -454,7 +444,7 @@ export default function UserList() {
 
               <StyledTableCell>Trips</StyledTableCell>
 
-              <StyledTableCell>Status</StyledTableCell>
+              {/* <StyledTableCell>Status</StyledTableCell> */}
 
               <StyledTableCell align="center">Actions</StyledTableCell>
             </TableRow>
@@ -531,12 +521,9 @@ export default function UserList() {
 
                   {/* STATUS */}
 
-                  <StyledTableCell>
+                  {/* <StyledTableCell>
                     <div className="flex items-center gap-2">
-                      <Switch
-                        checked={row?.isVerified}
-                        onChange={() => toggleStatus(row?._id)}
-                      />
+                   
 
                       <span
                         className={`text-sm font-medium ${
@@ -546,7 +533,7 @@ export default function UserList() {
                         {row?.isVerified ? "Verified" : "Unverified"}
                       </span>
                     </div>
-                  </StyledTableCell>
+                  </StyledTableCell> */}
 
                   {/* ACTIONS */}
 

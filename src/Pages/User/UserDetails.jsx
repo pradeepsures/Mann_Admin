@@ -141,16 +141,16 @@ export default function UserDetails() {
                 </h2>
 
                 <Chip
-                  label={
-                    user?.isVerified
-                      ? "Verified"
-                      : "Unverified"
-                  }
-                  color={
-                    user?.isVerified
-                      ? "success"
-                      : "error"
-                  }
+                  // label={
+                  //   user?.isVerified
+                  //     ? "Verified"
+                  //     : "Unverified"
+                  // }
+                  // color={
+                  //   user?.isVerified
+                  //     ? "success"
+                  //     : "error"
+                  // }
                 />
               </div>
 

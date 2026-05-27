@@ -37,6 +37,7 @@ import {
 // import { assignDriver } from "../../Services/BookingApi";
 import { reassignCancelRequestApi } from "../../Services/RequestApi";
 import VehicleFilter from "./VehicleFilter";
+import { useLocation } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -89,6 +90,13 @@ export default function VehicleList() {
   const [searchDriver, setSearchDriver] = useState("");
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+
+  const isActive = query.get("isActive") ?? "";
+  const isAvailable = query.get("isAvailable") ?? "";
+  const isOnTrip = query.get("isOnTrip") ?? "";
+
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
@@ -96,6 +104,9 @@ export default function VehicleList() {
         page,
         limit: rowsPerPage,
         ...filters,
+        isActive,
+        isAvailable,
+        isOnTrip,
       });
       // const result = await getAllVehicles({
       //   page,
@@ -430,7 +441,7 @@ export default function VehicleList() {
 
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3">
         <h1 className="text-2xl font-bold text-gray-800">Vehicle Management</h1>
-        
+
         <div className="flex flex-wrap gap-3">
           {/* <div className="flex items-center gap-2">
             <input

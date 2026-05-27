@@ -13,6 +13,7 @@ export const getAllUsers = async ({
   search = "",
   gender = "",
   isVerified = "",
+    filterType = "",
 }) => {
   const token = localStorage.getItem("token");
 
@@ -23,6 +24,7 @@ export const getAllUsers = async ({
       search,
       gender,
       isVerified,
+      filterType ,
     });
 
     const res = await fetch(

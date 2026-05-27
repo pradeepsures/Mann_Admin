@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -55,7 +55,7 @@ const formatText = (text) => {
 
 export default function BookingList() {
   const navigate = useNavigate();
-
+  const [searchParams] = useSearchParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -124,9 +124,40 @@ export default function BookingList() {
     fetchBookings();
   }, [fetchBookings]);
 
+  //dashboard filter
+  useEffect(() => {
+    const filter = searchParams.get("filter");
+
+    if (filter === "active") {
+      setFilters((prev) => ({
+        ...prev,
+        tripStatus: "driver_enroute,arrived,in_progress",
+      }));
+    }
+
+    if (filter === "completed") {
+      setFilters((prev) => ({
+        ...prev,
+        tripStatus: "completed",
+      }));
+    }
+
+    if (filter === "cancelled") {
+      setFilters((prev) => ({
+        ...prev,
+        tripStatus: "cancelled",
+      }));
+    }
+    setPage(1);
+  }, [searchParams]);
+
   // ✅ APPLY FILTER
   const handleApplyFilters = (newFilters) => {
-    setFilters(newFilters);
+    // setFilters(newFilters);
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+    }));
     setPage(1);
   };
 

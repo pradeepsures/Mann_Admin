@@ -289,6 +289,31 @@ export default function BookingDetails() {
           <Field label="Drop Long" value={data.dropoff.lng} />
           <Field label="Drop Address" value={data.dropoff.address} />
           <Field label="Drop Time" value={formatDateTime(data.dropoffAt)} />
+          {pickupVerification?.image && (
+            <div className="mt-3 flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-gray-500 text-sm font-medium">
+                Trip End Speedometer
+              </span>
+
+              <div className="flex items-center gap-3">
+                <img
+                  src={pickupVerification.image}
+                  alt="Trip End"
+                  className="h-12 w-16 object-cover rounded border"
+                />
+
+                <button
+                  onClick={() =>
+                    handleDownload(pickupVerification.image, "Trip End Image")
+                  }
+                  className="text-blue-600 hover:text-blue-800"
+                  title="Download"
+                >
+                  ⬇️
+                </button>
+              </div>
+            </div>
+          )}
         </Section>
 
         {/* USER */}

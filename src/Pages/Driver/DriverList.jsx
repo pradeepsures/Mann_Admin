@@ -29,6 +29,7 @@ import Breaker from "../../compoents/Breaker";
 import { getAllDrivers, deleteDriver } from "../../Services/DriverApi";
 import { useAuth } from "../../auth/AuthContext";
 import DriverFilter from "./DriverFilter";
+import { useLocation } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,8 +40,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
+
+
 export default function DriverList() {
+  const didMount = React.useRef(false);
   const { hasPermission } = useAuth();
+  const location = useLocation();
   const SECTION = "Driver";
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -111,17 +116,47 @@ export default function DriverList() {
     }
   }, [page, rowsPerPage, filters]);
 
+  useEffect(() => {
+  if (!didMount.current) {
+    didMount.current = true;
+    return;
+  }
+
+  fetchDrivers();
+}, [page, rowsPerPage, filters]);
+
   // useEffect(() => {
   //   fetchDrivers();
-  // }, [fetchDrivers]);
-  useEffect(() => {
-    fetchDrivers();
-  }, [page, rowsPerPage, filters]);
+  // }, [page, rowsPerPage, filters]);
 
-  // const handleApplyFilters = (f) => {
-  //   setPage(1);
-  //   setFilters(f);
-  // };
+
+//   useEffect(() => {
+//   const params = new URLSearchParams(location.search);
+
+//   const initialFilters = {
+//     isVerified: params.get("isVerified") || "",
+//     isOnline: params.get("isOnline") || "",
+//     isOnTrip: params.get("isOnTrip") || "",
+//     isAvailable: params.get("isAvailable") || "",
+//   };
+
+//   setFilters(initialFilters);
+//   setPage(1);
+// }, [location.search]);
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+
+  const initialFilters = {
+    isVerified: params.get("isVerified") ?? "",
+    isOnline: params.get("isOnline") ?? "",
+    isOnTrip: params.get("isOnTrip") ?? "",
+    isAvailable: params.get("isAvailable") ?? "",
+  };
+
+  setFilters(initialFilters);
+  setPage(1);
+}, [location.search]);
+
   const handleApplyFilters = (f) => {
     setPage(1);
 

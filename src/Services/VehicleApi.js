@@ -12,6 +12,8 @@ export const getAllVehicles = async ({
   brand = "",
   fuelType = "",
   isActive = "",
+    isOnTrip = "",       
+  isAvailable = "", 
 }) => {
   const token = localStorage.getItem("token");
 
@@ -24,6 +26,8 @@ export const getAllVehicles = async ({
     if (brand)           url += `&brand=${encodeURIComponent(brand)}`;
     if (fuelType)        url += `&fuelType=${fuelType}`;
     if (isActive !== "") url += `&isActive=${isActive}`;
+        if (isOnTrip !== "") url += `&isOnTrip=${isOnTrip}`;
+    if (isAvailable !== "") url += `&isAvailable=${isAvailable}`;
 
     const res = await fetch(url, {
       method: "GET",
