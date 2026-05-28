@@ -98,27 +98,33 @@ export default function BookingList() {
   const [stats, setStats] = useState(null);
 
   // ✅ FETCH BOOKINGS
-  const fetchBookings = useCallback(async () => {
-    try {
-      setLoading(true);
+  const fetchBookings = useCallback(
+    async (overrideFilters) => {
+      // allow immediate fetch with supplied filters (used by dashboard query)
+      const activeFilters = overrideFilters || filters;
 
-      const res = await getAllBookings({
-        page,
-        rowsPerPage,
-        ...filters,
-      });
+      try {
+        setLoading(true);
 
-      if (res?.status) {
-        setData(res.data);
-        setTotalPages(res.totalPage);
-        setStats(res.stats);
+        const res = await getAllBookings({
+          page,
+          rowsPerPage,
+          ...activeFilters,
+        });
+
+        if (res?.status) {
+          setData(res.data);
+          setTotalPages(res.totalPage);
+          setStats(res.stats);
+        }
+      } catch {
+        toast.error("Error fetching bookings");
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      toast.error("Error fetching bookings");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, rowsPerPage, filters]);
+    },
+    [page, rowsPerPage, filters],
+  );
 
   useEffect(() => {
     fetchBookings();
@@ -128,27 +134,35 @@ export default function BookingList() {
   useEffect(() => {
     const filter = searchParams.get("filter");
 
+    let newFilters = { ...filters };
+
     if (filter === "active") {
-      setFilters((prev) => ({
-        ...prev,
+      newFilters = {
+        ...newFilters,
         tripStatus: "driver_enroute,arrived,in_progress",
-      }));
+      };
     }
 
     if (filter === "completed") {
-      setFilters((prev) => ({
-        ...prev,
+      newFilters = {
+        ...newFilters,
         tripStatus: "completed",
-      }));
+      };
     }
 
     if (filter === "cancelled") {
-      setFilters((prev) => ({
-        ...prev,
+      newFilters = {
+        ...newFilters,
         tripStatus: "cancelled",
-      }));
+      };
     }
+
+    setFilters(newFilters);
     setPage(1);
+
+    // fetch immediately using the computed filters to avoid race where
+    // the regular effect may run with stale state
+    fetchBookings(newFilters);
   }, [searchParams]);
 
   // ✅ APPLY FILTER
