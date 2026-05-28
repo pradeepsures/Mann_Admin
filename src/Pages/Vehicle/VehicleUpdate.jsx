@@ -86,6 +86,11 @@ const UpdateVehicle = () => {
           fitnessExpiryDate: data.fitnessExpiryDate ? data.fitnessExpiryDate.split("T")[0] : "",
           permitStartDate: data.permitStartDate ? data.permitStartDate.split("T")[0] : "",
           permitExpiryDate: data.permitExpiryDate ? data.permitExpiryDate.split("T")[0] : "",
+          stickerNumber: data.stickerNumber || "",
+          chassisNumber: data.chassisNumber || "",
+          engineNumber: data.engineNumber || "",
+          dateOfPurchase: data.dateOfPurchase ? data.dateOfPurchase.split("T")[0] : "",
+          dateOfRegistration: data.dateOfRegistration ? data.dateOfRegistration.split("T")[0] : "",
           capacity: data.capacity || "",
           isActive: data.isActive !== false,
           carImage: data.carImage ? [...data.carImage] : [],
@@ -372,8 +377,11 @@ const UpdateVehicle = () => {
             { label: "Rc Number", key: "certificateNumber", type: "text" },
             { label: "Insurance Number", key: "insuranceNumber", type: "text" },
             { label: "Pollution Number", key: "pollutionNumber", type: "text" },
-            { label: "fitness Number", key: "fitnessNumber", type: "text" },
-            { label: " All India Permit Number", key: "permitNumber", type: "text" },
+            { label: "Fitness Number", key: "fitnessNumber", type: "text" },
+            { label: "All India Permit Number", key: "permitNumber", type: "text" },
+            { label: "Sticker Number", key: "stickerNumber", type: "text" },
+            { label: "Chassis Number", key: "chassisNumber", type: "text" },
+            { label: "Engine Number", key: "engineNumber", type: "text" },
           ].map(({ label, key, type }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>
@@ -421,6 +429,8 @@ const UpdateVehicle = () => {
             { label: "Fitness Expiry Date", key: "fitnessExpiryDate" },
             { label: "Permit Start Date", key: "permitStartDate" },
             { label: "Permit Expiry Date", key: "permitExpiryDate" },
+            { label: "Date of Purchase", key: "dateOfPurchase" },
+            { label: "Date of Registration", key: "dateOfRegistration" },
 
           ].map(({ label, key }) => (
             <div key={key}>

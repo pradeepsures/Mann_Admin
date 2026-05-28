@@ -104,6 +104,11 @@ export default function VehicleDetails() {
           <DetailItem label="Fuel Type" value={vehicle.fuelType?.toUpperCase()} />
           <DetailItem label="Capacity" value={`${vehicle.capacity || "—"} Seats`} />
           <DetailItem label="Boot Space" value={vehicle.bootSpace} />
+          <DetailItem label="Sticker Number" value={vehicle.stickerNumber} />
+          <DetailItem label="Chassis Number" value={vehicle.chassisNumber} />
+          <DetailItem label="Engine Number" value={vehicle.engineNumber} />
+          <DetailItem label="Date of Purchase" value={formatDate(vehicle.dateOfPurchase)} />
+          <DetailItem label="Date of Registration" value={formatDate(vehicle.dateOfRegistration)} />
           <DetailItem
             label="Status"
             value={
@@ -132,7 +137,7 @@ export default function VehicleDetails() {
             <DetailItem label="Name" value={vehicle.driver?.name} />
             <DetailItem label="Phone" value={vehicle.driver?.phone} />
             <DetailItem label="Email" value={vehicle.driver?.email} />
-            <DetailItem label="Driver ID" value={vehicle.driver?._id} small />
+            {/* <DetailItem label="Driver ID" value={vehicle.driver?._id} small /> */}
           </div>
         </div>
 
