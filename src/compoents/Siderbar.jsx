@@ -50,6 +50,7 @@ import { GiPunchingBag } from "react-icons/gi";
 import { GiHumanTarget } from "react-icons/gi";
 import { MdOutlineSettingsSuggest } from "react-icons/md";
 import { FaUserGroup } from "react-icons/fa6";
+import { MdOutlineCorporateFare } from "react-icons/md";
 const Sidebar = () => {
   const { hasPermission } = useAuth();
   const [open, setOpen] = useState(true);
@@ -139,6 +140,13 @@ const Sidebar = () => {
       link: "/home/complaint",
       icon: MdReportProblem,
       sectionName: "Complaint",
+    },
+
+     {
+      name: "Corporate",
+      link: "/home/corporate",
+      icon: MdOutlineCorporateFare,
+      sectionName: "Corporate",
     },
 
     {

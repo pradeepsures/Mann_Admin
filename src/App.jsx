@@ -133,6 +133,9 @@ import UpdateUser from "./Pages/User/UserUpdate";
 import UserBookingList from "./Pages/User/UserBookingList";
 import DriverAttendanceList from "./Pages/Driver/DriverAttendenceList";
 import InterCityPincodeList from "./Pages/Pincode/IntercityPincodeList";
+import CorporateList from "./Pages/Corporate/CorporateList";
+import CorporateDetails from "./Pages/Corporate/CorporateDetails";
+import CorporateUpdate from "./Pages/Corporate/CorporateUpdate";
 
 // import UserPrivacyPolicyView from "./Pages/PrivacyPolicy/PrivacyPolicyView";
 
@@ -343,7 +346,12 @@ const router = createBrowserRouter([
       { path: "user/bookings/:id", element: <UserBookingList/> },
 
       //intercity pin ComplaintDetails
-      { path: "pincode", element: <InterCityPincodeList/> }
+      { path: "pincode", element: <InterCityPincodeList/> },
+
+      //corporate
+      { path: "corporate", element: <CorporateList/> },
+      { path: "corporate/view/:id", element: <CorporateDetails/> },
+      { path: "corporate/edit/:id", element: <CorporateUpdate/> },
 
     ],
   },
