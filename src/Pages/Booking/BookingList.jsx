@@ -60,7 +60,7 @@ export default function BookingList() {
   const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(50);
+  const [rowsPerPage] = useState(100);
   const [totalPages, setTotalPages] = useState(0);
 
   const [selectedSegment, setSelectedSegment] = useState("");
@@ -82,6 +82,8 @@ export default function BookingList() {
     driverName: "",
     driverPhone: "",
     carNumber: "",
+    scheduledStartDate: "",
+    scheduledEndDate: "",
   });
 
   const [isExporting, setIsExporting] = useState(false);
@@ -192,6 +194,8 @@ export default function BookingList() {
       driverName: "",
       driverPhone: "",
       carNumber: "",
+      scheduledStartDate: "",
+      scheduledEndDate: "",
     };
 
     setFilters(empty);
@@ -200,12 +204,15 @@ export default function BookingList() {
 
   // DRIVER FETCH
   const fetchDrivers = useCallback(async () => {
-    if (!selectedSegment) return;
+    if (!selectedSegment || !selectedRowId) return;
 
     setDriversLoading(true);
 
     try {
-      const res = await getUnassignedDriversBySegment(selectedSegment);
+      const res = await getUnassignedDriversBySegment(
+        selectedSegment,
+        selectedRowId,
+      );
 
       if (res?.status) {
         setDrivers(res.data || []);
@@ -215,7 +222,7 @@ export default function BookingList() {
     } finally {
       setDriversLoading(false);
     }
-  }, [selectedSegment]);
+  }, [selectedSegment, selectedRowId]);
   // const fetchDrivers = useCallback(async (search) => {
   //   setDriversLoading(true);
   //   try {
@@ -744,8 +751,11 @@ export default function BookingList() {
         >
           {drivers.map((d) => (
             <Option key={d._id} value={d._id}>
-              {d.name}
+              {d.name} {d.phone ? `(${d.phone})` : ""}
             </Option>
+            // <Option key={d._id} value={d._id}>
+            //   {d.name || d.phone}
+            // </Option>
           ))}
         </Select>
       </Modal>

@@ -67,7 +67,7 @@ export default function FaqList() {
   const [totalRecord, setTotalRecord] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(7);
+  const [rowsPerPage, setRowsPerPage] = useState(100);
   const [search, setSearch] = useState("");
   const [isExporting, setIsExporting] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);

@@ -55,7 +55,7 @@ export default function SectionNameList() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
-    const [rowsPerPage] = useState(10);
+    const [rowsPerPage] = useState(100);
     const [totalPages, setTotalPages] = useState(1);
     const [search, setSearch] = useState("");
     const [searchQuery, setSearchQuery] = useState("");

@@ -93,7 +93,7 @@ export default function UserList() {
 
   const [page, setPage] = useState(1);
 
-  const [rowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(100);
 
   const [totalPages, setTotalPages] = useState(0);
 

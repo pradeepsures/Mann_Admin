@@ -72,7 +72,7 @@ export default function RegionList() {
   const [totalRecord, setTotalRecord] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(7);
+  const [rowsPerPage] = useState(100);
   const [search, setSearch] = useState("");
   const [isExporting, setIsExporting] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);

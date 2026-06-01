@@ -217,14 +217,14 @@ export default function CorporateView() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <DetailRow
-              label="Address Line 1"
+              label="Address"
               value={capitalize(
                 data?.companyAddress?.addressLine1
               )}
             />
 
             <DetailRow
-              label="Address Line 2"
+              label="Alternate Address"
               value={capitalize(
                 data?.companyAddress?.addressLine2
               )}

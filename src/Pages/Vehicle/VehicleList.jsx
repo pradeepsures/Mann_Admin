@@ -72,7 +72,7 @@ export default function VehicleList() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecord, setTotalRecord] = useState(0);
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(7);
+  const [rowsPerPage, setRowsPerPage] = useState(100);
   // const [search, setSearch] = useState("");
   // const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({});

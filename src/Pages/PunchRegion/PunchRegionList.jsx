@@ -66,7 +66,7 @@ export default function PunchRegionList() {
     const [totalRecord, setTotalRecord] = useState(0);
 
     const [page, setPage] = useState(1);
-    const [rowsPerPage] = useState(10);
+    const [rowsPerPage] = useState(100);
 
     const [filters, setFilters] = useState({
         search: "",

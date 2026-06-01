@@ -55,7 +55,7 @@ export default function EtsRouteShiftList() {
   const [totalRecord, setTotalRecord] = useState(0);
 
   const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 100;
 
   const [toggleLoading, setToggleLoading] = useState(null);
   const [isExporting, setIsExporting] = useState(false);

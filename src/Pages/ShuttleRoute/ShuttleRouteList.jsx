@@ -46,7 +46,7 @@ export default function ShuttleRouteList() {
   const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 100;
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecord, setTotalRecord] = useState(0);

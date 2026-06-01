@@ -68,7 +68,7 @@ export default function SegmentList() {
   const [totalPages, setTotalPages] = useState(0);
   const [search, setSearch] = useState("");                // search input value
   const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(7);
+  const [rowsPerPage] = useState(100);
   const [isLoading, setIsLoading] = useState(false);       // add button loading
   const [isExporting, setIsExporting] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);

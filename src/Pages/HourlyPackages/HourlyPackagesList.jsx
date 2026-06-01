@@ -72,7 +72,7 @@ export default function searchHourlyPackageList() {
 
   // frontend pagination
   const [page, setPage] = useState(1);
-  const rowsPerPage = 7;
+  const rowsPerPage = 100;
 
   // search
   const [search, setSearch] = useState("");

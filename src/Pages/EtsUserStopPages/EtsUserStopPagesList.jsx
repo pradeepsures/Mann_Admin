@@ -54,7 +54,7 @@ export default function EtsUserStoppageList() {
   const [totalRecord, setTotalRecord] = useState(0);
 
   const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 100;
 
   const [filters, setFilters] = useState({
     user: "",

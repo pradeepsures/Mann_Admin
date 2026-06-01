@@ -45,7 +45,7 @@ export default function PricingList() {
   const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(7);
+  const [rowsPerPage] = useState(100);
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalRecord, setTotalRecord] = useState(0);

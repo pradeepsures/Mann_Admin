@@ -49,7 +49,7 @@ export default function EtsUserList() {
   const [totalRecord, setTotalRecord] = useState(0);
 
   const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(100);
 
   // ✅ FILTER STATES
   const [filters, setFilters] = useState({

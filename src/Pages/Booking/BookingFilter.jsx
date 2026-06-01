@@ -157,19 +157,32 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           onChange={(e) => handleChange("endDate", e.target.value)}
         />
 
-        {/* <input
-          type="date"
-          className="border p-2 rounded-2xl"
-          value={localFilters.startDate || ""}
-          onChange={(e) => handleChange("startDate", e.target.value)}
+        {/* schedule at */}
+        {/* SCHEDULED START DATE */}
+        <input
+          type={localFilters.scheduledStartDate ? "date" : "text"}
+          className="border p-2 rounded-2xl w-full"
+          placeholder="Scheduled Start Date"
+          value={localFilters.scheduledStartDate || ""}
+          onFocus={(e) => (e.target.type = "date")}
+          onBlur={(e) => {
+            if (!e.target.value) e.target.type = "text";
+          }}
+          onChange={(e) => handleChange("scheduledStartDate", e.target.value)}
         />
 
+        {/* SCHEDULED END DATE */}
         <input
-          type="date"
-          className="border p-2 rounded-2xl"
-          value={localFilters.endDate || ""}
-          onChange={(e) => handleChange("endDate", e.target.value)}
-        /> */}
+          type={localFilters.scheduledEndDate ? "date" : "text"}
+          className="border p-2 rounded-2xl w-full"
+          placeholder="Scheduled End Date"
+          value={localFilters.scheduledEndDate || ""}
+          onFocus={(e) => (e.target.type = "date")}
+          onBlur={(e) => {
+            if (!e.target.value) e.target.type = "text";
+          }}
+          onChange={(e) => handleChange("scheduledEndDate", e.target.value)}
+        />
 
         {/* BOOKING TYPE */}
         <select

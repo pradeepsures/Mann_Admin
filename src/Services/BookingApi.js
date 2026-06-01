@@ -23,6 +23,8 @@ export const getAllBookings = async ({
   driverName,
   driverPhone,
   carNumber,
+  scheduledStartDate,
+  scheduledEndDate
 }) => {
   const token = localStorage.getItem("token");
 
@@ -35,6 +37,8 @@ export const getAllBookings = async ({
     if (searchQuery) params.append("search", searchQuery);
     if (startDate) params.append("startDate", startDate);
     if (endDate) params.append("endDate", endDate);
+    if (scheduledStartDate) params.append("scheduledStartDate", scheduledStartDate);
+    if (scheduledEndDate) params.append("scheduledEndDate", scheduledEndDate);
 
     if (overallStatus) params.append("overallStatus", overallStatus);
     if (tripStatus) params.append("tripStatus", tripStatus);
@@ -154,13 +158,14 @@ export const assignDriver = async (bookingId, driverId) => {
 // };
 
 
-export const getUnassignedDriversBySegment = async (segmentId, search = "") => {
+export const getUnassignedDriversBySegment = async (segmentId, bookingId = "", search = "") => {
   const token = localStorage.getItem("token");
 
   try {
     const params = new URLSearchParams();
 
     if (segmentId) params.append("segment", segmentId);
+    if (bookingId) params.append("booking", bookingId);
     if (search) params.append("search", search);
 
     const res = await fetch(

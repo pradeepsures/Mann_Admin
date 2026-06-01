@@ -51,7 +51,7 @@ export default function PunchList() {
   const [totalRecord, setTotalRecord] = useState(0);
 
   const [page, setPage] = useState(1);
-  const rowsPerPage = 10;
+  const rowsPerPage = 100;
 
   const [isExporting, setIsExporting] = useState(false);
 

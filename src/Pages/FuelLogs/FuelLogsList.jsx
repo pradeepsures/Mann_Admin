@@ -52,7 +52,7 @@ export default function FuelLogsList() {
     const [vehicles, setVehicles] = useState([]);
 
     const [page, setPage] = useState(1);
-    const rowsPerPage = 10;
+    const rowsPerPage = 100;
 
     const [filters, setFilters] = useState({
         driver: "",

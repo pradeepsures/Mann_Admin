@@ -45,7 +45,7 @@ export default function CancelRequestList() {
   const [loading, setLoading] = useState(false);
 
   const [page, setPage] = useState(1);
-  const rowsPerPage = 7;
+  const rowsPerPage = 100;
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);

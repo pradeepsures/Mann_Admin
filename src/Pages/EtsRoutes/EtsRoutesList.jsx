@@ -51,7 +51,7 @@ export default function EtsRouteList() {
     const [isExporting, setIsExporting] = useState(false);
 
     const [page, setPage] = useState(1);
-    const rowsPerPage = 10;
+    const rowsPerPage = 100;
 
     const [toggleLoading, setToggleLoading] = useState(null);
 

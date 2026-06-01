@@ -112,7 +112,10 @@ export default function BookingDetails() {
         return;
       }
 
-      const res = await getUnassignedDriversBySegment(data.segment._id);
+      const res = await getUnassignedDriversBySegment(
+        data.segment._id,
+        data._id,
+      );
 
       if (res?.status) {
         if (!res.data || res.data.length === 0) {

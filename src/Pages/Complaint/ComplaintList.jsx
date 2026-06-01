@@ -51,7 +51,7 @@ export default function ComplaintList() {
   });
 
   const [page, setPage] = useState(1);
-  const [rowsPerPage] = useState(7);
+  const [rowsPerPage] = useState(100);
 
   const [isExporting, setIsExporting] = useState(false);
 

@@ -65,7 +65,7 @@ export default function HolidayList() {
     const [regionLoading, setRegionLoading] = useState(false);
 
     const [page, setPage] = useState(1);
-    const [rowsPerPage] = useState(10);
+    const [rowsPerPage] = useState(100);
 
     const [toggleLoading, setToggleLoading] = useState(null);
 

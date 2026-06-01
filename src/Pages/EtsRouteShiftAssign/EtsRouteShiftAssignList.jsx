@@ -86,7 +86,7 @@ export default function EtsRouteShiftAssignList() {
     });
 
     const [page, setPage] = useState(1);
-    const rowsPerPage = 10;
+    const rowsPerPage = 100;
     const [totalPages, setTotalPages] = useState(0);
     const [totalRecord, setTotalRecord] = useState(0);
 
