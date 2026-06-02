@@ -471,14 +471,14 @@ const UpdateVehicle = () => {
             htmlFor="certificate-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload New Certificate Photo
+            � Upload New Certificate Photo or PDF
           </label>
           <input
             id="certificate-upload"
             className="hidden"
             type="file"
             name="certificatePhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -495,14 +495,14 @@ const UpdateVehicle = () => {
             htmlFor="rc-front-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload New RC Front Photo
+            � Upload New RC Front Photo or PDF
           </label>
           <input
             id="rc-front-upload"
             className="hidden"
             type="file"
             name="rcFrontPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -519,14 +519,14 @@ const UpdateVehicle = () => {
             htmlFor="rc-back-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload New RC Back Photo
+            � Upload New RC Back Photo or PDF
           </label>
           <input
             id="rc-back-upload"
             className="hidden"
             type="file"
             name="rcBackPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -546,7 +546,7 @@ const UpdateVehicle = () => {
             htmlFor="car-images-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload New Vehicle Images
+            � Upload New Vehicle Images or PDFs
           </label>
           <input
             id="car-images-upload"
@@ -554,7 +554,7 @@ const UpdateVehicle = () => {
             type="file"
             name="carImage"
             multiple
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -574,7 +574,7 @@ const UpdateVehicle = () => {
             htmlFor="document-images-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload New Document Images
+            � Upload New Document Images or PDFs
           </label>
           <input
             id="document-images-upload"
@@ -582,7 +582,7 @@ const UpdateVehicle = () => {
             type="file"
             name="documentImage"
             multiple
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 

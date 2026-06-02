@@ -132,7 +132,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
         />
 
         {/* DATE */}
-{/* 
+        {/* 
         <input
           type={localFilters.startDate ? "date" : "text"}
           className="border p-2 rounded-2xl w-full"
@@ -144,7 +144,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           }}
           onChange={(e) => handleChange("startDate", e.target.value)}
         /> */}
-{/* 
+        {/* 
         <input
           type={localFilters.endDate ? "date" : "text"}
           className="border p-2 rounded-2xl w-full"
@@ -183,6 +183,17 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           }}
           onChange={(e) => handleChange("scheduledEndDate", e.target.value)}
         />
+
+        {/* UPCOMING */}
+        <select
+          className="border p-2 rounded-2xl"
+          value={localFilters.upcoming || ""}
+          onChange={(e) => handleChange("upcoming", e.target.value)}
+        >
+          <option value="">Upcoming</option>
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
 
         {/* BOOKING TYPE */}
         <select

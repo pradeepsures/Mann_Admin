@@ -131,6 +131,52 @@ const CreateVehicle = () => {
     }));
   };
 
+  const renderPreviewFile = (field, altText) => {
+    const file = formData[field];
+    if (!file) return null;
+
+    if (file.type === "application/pdf") {
+      return (
+        <div className="mt-2 mb-2 ml-2 p-3 border rounded bg-gray-100 text-sm text-gray-700">
+          📄 {file.name}
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={previews[field]}
+        alt={altText}
+        className="h-16 w-24 object-cover rounded border border-gray-300 ml-2 mt-2"
+      />
+    );
+  };
+
+  const renderPreviewList = (field, label) => {
+    return (previews[field] || []).map((url, idx) => {
+      const file = formData[field]?.[idx];
+      if (file?.type === "application/pdf") {
+        return (
+          <div
+            key={idx}
+            className="h-16 w-24 flex items-center justify-center rounded border border-gray-300 bg-gray-100 text-xs text-gray-700 p-2"
+          >
+            📄 {file.name}
+          </div>
+        );
+      }
+
+      return (
+        <img
+          key={idx}
+          src={url}
+          alt={`${label} ${idx}`}
+          className="h-16 w-24 object-cover rounded border border-gray-300"
+        />
+      );
+    });
+  };
+
   // Cleanup object URLs
   useEffect(() => {
     return () => {
@@ -462,14 +508,14 @@ const CreateVehicle = () => {
             htmlFor="certificate-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload Certificate Photo
+            � Upload Certificate Photo or PDF
           </label>
           <input
             id="certificate-upload"
             className="hidden"
             type="file"
             name="certificatePhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -486,14 +532,14 @@ const CreateVehicle = () => {
             htmlFor="rc-front-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload RC Front Photo
+            📎 Upload RC Front Photo or PDF
           </label>
           <input
             id="rc-front-upload"
             className="hidden"
             type="file"
             name="rcFrontPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -510,14 +556,14 @@ const CreateVehicle = () => {
             htmlFor="rc-back-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload RC Back Photo
+            📎 Upload RC Back Photo or PDF
           </label>
           <input
             id="rc-back-upload"
             className="hidden"
             type="file"
             name="rcBackPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -537,7 +583,7 @@ const CreateVehicle = () => {
             htmlFor="car-images-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload Car Images
+            � Upload Car Images or PDFs
           </label>
           <input
             id="car-images-upload"
@@ -545,7 +591,7 @@ const CreateVehicle = () => {
             type="file"
             name="carImage"
             multiple
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -565,7 +611,7 @@ const CreateVehicle = () => {
             htmlFor="document-images-upload"
             className="ml-2 mt-2 flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload Document Images
+            � Upload Document Images or PDFs
           </label>
           <input
             id="document-images-upload"
@@ -573,7 +619,7 @@ const CreateVehicle = () => {
             type="file"
             name="documentImage"
             multiple
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 

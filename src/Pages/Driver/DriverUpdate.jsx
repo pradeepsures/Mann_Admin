@@ -457,17 +457,17 @@ const UpdateDriver = () => {
             htmlFor="license-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️{" "}
+            �{" "}
             {previews.licensePhoto
-              ? "Replace License Photo"
-              : "Upload / Replace License Photo"}
+              ? "Replace License Photo or PDF"
+              : "Upload / Replace License Photo or PDF"}
           </label>
           <input
             id="license-upload"
             className="hidden"
             type="file"
             name="licensePhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -493,17 +493,17 @@ const UpdateDriver = () => {
             htmlFor="license-back-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️{" "}
+            �{" "}
             {previews.licenseBackPhoto
-              ? "Replace License Back Photo"
-              : "Upload / Replace License Back Photo"}
+              ? "Replace License Back Photo or PDF"
+              : "Upload / Replace License Back Photo or PDF"}
           </label>
           <input
             id="license-back-upload"
             className="hidden"
             type="file"
             name="licenseBackPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -543,15 +543,15 @@ const UpdateDriver = () => {
             htmlFor="adhaar-front-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ {previews.adhaarFrontPhoto ? "Replace" : "Upload / Replace"}{" "}
-            Aadhaar Front
+            � {previews.adhaarFrontPhoto ? "Replace" : "Upload / Replace"}{" "}
+            Aadhaar Front Photo or PDF
           </label>
           <input
             id="adhaar-front-upload"
             className="hidden"
             type="file"
             name="adhaarFrontPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -578,17 +578,17 @@ const UpdateDriver = () => {
             htmlFor="adhaar-back-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️{" "}
+            �{" "}
             {previews.adhaarBackPhoto
-              ? "Replace Aadhaar Back"
-              : "Upload / Replace Aadhaar Back"}
+              ? "Replace Aadhaar Back Photo or PDF"
+              : "Upload / Replace Aadhaar Back Photo or PDF"}
           </label>
           <input
             id="adhaar-back-upload"
             className="hidden"
             type="file"
             name="adhaarBackPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -629,17 +629,17 @@ const UpdateDriver = () => {
             htmlFor="pan-front-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️{" "}
+            �{" "}
             {previews.panFrontPhoto
-              ? "Replace PAN Front"
-              : "Upload / Replace PAN Front"}
+              ? "Replace PAN Front Photo or PDF"
+              : "Upload / Replace PAN Front Photo or PDF"}
           </label>
           <input
             id="pan-front-upload"
             className="hidden"
             type="file"
             name="panFrontPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -666,17 +666,17 @@ const UpdateDriver = () => {
             htmlFor="pan-back-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️{" "}
+            �{" "}
             {previews.panBackPhoto
-              ? "Replace PAN Back"
-              : "Upload / Replace PAN Back"}
+              ? "Replace PAN Back Photo or PDF"
+              : "Upload / Replace PAN Back Photo or PDF"}
           </label>
           <input
             id="pan-back-upload"
             className="hidden"
             type="file"
             name="panBackPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -715,17 +715,17 @@ const UpdateDriver = () => {
             htmlFor="police-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️{" "}
+            �{" "}
             {previews.policeVerificationPhoto
-              ? "Replace Police Verification"
-              : "Upload / Replace Police Verification"}
+              ? "Replace Police Verification Photo or PDF"
+              : "Upload / Replace Police Verification Photo or PDF"}
           </label>
           <input
             id="police-upload"
             className="hidden"
             type="file"
             name="policeVerificationPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -752,7 +752,7 @@ const UpdateDriver = () => {
             htmlFor="profile-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️{" "}
+            �{" "}
             {previews.profilePic
               ? "Replace Profile Picture"
               : "Upload / Replace Profile Picture"}
@@ -762,7 +762,7 @@ const UpdateDriver = () => {
             className="hidden"
             type="file"
             name="profilePic"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
           {apiError.profilePic && (

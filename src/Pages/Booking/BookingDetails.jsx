@@ -402,6 +402,10 @@ export default function BookingDetails() {
             label="Cancellation Fee"
             value={data.pricingSnapshot?.cancellationFee}
           />
+          <Field
+            label="Toll Charges"
+            value={data.pricingSnapshot?.tollCharge}
+          />
         </Section>
 
         {/* PAYMENT */}

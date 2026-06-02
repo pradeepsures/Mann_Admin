@@ -5,8 +5,17 @@ import { useAuth } from "../../auth/AuthContext";
 import Loader from "../../compoents/Loader";
 import Breaker from "../../compoents/Breaker";
 import toast from "react-hot-toast";
-import { getVehicleById } from "../../Services/VehicleApi"; // assuming you have this function
+import { getVehicleById, deleteVehicleImage } from "../../Services/VehicleApi";
 import { format } from "date-fns"; // optional - for nice date formatting
+
+const isImageUrl = (src) => {
+  return /\.(jpe?g|png|gif|bmp|webp|svg)(\?.*)?$/i.test(src || "");
+};
+
+const getFileName = (src) => {
+  if (!src) return "file";
+  return src.split("/").pop().split("?")[0] || "file";
+};
 
 export default function VehicleDetails() {
   const { id } = useParams();
@@ -16,6 +25,7 @@ export default function VehicleDetails() {
   const [vehicle, setVehicle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [imageDeleting, setImageDeleting] = useState(false);
 
   useEffect(() => {
     const fetchVehicle = async () => {
@@ -49,6 +59,39 @@ export default function VehicleDetails() {
       return format(new Date(dateStr), "dd MMM yyyy");
     } catch {
       return dateStr;
+    }
+  };
+
+  const handleDeleteImage = async (field, imageUrl) => {
+    if (!imageUrl) return;
+    if (!window.confirm("Delete this image?")) return;
+
+    try {
+      setImageDeleting(true);
+      const res = await deleteVehicleImage(id, field, imageUrl);
+
+      if (res?.status) {
+        toast.success("Image deleted successfully");
+        setVehicle((prev) => {
+          if (!prev) return prev;
+          const next = { ...prev };
+
+          if (field === "carImage" || field === "documentImage") {
+            next[field] = prev[field]?.filter((item) => item !== imageUrl) || [];
+          } else {
+            next[field] = null;
+          }
+
+          return next;
+        });
+      } else {
+        toast.error(res?.message || "Failed to delete image");
+      }
+    } catch (err) {
+      console.error("Delete image error:", err);
+      toast.error(err.message || "Failed to delete image");
+    } finally {
+      setImageDeleting(false);
     }
   };
 
@@ -172,29 +215,56 @@ export default function VehicleDetails() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {vehicle.carImage?.length > 0 && (
-            <ImageCard title="Vehicle Images" images={vehicle.carImage} />
+            <ImageCard
+              title="Vehicle Images"
+              images={vehicle.carImage}
+              field="carImage"
+              onDelete={handleDeleteImage}
+              disabled={imageDeleting}
+            />
           )}
           {vehicle.certificatePhoto && (
-            <ImageCard title="Certificate Photo" images={[vehicle.certificatePhoto]} />
+            <ImageCard
+              title="Certificate Photo"
+              images={[vehicle.certificatePhoto]}
+              field="certificatePhoto"
+              onDelete={handleDeleteImage}
+              disabled={imageDeleting}
+            />
           )}
           {vehicle.rcFrontPhoto && (
-            <ImageCard title="RC Front" images={[vehicle.rcFrontPhoto]} />
+            <ImageCard
+              title="RC Front"
+              images={[vehicle.rcFrontPhoto]}
+              field="rcFrontPhoto"
+              onDelete={handleDeleteImage}
+              disabled={imageDeleting}
+            />
           )}
           {vehicle.rcBackPhoto && (
-            <ImageCard title="RC Back" images={[vehicle.rcBackPhoto]} />
+            <ImageCard
+              title="RC Back"
+              images={[vehicle.rcBackPhoto]}
+              field="rcBackPhoto"
+              onDelete={handleDeleteImage}
+              disabled={imageDeleting}
+            />
           )}
           {vehicle.documentImage?.length > 0 && (
-  <div className="flex flex-row gap-6 overflow-x-auto pb-2 whitespace-nowrap">
-    {vehicle.documentImage.map((docImg, idx) => (
-      <div key={idx} className="inline-block flex-shrink-0">
-        <ImageCard
-          title={`Document Image ${idx + 1}`}
-          images={[docImg]}
-        />
-      </div>
-    ))}
-  </div>
-)}
+            <div className="flex flex-row gap-6 overflow-x-auto pb-2 whitespace-nowrap">
+              {vehicle.documentImage.map((docImg, idx) => (
+                <div key={idx} className="inline-block flex-shrink-0">
+                  <ImageCard
+                    title={`Document Image ${idx + 1}`}
+                    images={[docImg]}
+                    field="documentImage"
+                    onDelete={handleDeleteImage}
+                    disabled={imageDeleting}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
           {/* {vehicle.documentImage?.length > 0 && (
             <div className="flex flex-wrap gap-6 overflow-x-auto pb-2">
               {vehicle.documentImage.map((docImg, idx) => (
@@ -256,54 +326,96 @@ const DetailItem = ({ label, value, small = false }) => (
   </div>
 );
 
-const handleDownloadImage = async (src, title, idx) => {
+// const handleDownloadImage = async (src, title, idx) => {
+//   try {
+//     const response = await fetch(src);
+//     const blob = await response.blob();
+//     const objectUrl = URL.createObjectURL(blob);
+//     const extensionMatch = src.split(".").pop().split(/[?#]/)[0] || "jpg";
+//     const fileName = `${title.replace(/\s+/g, "_").toLowerCase()}_${idx + 1}.${extensionMatch}`;
+//     const link = document.createElement("a");
+//     link.href = objectUrl;
+//     link.download = fileName;
+//     document.body.appendChild(link);
+//     link.click();
+//     link.remove();
+//     URL.revokeObjectURL(objectUrl);
+//   } catch (err) {
+//     console.error("Download failed", err);
+//     toast.error("Unable to download image");
+//   }
+// };
+const handleDownloadImage = (src, title, idx) => {
   try {
-    const response = await fetch(src);
-    const blob = await response.blob();
-    const objectUrl = URL.createObjectURL(blob);
-    const extensionMatch = src.split(".").pop().split(/[?#]/)[0] || "jpg";
-    const fileName = `${title.replace(/\s+/g, "_").toLowerCase()}_${idx + 1}.${extensionMatch}`;
+    const extension =
+      src.split(".").pop().split(/[?#]/)[0] || "file";
+
     const link = document.createElement("a");
-    link.href = objectUrl;
-    link.download = fileName;
+    link.href = src;
+    link.target = "_blank";
+    link.download = `${title.replace(/\s+/g, "_").toLowerCase()}_${idx + 1}.${extension}`;
+
     document.body.appendChild(link);
     link.click();
-    link.remove();
-    URL.revokeObjectURL(objectUrl);
+    document.body.removeChild(link);
+
+    toast.success("Download started");
   } catch (err) {
     console.error("Download failed", err);
-    toast.error("Unable to download image");
+    toast.error("Unable to download file");
   }
 };
 
-const ImageCard = ({ title, images, horizontal = false }) => (
+const ImageCard = ({ title, images, field, onDelete, horizontal = false, disabled = false }) => (
   <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
     <div className="bg-gray-100 px-4 py-2 font-medium text-gray-700 text-center">
       {title}
     </div>
     <div className={`p-3 ${horizontal ? "flex gap-3 overflow-x-auto" : "grid grid-cols-1 gap-3"}`}>
-      {images.map((img, idx) => (
-        <div key={idx} className={`overflow-hidden rounded-md shadow-sm bg-white ${horizontal ? "min-w-[220px]" : ""}`}>
-          <img
-            src={img}
-            alt={`${title} ${idx + 1}`}
-            className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300"
-            onError={(e) => {
-              e.target.src = "/assets/placeholder.png";
-              e.target.alt = "Image not available";
-            }}
-          />
-          <div className="p-2 bg-gray-50 flex justify-end">
-            <button
-              type="button"
-              onClick={() => handleDownloadImage(img, title, idx)}
-              className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-            >
-              Download
-            </button>
+      {images.map((img, idx) => {
+        const isImage = isImageUrl(img);
+        return (
+          <div key={idx} className={`overflow-hidden rounded-md shadow-sm bg-white ${horizontal ? "min-w-[220px]" : ""}`}>
+            {isImage ? (
+              <img
+                src={img}
+                alt={`${title} ${idx + 1}`}
+                className="w-full h-40 object-cover hover:scale-105 transition-transform duration-300"
+                onError={(e) => {
+                  e.target.src = "/assets/placeholder.png";
+                  e.target.alt = "Image not available";
+                }}
+              />
+            ) : (
+              <div className="w-full h-40 flex flex-col items-center justify-center gap-2 rounded-md bg-gray-100 p-4 text-center text-gray-700">
+                <div className="text-4xl">📄</div>
+                <div className="text-sm font-medium">{title}</div>
+                <div className="text-xs text-gray-500 break-all">{getFileName(img)}</div>
+              </div>
+            )}
+            <div className="p-2 bg-gray-50 flex justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => handleDownloadImage(img, title, idx)}
+                disabled={disabled}
+                className="px-3 py-1 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Download
+              </button>
+              {onDelete && field && (
+                <button
+                  type="button"
+                  onClick={() => onDelete(field, img)}
+                  disabled={disabled}
+                  className="px-3 py-1 text-xs font-medium bg-red-600 text-white rounded-md hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   </div>
 );

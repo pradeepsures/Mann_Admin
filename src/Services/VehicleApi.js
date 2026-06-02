@@ -14,6 +14,7 @@ export const getAllVehicles = async ({
   isActive = "",
     isOnTrip = "",       
   isAvailable = "", 
+  isAssigned = "",
 }) => {
   const token = localStorage.getItem("token");
 
@@ -28,6 +29,7 @@ export const getAllVehicles = async ({
     if (isActive !== "") url += `&isActive=${isActive}`;
         if (isOnTrip !== "") url += `&isOnTrip=${isOnTrip}`;
     if (isAvailable !== "") url += `&isAvailable=${isAvailable}`;
+    if (isAssigned !== "") url += `&isAssigned=${isAssigned}`;
 
     const res = await fetch(url, {
       method: "GET",
@@ -155,6 +157,45 @@ export const deleteVehicle = async (id) => {
     return result;
   } catch (err) {
     toast.error(err.message || "Error deleting vehicle");
+    throw err;
+  }
+};
+
+//delete vehicle image
+export const deleteVehicleImage = async (
+  vehicleId,
+  field,
+  imageUrl = ""
+) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/vehicle/${vehicleId}/image`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          field,
+          imageUrl,
+        }),
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        result.message || "Failed to delete vehicle image"
+      );
+    }
+
+    return result;
+  } catch (err) {
+    toast.error(err.message || "Error deleting vehicle image");
     throw err;
   }
 };

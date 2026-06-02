@@ -86,6 +86,27 @@ const CreateDriver = () => {
     }
   };
 
+  const renderPreviewFile = (field, altText) => {
+    const file = formData[field];
+    if (!file) return null;
+
+    if (file.type === "application/pdf") {
+      return (
+        <div className="mt-2 mb-2 ml-2 p-3 border rounded bg-gray-100 text-sm text-gray-700">
+          📄 {file.name}
+        </div>
+      );
+    }
+
+    return (
+      <img
+        src={previews[field]}
+        alt={altText}
+        className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
+      />
+    );
+  };
+
   useEffect(() => {
     return () => {
       Object.values(previews).forEach((url) => {
@@ -422,25 +443,19 @@ const CreateDriver = () => {
           <label className="ml-2 mt-5 font-normal block">
             License Front Photo *
           </label>
-          {previews.licensePhoto && (
-            <img
-              src={previews.licensePhoto}
-              alt="License Preview"
-              className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
-            />
-          )}
+          {renderPreviewFile("licensePhoto", "License Preview")}
           <label
             htmlFor="license-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload License Photo
+            � Upload License Photo or PDF
           </label>
           <input
             id="license-upload"
             className="hidden"
             type="file"
             name="licensePhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
           {apiError.licensePhoto && (
@@ -450,25 +465,19 @@ const CreateDriver = () => {
           <label className="ml-2 mt-5 font-normal block">
             License Back Photo *
           </label>
-          {previews.licenseBackPhoto && (
-            <img
-              src={previews.licenseBackPhoto}
-              alt="License Back Preview"
-              className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
-            />
-          )}
+          {renderPreviewFile("licenseBackPhoto", "License Back Preview")}
           <label
             htmlFor="license-back-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload License Back Photo
+            � Upload License Back Photo or PDF
           </label>
           <input
             id="license-back-upload"
             className="hidden"
             type="file"
             name="licenseBackPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
           {apiError.licenseBackPhoto && (
@@ -498,25 +507,19 @@ const CreateDriver = () => {
           <label className="ml-2 mt-5 font-normal block">
             Aadhaar Front Photo *
           </label>
-          {previews.adhaarFrontPhoto && (
-            <img
-              src={previews.adhaarFrontPhoto}
-              alt="Aadhaar Front"
-              className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
-            />
-          )}
+          {renderPreviewFile("adhaarFrontPhoto", "Aadhaar Front")}
           <label
             htmlFor="adhaar-front-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload Aadhaar Front
+            � Upload Aadhaar Front Photo or PDF
           </label>
           <input
             id="adhaar-front-upload"
             className="hidden"
             type="file"
             name="adhaarFrontPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
           {apiError.adhaarFrontPhoto && (
@@ -528,25 +531,19 @@ const CreateDriver = () => {
           <label className="ml-2 mt-5 font-normal block">
             Aadhaar Back Photo *
           </label>
-          {previews.adhaarBackPhoto && (
-            <img
-              src={previews.adhaarBackPhoto}
-              alt="Aadhaar Back"
-              className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
-            />
-          )}
+          {renderPreviewFile("adhaarBackPhoto", "Aadhaar Back")}
           <label
             htmlFor="adhaar-back-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload Aadhaar Back
+            � Upload Aadhaar Back Photo or PDF
           </label>
           <input
             id="adhaar-back-upload"
             className="hidden"
             type="file"
             name="adhaarBackPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
           {apiError.adhaarBackPhoto && (
@@ -572,25 +569,19 @@ const CreateDriver = () => {
           <label className="ml-2 mt-5 font-normal block">
             PAN Front Photo *
           </label>
-          {previews.panFrontPhoto && (
-            <img
-              src={previews.panFrontPhoto}
-              alt="PAN Front"
-              className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
-            />
-          )}
+          {renderPreviewFile("panFrontPhoto", "PAN Front")}
           <label
             htmlFor="pan-front-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload PAN Front
+            📎 Upload PAN Front Photo or PDF
           </label>
           <input
             id="pan-front-upload"
             className="hidden"
             type="file"
             name="panFrontPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
           {apiError.panFrontPhoto && (
@@ -602,25 +593,19 @@ const CreateDriver = () => {
           <label className="ml-2 mt-5 font-normal block">
             PAN Back Photo *
           </label>
-          {previews.panBackPhoto && (
-            <img
-              src={previews.panBackPhoto}
-              alt="PAN Back"
-              className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
-            />
-          )}
+          {renderPreviewFile("panBackPhoto", "PAN Back")}
           <label
             htmlFor="pan-back-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload PAN Back
+            📎 Upload PAN Back Photo or PDF
           </label>
           <input
             id="pan-back-upload"
             className="hidden"
             type="file"
             name="panBackPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
           {apiError.panBackPhoto && (
@@ -642,25 +627,19 @@ const CreateDriver = () => {
           <label className="ml-2 mt-5 font-normal block">
             Police Verification Photo
           </label>
-          {previews.policeVerificationPhoto && (
-            <img
-              src={previews.policeVerificationPhoto}
-              alt="Police Verification"
-              className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
-            />
-          )}
+          {renderPreviewFile("policeVerificationPhoto", "Police Verification")}
           <label
             htmlFor="police-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload Police Verification Photo
+            📎 Upload Police Verification Photo or PDF
           </label>
           <input
             id="police-upload"
             className="hidden"
             type="file"
             name="policeVerificationPhoto"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
 
@@ -668,25 +647,19 @@ const CreateDriver = () => {
           <label className="ml-2 mt-5 font-normal block">
             Profile Picture *
           </label>
-          {previews.profilePic && (
-            <img
-              src={previews.profilePic}
-              alt="Profile Preview"
-              className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
-            />
-          )}
+          {renderPreviewFile("profilePic", "Profile Preview")}
           <label
             htmlFor="profile-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            🖼️ Upload Profile Picture
+            📎 Upload Profile Picture 
           </label>
           <input
             id="profile-upload"
             className="hidden"
             type="file"
             name="profilePic"
-            accept="image/*"
+            accept="image/*,application/pdf"
             onChange={handleFileChange}
           />
           {apiError.profilePic && (

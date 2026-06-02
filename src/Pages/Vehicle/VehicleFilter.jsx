@@ -83,6 +83,7 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
       isActive: localFilters.isActive || "",
       isOnTrip: localFilters.isOnTrip || "",
       isAvailable: localFilters.isAvailable || "",
+      isAssigned: localFilters.isAssigned || "",
     });
   };
 
@@ -219,6 +220,17 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
           onChange={(e) => handleChange("isAvailable", e.target.value)}
         >
           <option value="">Available</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select>
+
+        {/* ASSIGNED */}
+        <select
+          className="border p-2 rounded-xl"
+          value={localFilters.isAssigned || ""}
+          onChange={(e) => handleChange("isAssigned", e.target.value)}
+        >
+          <option value="">Assigned</option>
           <option value="true">Yes</option>
           <option value="false">No</option>
         </select>

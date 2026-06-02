@@ -107,6 +107,7 @@ export default function VehicleList() {
         isActive,
         isAvailable,
         isOnTrip,
+        // isAssigned
       });
       // const result = await getAllVehicles({
       //   page,
@@ -166,6 +167,7 @@ export default function VehicleList() {
       isActive: f.isActive || "",
       isOnTrip: f.isOnTrip || "",
       isAvailable: f.isAvailable || "",
+      isAssigned: f.isAssigned || "",
     });
   };
 

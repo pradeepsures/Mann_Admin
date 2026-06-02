@@ -24,7 +24,8 @@ export const getAllBookings = async ({
   driverPhone,
   carNumber,
   scheduledStartDate,
-  scheduledEndDate
+  scheduledEndDate,
+  upcoming
 }) => {
   const token = localStorage.getItem("token");
 
@@ -53,6 +54,8 @@ export const getAllBookings = async ({
     if (driverName) params.append("driverName", driverName);
     if (driverPhone) params.append("driverPhone", driverPhone);
     if (carNumber) params.append("carNumber", carNumber);
+    if (upcoming !== undefined && upcoming !== "")
+  params.append("upcoming", upcoming);
 
     const res = await fetch(
       `${BASE_URL}/api/admin/booking?${params.toString()}`,

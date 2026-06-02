@@ -250,6 +250,40 @@ export const deleteDriver = async (id) => {
 
 };
 
+//delete driver image okay
+export const deleteDriverImage = async (driverId, field) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/drivers/${driverId}/image`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          field,
+        }),
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        result.message || "Failed to delete driver image"
+      );
+    }
+
+    return result;
+  } catch (err) {
+    toast.error(err.message || "Error deleting driver image");
+    throw err;
+  }
+};
+
 
 // ✅ GET VEHICLE BOOKING DETAILS
 // export const getDriverBooking = async (id) => {
