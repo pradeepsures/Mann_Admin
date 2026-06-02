@@ -247,10 +247,10 @@ export default function BookingList() {
   // }, [isAssignModalOpen, searchDriver, fetchDrivers]);
 
   useEffect(() => {
-    if (isAssignModalOpen && selectedSegment) {
+    if ((isAssignModalOpen || isReassignModalOpen) && selectedSegment) {
       fetchDrivers();
     }
-  }, [isAssignModalOpen, selectedSegment, fetchDrivers]);
+  }, [isAssignModalOpen, isReassignModalOpen, selectedSegment, fetchDrivers]);
 
   const handlePageChange = (e, value) => {
     setPage(value);
@@ -366,6 +366,32 @@ export default function BookingList() {
           },
           { label: "Vehicle Brand", value: (r) => r.vehicle?.brand || "-" },
           { label: "Vehicle Model", value: (r) => r.vehicle?.model || "-" },
+          { label: "Vehicle Color", value: (r) => r.vehicle?.color || "-" },
+          { label: "Fuel Type", value: (r) => r.vehicle?.fuelType || "-" },
+          { label: "Year", value: (r) => r.vehicle?.year || "-" },
+          { label: "Boot Space", value: (r) => r.vehicle?.bootSpace || "-" },
+          { label: "Capacity", value: (r) => r.vehicle?.capacity || "-" },
+          { label: "Sticker Number",  value: (r) => r.vehicle?.stickerNumber || "-",},
+          { label: "Chassis Number", value: (r) => r.vehicle?.chassisNumber || "-", },
+          { label: "Engine Number", value: (r) => r.vehicle?.engineNumber || "-", },
+          { label: "Certificate Number", value: (r) => r.vehicle?.certificateNumber || "-", },
+          { label: "Certificate Expiry", value: (r) => r.vehicle?.certificateExpiry || "-", },
+          { label: "Insurance Number", value: (r) => r.vehicle?.insuranceNumber || "-", },
+          { label: "Insurance Issue Date", value: (r) => r.vehicle?.insuranceIssueDate || "-", },
+          { label: "Insurance Expiry", value: (r) => r.vehicle?.insuranceExpiry || "-", },
+          { label: "Pollution Number", value: (r) => r.vehicle?.pollutionNumber || "-", },
+          { label: "Pollution Start Date", value: (r) => r.vehicle?.pollutionStartDate || "-", },
+          { label: "Pollution Expiry Date", value: (r) => r.vehicle?.pollutionExpiryDate || "-", },
+          { label: "Fitness Number", value: (r) => r.vehicle?.fitnessNumber || "-", },
+          { label: "Fitness Start Date", value: (r) => r.vehicle?.fitnessStartDate || "-", },
+          { label: "Fitness Expiry Date", value: (r) => r.vehicle?.fitnessExpiryDate || "-",},
+          { label: "Permit Number", value: (r) => r.vehicle?.permitNumber || "-", },
+          { label: "Permit Start Date", value: (r) => r.vehicle?.permitStartDate || "-", },
+          { label: "Permit Expiry Date", value: (r) => r.vehicle?.permitExpiryDate || "-", },
+          { label: "RC Issue Date", value: (r) => r.vehicle?.rcIssueDate || "-",},
+          { label: "RC Expiry", value: (r) => r.vehicle?.rcExpeiry || "-", },
+          { label: "Purchase Date", value: (r) => r.vehicle?.dateOfPurchase || "-", },
+          { label: "Registration Date", value: (r) => r.vehicle?.dateOfRegistration || "-", },
 
           { label: "Driver Name", value: (r) => r.driver?.name || "-" },
           { label: "Driver Phone", value: (r) => r.driver?.phone || "-" },

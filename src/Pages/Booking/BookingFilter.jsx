@@ -132,7 +132,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
         />
 
         {/* DATE */}
-
+{/* 
         <input
           type={localFilters.startDate ? "date" : "text"}
           className="border p-2 rounded-2xl w-full"
@@ -143,8 +143,8 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
             if (!e.target.value) e.target.type = "text";
           }}
           onChange={(e) => handleChange("startDate", e.target.value)}
-        />
-
+        /> */}
+{/* 
         <input
           type={localFilters.endDate ? "date" : "text"}
           className="border p-2 rounded-2xl w-full"
@@ -155,14 +155,14 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
             if (!e.target.value) e.target.type = "text";
           }}
           onChange={(e) => handleChange("endDate", e.target.value)}
-        />
+        /> */}
 
         {/* schedule at */}
         {/* SCHEDULED START DATE */}
         <input
           type={localFilters.scheduledStartDate ? "date" : "text"}
           className="border p-2 rounded-2xl w-full"
-          placeholder="Scheduled Start Date"
+          placeholder="Schedule Start Date"
           value={localFilters.scheduledStartDate || ""}
           onFocus={(e) => (e.target.type = "date")}
           onBlur={(e) => {
@@ -175,7 +175,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
         <input
           type={localFilters.scheduledEndDate ? "date" : "text"}
           className="border p-2 rounded-2xl w-full"
-          placeholder="Scheduled End Date"
+          placeholder="Schedule End Date"
           value={localFilters.scheduledEndDate || ""}
           onFocus={(e) => (e.target.type = "date")}
           onBlur={(e) => {
