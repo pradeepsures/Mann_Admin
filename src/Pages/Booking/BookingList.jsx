@@ -19,7 +19,8 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { Modal, Select } from "antd";
 import xlsx from "json-as-xlsx";
-import { EyeIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, PencilIcon } from "@heroicons/react/24/outline";
+import EditIcon from "@mui/icons-material/Edit";
 
 import Loader from "../../compoents/Loader";
 import Breaker from "../../compoents/Breaker";
@@ -31,9 +32,11 @@ import {
   getAllBookings,
   assignDriver as assignDriverApi,
   getUnassignedDriversBySegment,
+  updateBookingSegment,
 } from "../../Services/BookingApi";
 import { getAllDrivers } from "../../Services/DriverApi";
 import { reassignCancelRequestApi } from "../../Services/RequestApi";
+import { getAllSegment } from "../../Services/SegmentApi";
 
 const { Option } = Select;
 
@@ -98,6 +101,15 @@ export default function BookingList() {
   const [drivers, setDrivers] = useState([]);
   const [driversLoading, setDriversLoading] = useState(false);
   const [stats, setStats] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // SEGMENT EDIT
+  const [isSegmentEditModalOpen, setIsSegmentEditModalOpen] = useState(false);
+  const [selectedBookingForSegment, setSelectedBookingForSegment] =
+    useState(null);
+  const [selectedSegmentForUpdate, setSelectedSegmentForUpdate] = useState("");
+  const [availableSegments, setAvailableSegments] = useState([]);
+  const [segmentsLoading, setSegmentsLoading] = useState(false);
 
   // ✅ FETCH BOOKINGS
   const fetchBookings = useCallback(
@@ -240,12 +252,6 @@ export default function BookingList() {
   //   }
   // }, []);
 
-  // useEffect(() => {
-  //   if (isAssignModalOpen) {
-  //     fetchDrivers(searchDriver);
-  //   }
-  // }, [isAssignModalOpen, searchDriver, fetchDrivers]);
-
   useEffect(() => {
     if ((isAssignModalOpen || isReassignModalOpen) && selectedSegment) {
       fetchDrivers();
@@ -266,18 +272,74 @@ export default function BookingList() {
   };
 
   const handleAssignDriver = (bookingId, segmentId) => {
+    setAnchorEl(null);
     setSelectedRowId(bookingId);
     setSelectedSegment(segmentId); // ✅ now correct
     setIsAssignModalOpen(true);
     setSelectedDriver("");
     setSearchDriver("");
+    setDropdownOpen(true);
   };
 
   const handleReassignDriver = (bookingId, segmentId) => {
+    setAnchorEl(null);
     setSelectedRowId(bookingId);
     setSelectedSegment(segmentId);
     setIsReassignModalOpen(true);
     setSelectedDriver("");
+    setDropdownOpen(true);
+  };
+
+  // SEGMENT EDIT HANDLERS
+  const fetchSegments = useCallback(async () => {
+    setSegmentsLoading(true);
+    try {
+      const res = await getAllSegment({ page: 1, rowsPerPage: 100 });
+      if (res?.status) {
+        setAvailableSegments(res.data || []);
+      }
+    } catch (err) {
+      toast.error("Failed to load segments");
+    } finally {
+      setSegmentsLoading(false);
+    }
+  }, []);
+
+  const handleEditSegment = (bookingId, currentSegmentId) => {
+    setSelectedBookingForSegment(bookingId);
+    setSelectedSegmentForUpdate(currentSegmentId || "");
+    setIsSegmentEditModalOpen(true);
+    fetchSegments();
+  };
+
+  const handleSegmentEditClose = () => {
+    setIsSegmentEditModalOpen(false);
+    setSelectedBookingForSegment(null);
+    setSelectedSegmentForUpdate("");
+  };
+
+  const handleSegmentUpdateSubmit = async () => {
+    if (!selectedSegmentForUpdate) {
+      toast.error("Please select a segment");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await updateBookingSegment(
+        selectedBookingForSegment,
+        selectedSegmentForUpdate,
+      );
+
+      if (res?.status) {
+        fetchBookings();
+        handleSegmentEditClose();
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to update segment");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // const handleAssignSubmit = async () => {
@@ -371,27 +433,87 @@ export default function BookingList() {
           { label: "Year", value: (r) => r.vehicle?.year || "-" },
           { label: "Boot Space", value: (r) => r.vehicle?.bootSpace || "-" },
           { label: "Capacity", value: (r) => r.vehicle?.capacity || "-" },
-          { label: "Sticker Number",  value: (r) => r.vehicle?.stickerNumber || "-",},
-          { label: "Chassis Number", value: (r) => r.vehicle?.chassisNumber || "-", },
-          { label: "Engine Number", value: (r) => r.vehicle?.engineNumber || "-", },
-          { label: "Certificate Number", value: (r) => r.vehicle?.certificateNumber || "-", },
-          { label: "Certificate Expiry", value: (r) => r.vehicle?.certificateExpiry || "-", },
-          { label: "Insurance Number", value: (r) => r.vehicle?.insuranceNumber || "-", },
-          { label: "Insurance Issue Date", value: (r) => r.vehicle?.insuranceIssueDate || "-", },
-          { label: "Insurance Expiry", value: (r) => r.vehicle?.insuranceExpiry || "-", },
-          { label: "Pollution Number", value: (r) => r.vehicle?.pollutionNumber || "-", },
-          { label: "Pollution Start Date", value: (r) => r.vehicle?.pollutionStartDate || "-", },
-          { label: "Pollution Expiry Date", value: (r) => r.vehicle?.pollutionExpiryDate || "-", },
-          { label: "Fitness Number", value: (r) => r.vehicle?.fitnessNumber || "-", },
-          { label: "Fitness Start Date", value: (r) => r.vehicle?.fitnessStartDate || "-", },
-          { label: "Fitness Expiry Date", value: (r) => r.vehicle?.fitnessExpiryDate || "-",},
-          { label: "Permit Number", value: (r) => r.vehicle?.permitNumber || "-", },
-          { label: "Permit Start Date", value: (r) => r.vehicle?.permitStartDate || "-", },
-          { label: "Permit Expiry Date", value: (r) => r.vehicle?.permitExpiryDate || "-", },
-          { label: "RC Issue Date", value: (r) => r.vehicle?.rcIssueDate || "-",},
-          { label: "RC Expiry", value: (r) => r.vehicle?.rcExpeiry || "-", },
-          { label: "Purchase Date", value: (r) => r.vehicle?.dateOfPurchase || "-", },
-          { label: "Registration Date", value: (r) => r.vehicle?.dateOfRegistration || "-", },
+          {
+            label: "Sticker Number",
+            value: (r) => r.vehicle?.stickerNumber || "-",
+          },
+          {
+            label: "Chassis Number",
+            value: (r) => r.vehicle?.chassisNumber || "-",
+          },
+          {
+            label: "Engine Number",
+            value: (r) => r.vehicle?.engineNumber || "-",
+          },
+          {
+            label: "Certificate Number",
+            value: (r) => r.vehicle?.certificateNumber || "-",
+          },
+          {
+            label: "Certificate Expiry",
+            value: (r) => r.vehicle?.certificateExpiry || "-",
+          },
+          {
+            label: "Insurance Number",
+            value: (r) => r.vehicle?.insuranceNumber || "-",
+          },
+          {
+            label: "Insurance Issue Date",
+            value: (r) => r.vehicle?.insuranceIssueDate || "-",
+          },
+          {
+            label: "Insurance Expiry",
+            value: (r) => r.vehicle?.insuranceExpiry || "-",
+          },
+          {
+            label: "Pollution Number",
+            value: (r) => r.vehicle?.pollutionNumber || "-",
+          },
+          {
+            label: "Pollution Start Date",
+            value: (r) => r.vehicle?.pollutionStartDate || "-",
+          },
+          {
+            label: "Pollution Expiry Date",
+            value: (r) => r.vehicle?.pollutionExpiryDate || "-",
+          },
+          {
+            label: "Fitness Number",
+            value: (r) => r.vehicle?.fitnessNumber || "-",
+          },
+          {
+            label: "Fitness Start Date",
+            value: (r) => r.vehicle?.fitnessStartDate || "-",
+          },
+          {
+            label: "Fitness Expiry Date",
+            value: (r) => r.vehicle?.fitnessExpiryDate || "-",
+          },
+          {
+            label: "Permit Number",
+            value: (r) => r.vehicle?.permitNumber || "-",
+          },
+          {
+            label: "Permit Start Date",
+            value: (r) => r.vehicle?.permitStartDate || "-",
+          },
+          {
+            label: "Permit Expiry Date",
+            value: (r) => r.vehicle?.permitExpiryDate || "-",
+          },
+          {
+            label: "RC Issue Date",
+            value: (r) => r.vehicle?.rcIssueDate || "-",
+          },
+          { label: "RC Expiry", value: (r) => r.vehicle?.rcExpeiry || "-" },
+          {
+            label: "Purchase Date",
+            value: (r) => r.vehicle?.dateOfPurchase || "-",
+          },
+          {
+            label: "Registration Date",
+            value: (r) => r.vehicle?.dateOfRegistration || "-",
+          },
 
           { label: "Driver Name", value: (r) => r.driver?.name || "-" },
           { label: "Driver Phone", value: (r) => r.driver?.phone || "-" },
@@ -453,7 +575,6 @@ export default function BookingList() {
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       {/* <Breaker /> */}
-
       <div className="flex justify-between items-center mb-4">
         {/* LEFT */}
         <Breaker />
@@ -522,14 +643,12 @@ export default function BookingList() {
           </div>
         )}
       </div>
-
       {/* ✅ FIXED FILTER */}
       <BookingFilter
         appliedFilters={filters} // ⭐ IMPORTANT FIX
         onApply={handleApplyFilters}
         onReset={handleResetFilters}
       />
-
       <div className="flex justify-between mb-6">
         <div />
         <motion.button
@@ -540,7 +659,6 @@ export default function BookingList() {
           {isExporting ? <LoderBtn /> : "Export Excel"}
         </motion.button>
       </div>
-
       <TableContainer component={Paper} className="rounded-xl shadow">
         <Table>
           <TableHead>
@@ -632,7 +750,21 @@ export default function BookingList() {
                       "-"
                     )}
                   </TableCell>
-                  <TableCell>{row.segment?.name || "-"}</TableCell>
+
+                  {/* <TableCell>{row.segment?.name || "-"}</TableCell> */}
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <span>{row.segment?.name || "-"}</span>
+
+                      <EditIcon
+                        className="h-4 w-4 text-blue-600 cursor-pointer"
+                        onClick={() =>
+                          handleEditSegment(row._id, row.segment?._id)
+                        }
+                      />
+                    </div>
+                  </TableCell>
+
                   <TableCell>
                     {row.vehicle ? (
                       <>
@@ -711,7 +843,15 @@ export default function BookingList() {
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl) && selectedRowId === row._id}
                       onClose={handleMenuClose}
+                      MenuListProps={{
+                        onClick: (e) => e.stopPropagation(),
+                      }}
                     >
+                      {/* <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl) && selectedRowId === row._id}
+                      onClose={handleMenuClose}
+                    > */}
                       <MenuItem
                         onClick={() =>
                           navigate(`/home/booking/bookingdetails/${row._id}`)
@@ -744,7 +884,6 @@ export default function BookingList() {
           </TableBody>
         </Table>
       </TableContainer>
-
       {totalPages > 1 && (
         <Stack alignItems="center" mt={5}>
           <Pagination
@@ -754,7 +893,6 @@ export default function BookingList() {
           />
         </Stack>
       )}
-
       {/* MODAL */}
       <Modal
         title="Assign Chauffeur"
@@ -766,12 +904,13 @@ export default function BookingList() {
         }}
         onOk={handleAssignSubmit}
       >
-        <Select
+        {/* <Select
           showSearch
+          open={dropdownOpen} // 🔥 FORCE OPEN
+          onDropdownVisibleChange={(open) => setDropdownOpen(open)} // keep control
           placeholder="Select Chauffeur"
           value={selectedDriver || undefined}
           onChange={(val) => setSelectedDriver(val)}
-          onSearch={(val) => setSearchDriver(val)}
           style={{ width: "100%" }}
           loading={driversLoading}
         >
@@ -779,9 +918,69 @@ export default function BookingList() {
             <Option key={d._id} value={d._id}>
               {d.name} {d.phone ? `(${d.phone})` : ""}
             </Option>
-            // <Option key={d._id} value={d._id}>
-            //   {d.name || d.phone}
-            // </Option>
+          ))}
+        </Select> */}
+        <div onClick={(e) => e.stopPropagation()}>
+          <Select
+            showSearch
+            open={dropdownOpen}
+            placeholder="Select Chauffeur"
+            value={selectedDriver || undefined}
+            onChange={(val) => setSelectedDriver(val)}
+            style={{ width: "100%" }}
+            loading={driversLoading}
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              option?.children
+                ?.toString()
+                .toLowerCase()
+                .includes(input.toLowerCase())
+            }
+          >
+            {drivers.map((d) => (
+              <Option key={d._id} value={d._id}>
+                {d.name} | {d.phone ? `(${d.phone})` : ""}
+              </Option>
+            ))}
+          </Select>
+          {/* <Select
+            showSearch
+            open={dropdownOpen}
+            onDropdownVisibleChange={(open) => setDropdownOpen(open)}
+            placeholder="Select Chauffeur"
+            value={selectedDriver || undefined}
+            onChange={(val) => setSelectedDriver(val)}
+            style={{ width: "100%" }}
+            loading={driversLoading}
+          >
+            {drivers.map((d) => (
+              <Option key={d._id} value={d._id}>
+                {d.name} | {d.phone ? `(${d.phone})` : ""}
+              </Option>
+            ))}
+          </Select> */}
+        </div>
+      </Modal>
+      //segment model
+      <Modal
+        title="Update Booking Segment"
+        open={isSegmentEditModalOpen}
+        onCancel={handleSegmentEditClose}
+        onOk={handleSegmentUpdateSubmit}
+        okText="Update"
+      >
+        <Select
+          showSearch
+          placeholder="Select Segment"
+          value={selectedSegmentForUpdate || undefined}
+          onChange={(val) => setSelectedSegmentForUpdate(val)}
+          style={{ width: "100%" }}
+          loading={segmentsLoading}
+        >
+          {availableSegments.map((s) => (
+            <Option key={s._id} value={s._id}>
+              {s.name}
+            </Option>
           ))}
         </Select>
       </Modal>

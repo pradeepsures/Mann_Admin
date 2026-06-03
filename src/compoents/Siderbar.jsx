@@ -512,7 +512,7 @@ const Sidebar = () => {
                     {menu.subMenus && (
                       <div
                         className={`overflow-hidden transition-all duration-300 ${
-                          activeMenu === index ? "max-h-[500px]" : "max-h-0"
+                          activeMenu === index ? "max-h-[1000px]" : "max-h-0"
                         }`}
                       >
                         {/* {menu.subMenus.map((subMenu, subIndex) => (

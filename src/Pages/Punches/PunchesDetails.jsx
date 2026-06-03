@@ -6,6 +6,12 @@ import toast from "react-hot-toast";
 
 import { getPunchById } from "../../Services/PunchesApi";
 
+const formatText = (text) => {
+  if (!text) return "N/A";
+
+  return text.replace(/[_-]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
 const PunchView = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -173,6 +179,115 @@ const PunchView = () => {
                 </div>
               </div>
             </div>
+
+            {/* 🔹 CURRENT BOOKING DETAILS */}
+            {data?.currentBooking?.booking && (
+              <div className="bg-orange-50 p-5 rounded-xl border">
+                <h3 className="font-semibold mb-4 text-orange-700">
+                  Current Booking Details
+                </h3>
+
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Booking Number</p>
+                    <p className="font-medium">
+                      {show(data.currentBooking.booking.bookingNumber)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Traveller Name</p>
+                    <p className="font-medium">
+                      {show(data.currentBooking.booking.travellerName)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Traveller Phone</p>
+                    <p className="font-medium">
+                      {show(data.currentBooking.booking.travellerPhone)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Booking Type</p>
+                    <p>{formatText(data.currentBooking.booking.bookingType)}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Trip Status</p>
+                    <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                      {formatText(data.currentBooking.booking.tripStatus)}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Assignment Status</p>
+                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs">
+                      {formatText(data.currentBooking.booking.assignmentStatus)}
+                    </span>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Overall Status</p>
+                    <p>
+                      {formatText(data.currentBooking.booking.overallStatus)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Estimated Fare</p>
+                    <p className="font-semibold text-green-600">
+                      ₹ {data.currentBooking.booking.estimatedFare || 0}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Scheduled At</p>
+                    <p>
+                      {data.currentBooking.booking.scheduledAt
+                        ? new Date(
+                            data.currentBooking.booking.scheduledAt,
+                          ).toLocaleString()
+                        : "N/A"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pickup & Drop */}
+                <div className="grid md:grid-cols-2 gap-4 mt-5">
+                  <div className="bg-white p-4 rounded-lg border">
+                    <h4 className="font-semibold text-green-700 mb-2">
+                      Pickup Details
+                    </h4>
+
+                    <p className="text-sm text-gray-500">Address</p>
+                    <p>{show(data.currentBooking.booking.pickup?.address)}</p>
+
+                    <div className="mt-2 text-xs text-gray-600">
+                      Lat: {show(data.currentBooking.booking.pickup?.lat)}
+                      <br />
+                      Lng: {show(data.currentBooking.booking.pickup?.lng)}
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-4 rounded-lg border">
+                    <h4 className="font-semibold text-red-700 mb-2">
+                      Drop Details
+                    </h4>
+
+                    <p className="text-sm text-gray-500">Address</p>
+                    <p>{show(data.currentBooking.booking.dropoff?.address)}</p>
+
+                    <div className="mt-2 text-xs text-gray-600">
+                      Lat: {show(data.currentBooking.booking.dropoff?.lat)}
+                      <br />
+                      Lng: {show(data.currentBooking.booking.dropoff?.lng)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* 🔹 REGION & PUNCH REGION */}
             <div className="bg-green-50 p-5 rounded-xl border">

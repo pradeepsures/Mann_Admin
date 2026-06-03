@@ -64,24 +64,27 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
   }, [driverSearch]);
 
   // ───────── APPLY ─────────
+  // const handleApply = () => {
+  //   const cleaned = { ...localFilters };
+
+  //   onApply({
+  //     searchQuery: cleaned.search || "",
+  //     isVerified: cleaned.isVerified || "",
+  //     isOnline: cleaned.isOnline || "",
+  //     region: cleaned.region || "",
+
+  //     isPunchedIn: cleaned.isPunchedIn || "",
+  //     isPunchedOut: cleaned.isPunchedOut || "",
+  //     isOnTrip: cleaned.isOnTrip || "",
+  //     isAssigned: cleaned.isAssigned || "",
+  //     isAvailable: cleaned.isAvailable || "",
+
+  //     startDate: cleaned.startDate || "",
+  //     endDate: cleaned.endDate || "",
+  //   });
+  // };
   const handleApply = () => {
-    const cleaned = { ...localFilters };
-
-    onApply({
-      searchQuery: cleaned.search || "",
-      isVerified: cleaned.isVerified || "",
-      isOnline: cleaned.isOnline || "",
-      region: cleaned.region || "",
-
-      isPunchedIn: cleaned.isPunchedIn || "",
-      isPunchedOut: cleaned.isPunchedOut || "",
-      isOnTrip: cleaned.isOnTrip || "",
-      isAssigned: cleaned.isAssigned || "",
-      isAvailable: cleaned.isAvailable || "",
-
-      startDate: cleaned.startDate || "",
-      endDate: cleaned.endDate || "",
-    });
+    onApply(localFilters);
   };
 
   return (
@@ -119,9 +122,18 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
           onChange={(e) => handleChange("isVerified", e.target.value)}
         >
           <option value="">Verified</option>
-          <option value="true">Verified</option>
-          <option value="false">Unverified</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
         </select>
+        {/* <select
+          className="border p-2 rounded-xl"
+          value={localFilters.isVerified || ""}
+          onChange={(e) => handleChange("isVerified", e.target.value)}
+        >
+          <option value="">Verified</option>
+          <option value="true">Verified - yes</option>
+          <option value="false">Unverified</option>
+        </select> */}
 
         {/* ONLINE */}
         <select

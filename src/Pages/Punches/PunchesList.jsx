@@ -61,6 +61,7 @@ export default function PunchList() {
     status: "",
     startDate: "",
     endDate: "",
+    punchStatus: "",
   });
 
   const [localFilters, setLocalFilters] = useState({ ...filters });
@@ -156,6 +157,7 @@ export default function PunchList() {
       status: "",
       startDate: "",
       endDate: "",
+      punchStatus: "",
     };
     setLocalFilters(empty);
     setFilters(empty);
@@ -259,7 +261,7 @@ export default function PunchList() {
           </Select>
 
           {/* STATUS */}
-          <select
+          {/* <select
             className="border p-2 rounded-2xl"
             value={localFilters.status}
             onChange={(e) =>
@@ -269,6 +271,20 @@ export default function PunchList() {
             <option value="">All Status</option>
             <option value="completed">Completed</option>
             <option value="pending">Pending</option>
+          </select> */}
+
+          {/* PUNCh STATUS */}
+          <select
+            className="border p-2 rounded-2xl"
+            value={localFilters.punchStatus}
+            onChange={(e) =>
+              setLocalFilters({ ...localFilters, punchStatus: e.target.value })
+            }
+          >
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="completed">Completed</option>
+            <option value="not_punched">Not Punched</option>
           </select>
 
           {/* DATE */}
@@ -358,6 +374,7 @@ export default function PunchList() {
               <StyledTableCell>PUNCH REGION</StyledTableCell>
               <StyledTableCell>STATUS</StyledTableCell>
               <StyledTableCell>PUNCH IN</StyledTableCell>
+              <StyledTableCell>BOOKING DETAILS</StyledTableCell>
               <StyledTableCell>PUNCH OUT</StyledTableCell>
               <StyledTableCell align="center">ACTIONS</StyledTableCell>
             </TableRow>
@@ -368,7 +385,22 @@ export default function PunchList() {
               <TableRow key={row.id}>
                 <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
 
-                <TableCell>{row?.driver?.name}</TableCell>
+                {/* <TableCell>{row?.driver?.name}</TableCell> */}
+                <TableCell>
+                  <div>
+                    <div className="font-medium text-gray-800">
+                      {row?.driver?.name || "-"}
+                    </div>
+
+                    <div className="text-xs text-blue-600">
+                      📞 {row?.driver?.phone || "-"}
+                    </div>
+
+                    <div className="text-xs text-purple-600">
+                      Grade: {row?.driver?.grade || "-"}
+                    </div>
+                  </div>
+                </TableCell>
                 <TableCell>{row?.region?.name}</TableCell>
                 <TableCell>{row?.punchRegion?.name}</TableCell>
 
@@ -384,7 +416,72 @@ export default function PunchList() {
                   </span>
                 </TableCell>
 
-                <TableCell>{formatPunchDate(row?.punchInAtIST)}</TableCell>
+                <TableCell>
+                  {/* {formatPunchDate(row?.punchInAtIST)} */}
+                  <div className="text-xs text-green-600">
+                    Punch In:{" "}
+                    {row?.punchInAt
+                      ? new Date(row.punchInAt).toLocaleString()
+                      : "-"}
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  {row?.currentBooking?.booking ? (
+                    <div className="space-y-1 text-xs">
+                      <div className="font-semibold text-blue-700">
+                        {row.currentBooking.booking.bookingNumber}
+                      </div>
+
+                      <div className="font-medium">
+                        {row.currentBooking.booking.travellerName}
+                      </div>
+
+                      <div className="text-gray-600">
+                        📞 {row.currentBooking.booking.travellerPhone}
+                      </div>
+
+                      <div className="text-indigo-600">
+                        {row.currentBooking.booking.bookingType
+                          ?.replaceAll("_", " ")
+                          ?.toUpperCase()}
+                      </div>
+
+                      <span
+                        className={`inline-block px-2 py-1 rounded text-[10px]
+          ${
+            row.currentBooking.booking.tripStatus === "completed"
+              ? "bg-green-100 text-green-700"
+              : row.currentBooking.booking.tripStatus === "arrived"
+                ? "bg-blue-100 text-blue-700"
+                : "bg-yellow-100 text-yellow-700"
+          }
+        `}
+                      >
+                        {row.currentBooking.booking.tripStatus?.replaceAll(
+                          "_",
+                          " ",
+                        )}
+                      </span>
+
+                      <div className="text-gray-500 truncate max-w-[250px]">
+                        📍 {row.currentBooking.booking.pickup?.address}
+                      </div>
+
+                      <div className="text-gray-500 truncate max-w-[250px]">
+                        🏁 {row.currentBooking.booking.dropoff?.address}
+                      </div>
+                      <div className="text-gray-600">
+                        Fare {row.currentBooking.booking.estimatedFare}
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-green-600 font-medium">
+                     No Booking
+                    </span>
+                  )}
+                </TableCell>
+
                 <TableCell>
                   {row?.punchOutAtIST
                     ? formatPunchDate(row.punchOutAtIST)

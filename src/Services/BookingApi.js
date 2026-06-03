@@ -212,3 +212,37 @@ export const getPickupVerification = async (bookingId) => {
     throw err;
   }
 };
+
+export const updateBookingSegment = async (bookingId, segmentId) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/bookingSegmentUpdate/${bookingId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ segmentId }),
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok || result.status === false) {
+      const errorMessage =
+        result.message || "Failed to update booking segment";
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    toast.success(result.message || "Booking segment updated successfully");
+
+    return result;
+  } catch (err) {
+    toast.error(err.message || "Something went wrong");
+    throw err;
+  }
+};

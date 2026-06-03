@@ -427,8 +427,16 @@ export default function BookingDetails() {
             label="Extra Status"
             value={data.payment?.extraPayment?.status}
           />
+            <Field
+            label="Order ID"
+            value={data.payment?.orderId}
+          />
+          <Field
+            label="Transaction ID"
+            value={data.payment?.transactionId}
+          />
         </Section>
-
+        
         {/* FARE */}
         <Section title="Fare">
           <Field label="Estimated Fare" value={data.estimatedFare} />

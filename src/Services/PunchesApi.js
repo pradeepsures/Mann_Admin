@@ -11,6 +11,7 @@ export const getAllPunches = async ({
   status = "",
   startDate = "",
   endDate = "",
+  punchStatus = "",
 } = {}) => {
   const token = localStorage.getItem("token");
 
@@ -23,7 +24,7 @@ export const getAllPunches = async ({
     if (status) url += `&status=${status}`;
     if (startDate) url += `&startDate=${startDate}`;
     if (endDate) url += `&endDate=${endDate}`;
-
+    if (punchStatus) url += `&punchStatus=${punchStatus}`;
     const res = await fetch(url, {
       method: "GET",
       headers: {
