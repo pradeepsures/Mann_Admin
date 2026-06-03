@@ -10,6 +10,10 @@ const { Option } = Select;
 
 const DEFAULT_REGION_ID = "6a041b845a5ee14acc6f9de1";
 
+const validateName = (value) => {
+  return /^[A-Za-z\s]+$/.test(value);
+};
+
 const CreateDriver = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -160,6 +164,19 @@ const CreateDriver = () => {
     setApiError({});
 
     const errors = {};
+    if (!formData.name.trim()) {
+      errors.name = "First name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.name.trim())) {
+      errors.name = "First name can contain only letters";
+    }
+
+    if (formData.midName && !/^[A-Za-z\s]+$/.test(formData.midName.trim())) {
+      errors.midName = "Middle name can contain only letters";
+    }
+
+    if (formData.lastName && !/^[A-Za-z\s]+$/.test(formData.lastName.trim())) {
+      errors.lastName = "Last name can contain only letters";
+    }
     if (!formData.name.trim()) errors.name = "Name is required.";
     if (!formData.phone) {
       errors.phone = "Phone number is required";
@@ -172,9 +189,41 @@ const CreateDriver = () => {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
       errors.email = "Enter a valid email address (e.g. Ashwani@Manntours.com)";
     }
+    if (formData.adhaarNumber && !/^\d{12}$/.test(formData.adhaarNumber)) {
+      errors.adhaarNumber = "Aadhaar number must be exactly 12 digits";
+    }
 
+    const pan = (formData.panNumber || "").trim().toUpperCase();
+
+  if (formData.panNumber?.trim()) {
+  const pan = formData.panNumber.trim().toUpperCase();
+  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
+  if (!panRegex.test(pan)) {
+    errors.panNumber = "Invalid PAN format (e.g. ABCDE1234F)";
+  }
+}
+    if (formData.pincode) {
+      const pin = formData.pincode.trim();
+      const pinRegex = /^[1-9][0-9]{5}$/;
+
+      if (!pinRegex.test(pin)) {
+        errors.pincode =
+          "Invalid PIN code (must be 6 digits, not starting with 0)";
+      }
+    }
+
+    // if (Object.keys(errors).length > 0) {
+    //   setApiError(errors);
+    //   setLoading(false);
+    //   return;
+    // }
     if (Object.keys(errors).length > 0) {
       setApiError(errors);
+
+      // Show first validation error in toast
+      toast.error(Object.values(errors)[0]);
+
       setLoading(false);
       return;
     }
@@ -249,7 +298,16 @@ const CreateDriver = () => {
             name="name"
             placeholder="Enter full name"
             value={formData.name}
-            onChange={handleChange}
+            // onChange={handleChange}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (value === "" || /^[A-Za-z\s]+$/.test(value)) {
+                setFormData({ ...formData, name: value });
+              } else {
+                toast.error("First Name accepts letters only");
+              }
+            }}
           />
           {apiError.name && (
             <p className="text-red-500 text-sm ml-2">{apiError.name}</p>
@@ -263,7 +321,16 @@ const CreateDriver = () => {
             name="midName"
             placeholder="Enter middle name (optional)"
             value={formData.midName}
-            onChange={handleChange}
+            // onChange={handleChange}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (value === "" || /^[A-Za-z\s]+$/.test(value)) {
+                setFormData({ ...formData, midName: value });
+              } else {
+                toast.error("Middle Name accepts letters only");
+              }
+            }}
           />
 
           {/* last name */}
@@ -274,10 +341,19 @@ const CreateDriver = () => {
             name="lastName"
             placeholder="Enter Last Name (optional)"
             value={formData.lastName}
-            onChange={handleChange}
+            // onChange={handleChange}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (value === "" || /^[A-Za-z\s]+$/.test(value)) {
+                setFormData({ ...formData, lastName: value });
+              } else {
+                toast.error("Last Name accepts letters only");
+              }
+            }}
           />
 
-          <label className="ml-2 mt-5 font-normal block">Email</label>
+          <label className="ml-2 mt-5 font-normal block">Email *</label>
           <input
             className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
             type="email"
@@ -376,8 +452,18 @@ const CreateDriver = () => {
             name="pincode"
             placeholder="Enter pincode"
             value={formData.pincode}
-            onChange={handleChange}
+            // onChange={handleChange}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, "");
+
+              if (value.length <= 6) {
+                setFormData({ ...formData, pincode: value });
+              }
+            }}
           />
+          {apiError.pincode && (
+            <p className="text-red-500 text-sm ml-2">{apiError.pincode}</p>
+          )}
 
           {/* grade */}
           <label className="ml-2 mt-5 font-normal block">Grade</label>
@@ -441,7 +527,7 @@ const CreateDriver = () => {
           />
 
           <label className="ml-2 mt-5 font-normal block">
-            License Front Photo *
+            License Front Photo
           </label>
           {renderPreviewFile("licensePhoto", "License Preview")}
           <label
@@ -463,7 +549,7 @@ const CreateDriver = () => {
           )}
 
           <label className="ml-2 mt-5 font-normal block">
-            License Back Photo *
+            License Back Photo
           </label>
           {renderPreviewFile("licenseBackPhoto", "License Back Preview")}
           <label
@@ -487,9 +573,7 @@ const CreateDriver = () => {
           )}
 
           {/* Aadhaar */}
-          <label className="ml-2 mt-5 font-normal block">
-            Aadhaar Number *
-          </label>
+          <label className="ml-2 mt-5 font-normal block">Aadhaar Number</label>
           <input
             className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
             type="text"
@@ -498,14 +582,27 @@ const CreateDriver = () => {
             maxLength={12}
             inputMode="numeric"
             value={formData.adhaarNumber}
-            onChange={handleChange}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (value === "" || /^\d*$/.test(value)) {
+                setFormData({ ...formData, adhaarNumber: value });
+              } else {
+                toast.error("Aadhaar Number accepts digits only");
+              }
+            }}
+            // onChange={handleChange}
+            // onChange={(e) => {
+            //   const value = e.target.value.replace(/\D/g, ""); // allow only digits
+            //   setFormData({ ...formData, adhaarNumber: value });
+            // }}
           />
           {apiError.adhaarNumber && (
             <p className="text-red-500 text-sm ml-2">{apiError.adhaarNumber}</p>
           )}
 
           <label className="ml-2 mt-5 font-normal block">
-            Aadhaar Front Photo *
+            Aadhaar Front Photo
           </label>
           {renderPreviewFile("adhaarFrontPhoto", "Aadhaar Front")}
           <label
@@ -529,7 +626,7 @@ const CreateDriver = () => {
           )}
 
           <label className="ml-2 mt-5 font-normal block">
-            Aadhaar Back Photo *
+            Aadhaar Back Photo
           </label>
           {renderPreviewFile("adhaarBackPhoto", "Aadhaar Back")}
           <label
@@ -553,22 +650,29 @@ const CreateDriver = () => {
           )}
 
           {/* PAN */}
-          <label className="ml-2 mt-5 font-normal block">PAN Number *</label>
+          <label className="ml-2 mt-5 font-normal block">PAN Number</label>
           <input
             className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
             type="text"
             name="panNumber"
             placeholder="Enter PAN number"
             value={formData.panNumber}
-            onChange={handleChange}
+            // onChange={handleChange}
+            onChange={(e) => {
+              const value = e.target.value.toUpperCase();
+
+              if (value === "" || /^[A-Z0-9]*$/.test(value)) {
+                setFormData({ ...formData, panNumber: value });
+              } else {
+                toast.error("Only letters and numbers allowed in PAN");
+              }
+            }}
           />
           {apiError.panNumber && (
             <p className="text-red-500 text-sm ml-2">{apiError.panNumber}</p>
           )}
 
-          <label className="ml-2 mt-5 font-normal block">
-            PAN Front Photo *
-          </label>
+          <label className="ml-2 mt-5 font-normal block">PAN Front Photo</label>
           {renderPreviewFile("panFrontPhoto", "PAN Front")}
           <label
             htmlFor="pan-front-upload"
@@ -590,9 +694,7 @@ const CreateDriver = () => {
             </p>
           )}
 
-          <label className="ml-2 mt-5 font-normal block">
-            PAN Back Photo *
-          </label>
+          <label className="ml-2 mt-5 font-normal block">PAN Back Photo</label>
           {renderPreviewFile("panBackPhoto", "PAN Back")}
           <label
             htmlFor="pan-back-upload"
@@ -644,15 +746,13 @@ const CreateDriver = () => {
           />
 
           {/* Profile Picture */}
-          <label className="ml-2 mt-5 font-normal block">
-            Profile Picture *
-          </label>
+          <label className="ml-2 mt-5 font-normal block">Profile Picture</label>
           {renderPreviewFile("profilePic", "Profile Preview")}
           <label
             htmlFor="profile-upload"
             className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
           >
-            📎 Upload Profile Picture 
+            📎 Upload Profile Picture
           </label>
           <input
             id="profile-upload"

@@ -40,8 +40,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-
-
 export default function DriverList() {
   const didMount = React.useRef(false);
   const { hasPermission } = useAuth();
@@ -117,45 +115,44 @@ export default function DriverList() {
   }, [page, rowsPerPage, filters]);
 
   useEffect(() => {
-  if (!didMount.current) {
-    didMount.current = true;
-    return;
-  }
+    if (!didMount.current) {
+      didMount.current = true;
+      return;
+    }
 
-  fetchDrivers();
-}, [page, rowsPerPage, filters]);
+    fetchDrivers();
+  }, [page, rowsPerPage, filters]);
 
   // useEffect(() => {
   //   fetchDrivers();
   // }, [page, rowsPerPage, filters]);
 
+  //   useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
 
-//   useEffect(() => {
-//   const params = new URLSearchParams(location.search);
+  //   const initialFilters = {
+  //     isVerified: params.get("isVerified") || "",
+  //     isOnline: params.get("isOnline") || "",
+  //     isOnTrip: params.get("isOnTrip") || "",
+  //     isAvailable: params.get("isAvailable") || "",
+  //   };
 
-//   const initialFilters = {
-//     isVerified: params.get("isVerified") || "",
-//     isOnline: params.get("isOnline") || "",
-//     isOnTrip: params.get("isOnTrip") || "",
-//     isAvailable: params.get("isAvailable") || "",
-//   };
+  //   setFilters(initialFilters);
+  //   setPage(1);
+  // }, [location.search]);
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
 
-//   setFilters(initialFilters);
-//   setPage(1);
-// }, [location.search]);
-useEffect(() => {
-  const params = new URLSearchParams(location.search);
+    const initialFilters = {
+      isVerified: params.get("isVerified") ?? "",
+      isOnline: params.get("isOnline") ?? "",
+      isOnTrip: params.get("isOnTrip") ?? "",
+      isAvailable: params.get("isAvailable") ?? "",
+    };
 
-  const initialFilters = {
-    isVerified: params.get("isVerified") ?? "",
-    isOnline: params.get("isOnline") ?? "",
-    isOnTrip: params.get("isOnTrip") ?? "",
-    isAvailable: params.get("isAvailable") ?? "",
-  };
-
-  setFilters(initialFilters);
-  setPage(1);
-}, [location.search]);
+    setFilters(initialFilters);
+    setPage(1);
+  }, [location.search]);
 
   const handleApplyFilters = (f) => {
     setPage(1);
@@ -490,6 +487,8 @@ useEffect(() => {
 
               <StyledTableCell>ADDRESS</StyledTableCell>
 
+              <StyledTableCell>VEHICLE</StyledTableCell>
+
               <StyledTableCell>VERIFIED</StyledTableCell>
 
               <StyledTableCell align="center">Actions</StyledTableCell>
@@ -581,6 +580,33 @@ useEffect(() => {
                     <span className="text-gray-700">
                       {row?.permanentAddress || "N/A"}
                     </span>
+                  </TableCell>
+
+                  <TableCell>
+                    {row?.vehicles?.length > 0 ? (
+                      <div className="text-sm text-gray-700 space-y-2">
+                        {row.vehicles.map((v) => (
+                          <div key={v._id}>
+                            {/* LINE 1: Brand + Model */}
+                            <div className="font-medium">
+                              {v.brand} {v.model}
+                            </div>
+
+                            {/* LINE 2: Number + Fuel */}
+                            <div className="text-xs text-gray-500">
+                              🚗 {v.carNumber} | ⛽ {v.fuelType}
+                            </div>
+
+                            {/* LINE 3: Color + Year */}
+                            <div className="text-xs text-gray-500">
+                              🖌️ {v.color} | 📅 {v.year}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">No Vehicle</span>
+                    )}
                   </TableCell>
 
                   {/* VERIFIED */}
