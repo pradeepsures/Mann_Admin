@@ -252,7 +252,7 @@ export default function DriverList() {
 
     const exportData = [
       {
-        sheet: "Chauffeur Master",        // columns: [
+        sheet: "Chauffeur Master", // columns: [
         //     { label: "Name", value: "name" },
         //     { label: "Email", value: "email" },
         //     { label: "Phone", value: "phone" },
@@ -275,7 +275,10 @@ export default function DriverList() {
           { label: "State", value: "state" },
           { label: "Pincode", value: "pincode" },
           { label: "Region", value: (row) => row?.region?.name || "N/A" },
-          { label: "Punch Region", value: (row) => row?.punchRegion?.name || "N/A" },
+          {
+            label: "Punch Region",
+            value: (row) => row?.punchRegion?.name || "N/A",
+          },
 
           { label: "Permanent Address", value: "permanentAddress" },
           { label: "Current Address", value: "currentAddress" },
@@ -334,7 +337,8 @@ export default function DriverList() {
           },
           {
             label: "Medical Cert Photo",
-            value: (row) => (row?.medicalCertificatePhoto ? "Available" : "No Photo"),
+            value: (row) =>
+              row?.medicalCertificatePhoto ? "Available" : "No Photo",
           },
 
           // Status Fields
@@ -377,7 +381,10 @@ export default function DriverList() {
           { label: "Total Rides", value: "totalRides" },
 
           { label: "Device Type", value: "deviceType" },
-          { label: "First User", value: (row) => (row?.firstUser ? "Yes" : "No") },
+          {
+            label: "First User",
+            value: (row) => (row?.firstUser ? "Yes" : "No"),
+          },
 
           {
             label: "Created At",
@@ -592,19 +599,24 @@ export default function DriverList() {
             ) : (
               data.map((row, index) => (
                 <TableRow key={row.id} hover>
-
                   <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
 
                   {/* PROFILE */}
                   <TableCell>
-                    <img src={row?.profilePic || "/no-image.png"} alt="profile" className="w-12 h-12 rounded-full object-cover border" />
+                    <img
+                      src={row?.profilePic || "/no-image.png"}
+                      alt="profile"
+                      className="w-12 h-12 rounded-full object-cover border"
+                    />
                   </TableCell>
 
                   {/* DETAILS */}
                   <TableCell>
                     <div className="flex flex-col gap-1">
                       <span className="font-semibold text-gray-800">
-                        {[row.name, row.midName, row.lastName].filter(Boolean).join(" ")}
+                        {[row.name, row.midName, row.lastName]
+                          .filter(Boolean)
+                          .join(" ")}
                       </span>
                       <span className="text-sm text-gray-500">{row.email}</span>
                       <span className="text-sm text-gray-500">{row.phone}</span>
@@ -614,11 +626,16 @@ export default function DriverList() {
                   {/* TRIP & ATTENDANCE */}
                   <TableCell>
                     <div className="flex flex-col gap-2">
-                      <MenuItem onClick={() => navigate(`driverBookingView/${row.id}`)}>
+                      <MenuItem
+                        onClick={() => navigate(`driverBookingView/${row.id}`)}
+                      >
                         <EyeIcon className="h-5 w-5 text-blue-600 mr-2" /> Trips
                       </MenuItem>
-                      <MenuItem onClick={() => navigate(`driverAttendance/${row.id}`)}>
-                        <CalendarDaysIcon className="h-5 w-5 text-green-600 mr-2" /> Attendance
+                      <MenuItem
+                        onClick={() => navigate(`driverAttendance/${row.id}`)}
+                      >
+                        <CalendarDaysIcon className="h-5 w-5 text-green-600 mr-2" />{" "}
+                        Attendance
                       </MenuItem>
                     </div>
                   </TableCell>
@@ -639,7 +656,8 @@ export default function DriverList() {
                       </div>
                       {row.licenseExpiry && (
                         <div className="text-xs text-gray-500 mt-1">
-                          Exp: {new Date(row.licenseExpiry).toLocaleDateString()}
+                          Exp:{" "}
+                          {new Date(row.licenseExpiry).toLocaleDateString()}
                         </div>
                       )}
                     </div>
@@ -649,8 +667,12 @@ export default function DriverList() {
                   {/* DOCUMENTS */}
                   <TableCell>
                     <div className="text-xs space-y-1">
-                      <div><strong>Aadhaar:</strong> {row.adhaarNumber || "N/A"}</div>
-                      <div><strong>PAN:</strong> {row.panNumber || "N/A"}</div>
+                      <div>
+                        <strong>Aadhaar:</strong> {row.adhaarNumber || "N/A"}
+                      </div>
+                      <div>
+                        <strong>PAN:</strong> {row.panNumber || "N/A"}
+                      </div>
                     </div>
                   </TableCell>
 
@@ -670,9 +692,17 @@ export default function DriverList() {
                   {/* JOINING / LEAVING */}
                   <TableCell>
                     <div className="text-sm space-y-1">
-                      <div>Joined: {row.dateOfJoining ? new Date(row.dateOfJoining).toLocaleDateString() : "N/A"}</div>
+                      <div>
+                        Joined:{" "}
+                        {row.dateOfJoining
+                          ? new Date(row.dateOfJoining).toLocaleDateString()
+                          : "N/A"}
+                      </div>
                       {row.dateOfLeaving && (
-                        <div className="text-red-600">Left: {new Date(row.dateOfLeaving).toLocaleDateString()}</div>
+                        <div className="text-red-600">
+                          Left:{" "}
+                          {new Date(row.dateOfLeaving).toLocaleDateString()}
+                        </div>
                       )}
                     </div>
                   </TableCell>
@@ -680,14 +710,30 @@ export default function DriverList() {
                   {/* MEDICAL CERT */}
                   <TableCell>
                     <div className="text-sm space-y-1">
-                      <div>Issue: {row.medicalCertificateIssue ? new Date(row.medicalCertificateIssue).toLocaleDateString() : "N/A"}</div>
-                      <div>Expiry: {row.medicalCertificateExpiry ? new Date(row.medicalCertificateExpiry).toLocaleDateString() : "N/A"}</div>
+                      <div>
+                        Issue:{" "}
+                        {row.medicalCertificateIssue
+                          ? new Date(
+                              row.medicalCertificateIssue,
+                            ).toLocaleDateString()
+                          : "N/A"}
+                      </div>
+                      <div>
+                        Expiry:{" "}
+                        {row.medicalCertificateExpiry
+                          ? new Date(
+                              row.medicalCertificateExpiry,
+                            ).toLocaleDateString()
+                          : "N/A"}
+                      </div>
                     </div>
                   </TableCell>
 
                   {/* STATUS */}
                   <TableCell>
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${row.isVerified ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${row.isVerified ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"}`}
+                    >
                       {row.isVerified ? "Verified" : "Pending"}
                     </span>
                   </TableCell>
@@ -699,13 +745,43 @@ export default function DriverList() {
                     </IconButton>
                     {/* Your Menu remains same */}
                   </TableCell>
-
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+      >
+        <MenuItem
+          onClick={() => {
+            navigate(`driverView/${selectedRowId}`);
+            handleMenuClose();
+          }}
+        >
+          <EyeIcon className="h-5 w-5 text-blue-600 mr-2" />
+          View
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate(`updateDriver/${selectedRowId}`);
+            handleMenuClose();
+          }}
+        >
+          <PencilIcon className="h-5 w-5 text-green-600 mr-2" />
+          Edit
+        </MenuItem>
+
+        <MenuItem onClick={() => deleteHandler(selectedRowId)}>
+          <TrashIcon className="h-5 w-5 text-red-600 mr-2" />
+          Delete
+        </MenuItem>
+      </Menu>
 
       {totalRecord > rowsPerPage && (
         <Stack spacing={2} alignItems="center" mt={6}>
