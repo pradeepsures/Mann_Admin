@@ -12,24 +12,26 @@ export const getAllVehicles = async ({
   brand = "",
   fuelType = "",
   isActive = "",
-    isOnTrip = "",       
-  isAvailable = "", 
+  isOnTrip = "",
+  isAvailable = "",
   isAssigned = "",
+  isDeleted = "",
 }) => {
   const token = localStorage.getItem("token");
 
   try {
     let url = `${BASE_URL}/api/admin/vehicle?page=${page}&limit=${limit}`;
 
-    if (search)          url += `&search=${encodeURIComponent(search)}`;
-    if (driverId)        url += `&driverId=${driverId}`;
-    if (segmentId)       url += `&segmentId=${segmentId}`;
-    if (brand)           url += `&brand=${encodeURIComponent(brand)}`;
-    if (fuelType)        url += `&fuelType=${fuelType}`;
+    if (search) url += `&search=${encodeURIComponent(search)}`;
+    if (driverId) url += `&driverId=${driverId}`;
+    if (segmentId) url += `&segmentId=${segmentId}`;
+    if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+    if (fuelType) url += `&fuelType=${fuelType}`;
     if (isActive !== "") url += `&isActive=${isActive}`;
-        if (isOnTrip !== "") url += `&isOnTrip=${isOnTrip}`;
+    if (isOnTrip !== "") url += `&isOnTrip=${isOnTrip}`;
     if (isAvailable !== "") url += `&isAvailable=${isAvailable}`;
     if (isAssigned !== "") url += `&isAssigned=${isAssigned}`;
+    if (isDeleted !== "") url += `&isDeleted=${isDeleted}`;
 
     const res = await fetch(url, {
       method: "GET",
@@ -162,11 +164,7 @@ export const deleteVehicle = async (id) => {
 };
 
 //delete vehicle image
-export const deleteVehicleImage = async (
-  vehicleId,
-  field,
-  imageUrl = ""
-) => {
+export const deleteVehicleImage = async (vehicleId, field, imageUrl = "") => {
   const token = localStorage.getItem("token");
 
   try {
@@ -182,15 +180,13 @@ export const deleteVehicleImage = async (
           field,
           imageUrl,
         }),
-      }
+      },
     );
 
     const result = await res.json();
 
     if (!res.ok) {
-      throw new Error(
-        result.message || "Failed to delete vehicle image"
-      );
+      throw new Error(result.message || "Failed to delete vehicle image");
     }
 
     return result;
@@ -227,7 +223,7 @@ export const getVehicleBookingById = async (id, params = {}) => {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     const result = await res.json();
@@ -284,11 +280,41 @@ export const assignDriverToVehicle = async (vehicleId, driverId) => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ driverId }),
-      }
+      },
     );
 
     return await res.json();
   } catch (err) {
+    throw err;
+  }
+};
+
+///toggle status delete
+export const toggleVehicleDeleteStatus = async (id) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/vehicle/${id}/toggleDeleteStatus`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message || "Failed to update delete status");
+    }
+
+    toast.success(result.message || "Vehicle status updated");
+    return result;
+  } catch (err) {
+    toast.error(err.message || "Error updating vehicle status");
     throw err;
   }
 };

@@ -33,6 +33,7 @@ import {
   getAllVehicles,
   deleteVehicle,
   assignDriverToVehicle,
+  toggleVehicleDeleteStatus,
 } from "../../Services/VehicleApi";
 // import { assignDriver } from "../../Services/BookingApi";
 import { reassignCancelRequestApi } from "../../Services/RequestApi";
@@ -96,6 +97,7 @@ export default function VehicleList() {
   const isActive = query.get("isActive") ?? "";
   const isAvailable = query.get("isAvailable") ?? "";
   const isOnTrip = query.get("isOnTrip") ?? "";
+  const isDeleted = query.get("isDeleted") ?? "";
 
   const fetchData = useCallback(async () => {
     try {
@@ -107,7 +109,7 @@ export default function VehicleList() {
         isActive,
         isAvailable,
         isOnTrip,
-        // isAssigned
+       isDeleted,        // isAssigned
       });
       // const result = await getAllVehicles({
       //   page,
@@ -168,6 +170,7 @@ export default function VehicleList() {
       isOnTrip: f.isOnTrip || "",
       isAvailable: f.isAvailable || "",
       isAssigned: f.isAssigned || "",
+      isDeleted: f.isDeleted || "",
     });
   };
 
@@ -225,6 +228,24 @@ export default function VehicleList() {
       navigate("create");
       setIsLoading(false);
     }, 300);
+  };
+
+  //toggle delete handler
+  const toggleDeleteHandler = async (id) => {
+    try {
+      const res = await toggleVehicleDeleteStatus(id);
+
+      if (res?.status) {
+        toast.success(res.message || "Status updated");
+        fetchData(); // refresh list
+      } else {
+        toast.error(res?.message || "Failed to update");
+      }
+    } catch (err) {
+      toast.error("Error updating vehicle status");
+    }
+
+    handleMenuClose();
   };
 
   const exportFunc = async (vehiclesData) => {
@@ -688,6 +709,18 @@ export default function VehicleList() {
                           className="flex items-center gap-2 text-gray-700"
                         >
                           <TrashIcon className="h-5 w-5 text-red-600" /> Delete
+                        </MenuItem>
+                      )}
+                      {hasPermission("Vehicle", "delete") && (
+                        <MenuItem
+                          onClick={() => toggleDeleteHandler(row.id)}
+                          className="flex items-center gap-2 text-gray-700"
+                        >
+                          <TrashIcon
+                            className={`h-5 w-5 ${row.isDeleted ? "text-green-600" : "text-red-600"}`}
+                          />
+
+                          {row.isDeleted ? "Restore Vehicle" : "Delete Vehicle"}
                         </MenuItem>
                       )}
                     </Menu>
