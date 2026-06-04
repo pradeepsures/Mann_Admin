@@ -40,8 +40,8 @@ const UpdateVehicle = () => {
     carImage: [],
     documentImage: [],
     certificatePhoto: null, // only for new file object
-    rcFrontPhoto: null,      // only for new file object
-    rcBackPhoto: null,       // only for new file object
+    rcFrontPhoto: null, // only for new file object
+    rcBackPhoto: null, // only for new file object
   });
 
   const [previews, setPreviews] = useState({
@@ -70,27 +70,51 @@ const UpdateVehicle = () => {
           carNumber: data.carNumber || "",
           bootSpace: data.bootSpace || "",
           certificateNumber: data.certificateNumber || "",
-          certificateExpiry: data.certificateExpiry ? data.certificateExpiry.split("T")[0] : "",
-          insuranceExpiry: data.insuranceExpiry ? data.insuranceExpiry.split("T")[0] : "",
-          pollutionExpiry: data.pollutionExpiry ? data.pollutionExpiry.split("T")[0] : "",
+          certificateExpiry: data.certificateExpiry
+            ? data.certificateExpiry.split("T")[0]
+            : "",
+          insuranceExpiry: data.insuranceExpiry
+            ? data.insuranceExpiry.split("T")[0]
+            : "",
+          pollutionExpiry: data.pollutionExpiry
+            ? data.pollutionExpiry.split("T")[0]
+            : "",
           rcExpeiry: data.rcExpeiry ? data.rcExpeiry.split("T")[0] : "",
           rcIssueDate: data.rcIssueDate ? data.rcIssueDate.split("T")[0] : "",
           insuranceNumber: data.insuranceNumber || "",
           pollutionNumber: data.pollutionNumber || "",
           fitnessNumber: data.fitnessNumber || "",
           permitNumber: data.permitNumber || "",
-          insureanceIssueDate: data.insuranceIssueDate ? data.insuranceIssueDate.split("T")[0] : "",
-          pollutionStartDate: data.pollutionStartDate ? data.pollutionStartDate.split("T")[0] : "",
-          pollutionExpiryDate: data.pollutionExpiryDate ? data.pollutionExpiryDate.split("T")[0] : "",
-          fitnessStartDate: data.fitnessStartDate ? data.fitnessStartDate.split("T")[0] : "",
-          fitnessExpiryDate: data.fitnessExpiryDate ? data.fitnessExpiryDate.split("T")[0] : "",
-          permitStartDate: data.permitStartDate ? data.permitStartDate.split("T")[0] : "",
-          permitExpiryDate: data.permitExpiryDate ? data.permitExpiryDate.split("T")[0] : "",
+          insureanceIssueDate: data.insuranceIssueDate
+            ? data.insuranceIssueDate.split("T")[0]
+            : "",
+          pollutionStartDate: data.pollutionStartDate
+            ? data.pollutionStartDate.split("T")[0]
+            : "",
+          pollutionExpiryDate: data.pollutionExpiryDate
+            ? data.pollutionExpiryDate.split("T")[0]
+            : "",
+          fitnessStartDate: data.fitnessStartDate
+            ? data.fitnessStartDate.split("T")[0]
+            : "",
+          fitnessExpiryDate: data.fitnessExpiryDate
+            ? data.fitnessExpiryDate.split("T")[0]
+            : "",
+          permitStartDate: data.permitStartDate
+            ? data.permitStartDate.split("T")[0]
+            : "",
+          permitExpiryDate: data.permitExpiryDate
+            ? data.permitExpiryDate.split("T")[0]
+            : "",
           stickerNumber: data.stickerNumber || "",
           chassisNumber: data.chassisNumber || "",
           engineNumber: data.engineNumber || "",
-          dateOfPurchase: data.dateOfPurchase ? data.dateOfPurchase.split("T")[0] : "",
-          dateOfRegistration: data.dateOfRegistration ? data.dateOfRegistration.split("T")[0] : "",
+          dateOfPurchase: data.dateOfPurchase
+            ? data.dateOfPurchase.split("T")[0]
+            : "",
+          dateOfRegistration: data.dateOfRegistration
+            ? data.dateOfRegistration.split("T")[0]
+            : "",
           capacity: data.capacity || "",
           isActive: data.isActive !== false,
           carImage: data.carImage ? [...data.carImage] : [],
@@ -242,8 +266,12 @@ const UpdateVehicle = () => {
 
       // New uploads (file objects, not old URLs)
       // ✅ separate old + new
-      const newCarImages = formData.carImage.filter((img) => img instanceof File);
-      const oldCarImages = formData.carImage.filter((img) => typeof img === "string");
+      const newCarImages = formData.carImage.filter(
+        (img) => img instanceof File,
+      );
+      const oldCarImages = formData.carImage.filter(
+        (img) => typeof img === "string",
+      );
 
       // ✅ send old images (VERY IMPORTANT)
       oldCarImages.forEach((img) => {
@@ -259,15 +287,21 @@ const UpdateVehicle = () => {
       //     data.append("carImage", file);
       //   });
       // }
-      if (formData.documentImage.length > 0 && formData.documentImage[0] instanceof File) {
+      if (
+        formData.documentImage.length > 0 &&
+        formData.documentImage[0] instanceof File
+      ) {
         formData.documentImage.forEach((file) => {
           data.append("documentImage", file);
         });
       }
 
-      if (formData.certificatePhoto) data.append("certificatePhoto", formData.certificatePhoto);
-      if (formData.rcFrontPhoto) data.append("rcFrontPhoto", formData.rcFrontPhoto);
-      if (formData.rcBackPhoto) data.append("rcBackPhoto", formData.rcBackPhoto);
+      if (formData.certificatePhoto)
+        data.append("certificatePhoto", formData.certificatePhoto);
+      if (formData.rcFrontPhoto)
+        data.append("rcFrontPhoto", formData.rcFrontPhoto);
+      if (formData.rcBackPhoto)
+        data.append("rcBackPhoto", formData.rcBackPhoto);
 
       const res = await updateVehicle({ id, data });
 
@@ -298,7 +332,7 @@ const UpdateVehicle = () => {
 
   return (
     <div className="m-3">
-            <Breaker />
+      <Breaker />
       <div className="ml-5 mt-8 bg-white p-6 max-w-9xl rounded-xl shadow-xl">
         <form onSubmit={handleSubmit}>
           {/* DRIVER */}
@@ -308,7 +342,9 @@ const UpdateVehicle = () => {
             placeholder="Select chauffer"
             value={formData.driver || undefined}
             className="w-full h-10 mb-3 border rounded-xl"
-            onChange={(val) => setFormData((prev) => ({ ...prev, driver: val }))}
+            onChange={(val) =>
+              setFormData((prev) => ({ ...prev, driver: val }))
+            }
             filterOption={(input, option) =>
               option?.children?.toLowerCase().includes(input.toLowerCase())
             }
@@ -319,7 +355,9 @@ const UpdateVehicle = () => {
               </Option>
             ))}
           </Select>
-          {apiError.driver && <p className="text-red-500 text-sm ml-2">{apiError.driver}</p>}
+          {apiError.driver && (
+            <p className="text-red-500 text-sm ml-2">{apiError.driver}</p>
+          )}
 
           {/* SEGMENT */}
           <label className="ml-2 mt-5 font-normal block">Segment *</label>
@@ -346,47 +384,80 @@ const UpdateVehicle = () => {
               </Option>
             ))}
           </Select>
-          {apiError.segment && <p className="text-red-500 text-sm ml-2">{apiError.segment}</p>}
+          {apiError.segment && (
+            <p className="text-red-500 text-sm ml-2">{apiError.segment}</p>
+          )}
 
           {/* BASIC FIELDS */}
-          {/* {["Vehicle Brand", "Vehicle Model", "fuel Type", "Manufacturer Year", "Vehicle Number", "color", "bootSpace (Lr)", "Capacity (Seater)", "Certificate Number"].map(
-            (name) => (
-              <div key={name}>
-                <label className="ml-2 mt-5 font-normal block capitalize">{name}</label>
-                <input
-                  type={name === "year" ? "number" : "text"}
-                  name={name}
-                  value={formData[name] || ""}
-                  onChange={handleChange}
-                  className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
-                  placeholder={`Enter ${name}`}
-                />
-                {apiError[name] && <p className="text-red-500 text-sm ml-2">{apiError[name]}</p>}
-              </div>
-            )
-          )} */}
           {[
             { label: "Vehicle Brand *", key: "brand", type: "text" },
             { label: "Vehicle Model *", key: "model", type: "text" },
-            { label: "Fuel Type *", key: "fuelType", type: "select" },
             { label: "Manufacturer Year *", key: "year", type: "number" },
+            { label: "Fuel Type", key: "fuelType", type: "select" },
             { label: "Vehicle Number *", key: "carNumber", type: "text" },
-            { label: "Color", key: "color", type: "text" },
-            { label: "Boot Space (Lr)", key: "bootSpace", type: "text" },
-            { label: "Capacity (Seater)", key: "capacity", type: "number" },
-            { label: "Rc Number", key: "certificateNumber", type: "text" },
-            { label: "Insurance Number", key: "insuranceNumber", type: "text" },
-            { label: "Pollution Number", key: "pollutionNumber", type: "text" },
-            { label: "Fitness Number", key: "fitnessNumber", type: "text" },
-            { label: "All India Permit Number", key: "permitNumber", type: "text" },
             { label: "Sticker Number", key: "stickerNumber", type: "text" },
+            {
+              label: "Date of Registration",
+              key: "dateOfRegistration",
+              type: "date",
+            },
+            { label: "Color", key: "color", type: "text" },
+            { label: "Capacity (Seater)", key: "capacity", type: "text" },
+            { label: "Boot Space (Lr)", key: "bootSpace", type: "text" },
             { label: "Chassis Number", key: "chassisNumber", type: "text" },
             { label: "Engine Number", key: "engineNumber", type: "text" },
+            { label: "RC Number", key: "certificateNumber", type: "text" },
+            { label: "RC Issue Date", key: "rcIssueDate", type: "date" },
+            { label: "RC Expiry", key: "rcExpeiry", type: "date" },
+            { label: "Insurance Number", key: "insuranceNumber", type: "text" },
+            {
+              label: "Insurance Issue Date",
+              key: "insuranceIssueDate",
+              type: "date",
+            },
+            { label: "Insurance Expiry", key: "insuranceExpiry", type: "date" },
+            { label: "Pollution Number", key: "pollutionNumber", type: "text" },
+            {
+              label: "Pollution Start Date",
+              key: "pollutionStartDate",
+              type: "date",
+            },
+            {
+              label: "Pollution Expiry Date",
+              key: "pollutionExpiryDate",
+              type: "date",
+            },
+            { label: "Fitness Number", key: "fitnessNumber", type: "text" },
+            {
+              label: "Fitness Start Date",
+              key: "fitnessStartDate",
+              type: "date",
+            },
+            {
+              label: "Fitness Expiry Date",
+              key: "fitnessExpiryDate",
+              type: "date",
+            },
+            {
+              label: "All India Permit Number",
+              key: "permitNumber",
+              type: "text",
+            },
+            {
+              label: "Permit Start Date",
+              key: "permitStartDate",
+              type: "date",
+            },
+            {
+              label: "Permit Expiry Date",
+              key: "permitExpiryDate",
+              type: "date",
+            },
+            { label: "Date of Purchase", key: "dateOfPurchase", type: "date" },
           ].map(({ label, key, type }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>
 
-              {/* ✅ FUEL TYPE DROPDOWN */}
               {type === "select" ? (
                 <select
                   name={key}
@@ -405,8 +476,16 @@ const UpdateVehicle = () => {
                   value={formData[key] || ""}
                   onChange={handleChange}
                   className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
-                  placeholder={`Enter ${label}`}
+                  placeholder={type !== "date" ? `Enter ${label}` : ""}
                 />
+                // <input
+                //   type={type}
+                //   name={key}
+                //   value={formData[key] || ""}
+                //   onChange={handleChange}
+                //   className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+                //   placeholder={`Enter ${label}`}
+                // />
               )}
 
               {apiError[key] && (
@@ -415,51 +494,10 @@ const UpdateVehicle = () => {
             </div>
           ))}
 
-          {/* DATE FIELDS */}
-          {[
-            // { label: "Certificate Expiry", key: "certificateExpiry" },
-            { label: "RC Issue Date", key: "rcIssueDate" },
-            { label: "Insurance Expiry", key: "insuranceExpiry" },
-            { label: "Pollution Expiry", key: "pollutionExpiry" },
-            { label: "RC Expiry", key: "rcExpeiry" },
-            { label: "Insurance Issue Date", key: "insuranceIssueDate" },
-            { label: "Pollution Start Date", key: "pollutionStartDate" },
-            { label: "Pollution Expiry Date", key: "pollutionExpiryDate" },
-            { label: "Fitness Start Date", key: "fitnessStartDate" },
-            { label: "Fitness Expiry Date", key: "fitnessExpiryDate" },
-            { label: "Permit Start Date", key: "permitStartDate" },
-            { label: "Permit Expiry Date", key: "permitExpiryDate" },
-            { label: "Date of Purchase", key: "dateOfPurchase" },
-            { label: "Date of Registration", key: "dateOfRegistration" },
-
-          ].map(({ label, key }) => (
-            <div key={key}>
-              <label className="ml-2 mt-5 font-normal block">{label}</label>
-              <input
-                type="date"
-                name={key}
-                value={formData[key] || ""}
-                onChange={handleChange}
-                className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
-              />
-              {apiError[key] && <p className="text-red-500 text-sm ml-2">{apiError[key]}</p>}
-            </div>
-          ))}
-
-          {/* STATUS - ACTIVE */}
-          <div className="mt-8">
-            <label className="ml-2 font-normal block">Active</label>
-            <Switch
-              checked={formData.isActive}
-              onChange={(checked) => setFormData((prev) => ({ ...prev, isActive: checked }))}
-              checkedChildren="Yes"
-              unCheckedChildren="No"
-              size="default"
-            />
-          </div>
-
           {/* CERTIFICATE PHOTO */}
-          <label className="ml-2 mt-5 font-normal block">Certificate Photo</label>
+          <label className="ml-2 mt-5 font-normal block">
+            Certificate Photo
+          </label>
           {previews.certificatePhoto && (
             <img
               src={previews.certificatePhoto}
@@ -559,7 +597,9 @@ const UpdateVehicle = () => {
           />
 
           {/* DOCUMENT IMAGES (existing + new) */}
-          <label className="ml-2 mt-5 font-normal block">Miscellaneous Documents</label>
+          <label className="ml-2 mt-5 font-normal block">
+            Miscellaneous Documents
+          </label>
           <div className="flex gap-2 flex-wrap ml-2 mt-2">
             {previews.documentImage.map((img, i) => (
               <img
@@ -586,6 +626,20 @@ const UpdateVehicle = () => {
             onChange={handleFileChange}
           />
 
+          {/* STATUS - ACTIVE */}
+          <div className="mt-8">
+            <label className="ml-2 font-normal block">Active</label>
+            <Switch
+              checked={formData.isActive}
+              onChange={(checked) =>
+                setFormData((prev) => ({ ...prev, isActive: checked }))
+              }
+              checkedChildren="Yes"
+              unCheckedChildren="No"
+              size="default"
+            />
+          </div>
+
           {/* SUBMIT BUTTON */}
           <div className="flex justify-end items-center gap-4 mt-8">
             <button
@@ -603,7 +657,6 @@ const UpdateVehicle = () => {
               Back
             </button>
           </div>
-
         </form>
       </div>
     </div>

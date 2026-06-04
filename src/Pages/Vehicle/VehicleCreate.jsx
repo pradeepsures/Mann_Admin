@@ -250,7 +250,6 @@ const CreateVehicle = () => {
     });
   };
 
-
   // ================= SUBMIT =================
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -298,9 +297,12 @@ const CreateVehicle = () => {
       }
 
       // Single files
-      if (formData.certificatePhoto) data.append("certificatePhoto", formData.certificatePhoto);
-      if (formData.rcFrontPhoto) data.append("rcFrontPhoto", formData.rcFrontPhoto);
-      if (formData.rcBackPhoto) data.append("rcBackPhoto", formData.rcBackPhoto);
+      if (formData.certificatePhoto)
+        data.append("certificatePhoto", formData.certificatePhoto);
+      if (formData.rcFrontPhoto)
+        data.append("rcFrontPhoto", formData.rcFrontPhoto);
+      if (formData.rcBackPhoto)
+        data.append("rcBackPhoto", formData.rcBackPhoto);
 
       console.log("FormData created, calling createVehicle");
       const res = await createVehicle(data);
@@ -345,7 +347,9 @@ const CreateVehicle = () => {
             placeholder="Select chauffer"
             value={formData.driver || undefined}
             className="w-full h-10 mb-3 border rounded-xl"
-            onChange={(val) => setFormData((prev) => ({ ...prev, driver: val }))}
+            onChange={(val) =>
+              setFormData((prev) => ({ ...prev, driver: val }))
+            }
             filterOption={(input, option) =>
               option?.children?.toLowerCase().includes(input.toLowerCase())
             }
@@ -356,7 +360,9 @@ const CreateVehicle = () => {
               </Option>
             ))}
           </Select>
-          {apiError.driver && <p className="text-red-500 text-sm ml-2">{apiError.driver}</p>}
+          {apiError.driver && (
+            <p className="text-red-500 text-sm ml-2">{apiError.driver}</p>
+          )}
 
           {/* SEGMENT */}
           <label className="ml-2 mt-5 font-normal block">Segment *</label>
@@ -383,48 +389,81 @@ const CreateVehicle = () => {
               </Option>
             ))}
           </Select>
-          {apiError.segment && <p className="text-red-500 text-sm ml-2">{apiError.segment}</p>}
+          {apiError.segment && (
+            <p className="text-red-500 text-sm ml-2">{apiError.segment}</p>
+          )}
 
           {/* BASIC FIELDS */}
-          {/* {[" Vehicle Brand", "Vehicle model", "fuel Type", " Manufacturer Year", "Vehicle Number", "color", "BootSpace (Lr)", "Capacity (Seater)", "Certificate Number"].map(
-            (name) => (
-              <div key={name}>
-                <label className="ml-2 mt-5 font-normal block capitalize">{name}</label>
-                <input
-                  type={name === "year" ? "number" : "text"}
-                  name={name}
-                  value={formData[name] || ""}
-                  onChange={handleChange}
-                  className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
-                  placeholder={`Enter ${name}`}
-                />
-                {apiError[name] && <p className="text-red-500 text-sm ml-2">{apiError[name]}</p>}
-              </div>
-            )
-          )} */}
 
           {[
             { label: "Vehicle Brand *", key: "brand", type: "text" },
             { label: "Vehicle Model *", key: "model", type: "text" },
-            { label: "Fuel Type", key: "fuelType", type: "select" },
             { label: "Manufacturer Year *", key: "year", type: "number" },
+            { label: "Fuel Type", key: "fuelType", type: "select" },
             { label: "Vehicle Number *", key: "carNumber", type: "text" },
-            { label: "Color", key: "color", type: "text" },
-            { label: "Boot Space (Lr)", key: "bootSpace", type: "text" },
-            { label: "Capacity (Seater)", key: "capacity", type: "text" },
-            { label: "RC Number", key: "certificateNumber", type: "text" },
-            { label: "Insurance Number", key: "insuranceNumber", type: "text" },
-            { label: "Pollution Number", key: "pollutionNumber", type: "text" },
-            { label: "Fitness Number", key: "fitnessNumber", type: "text" },
-            { label: "All India Permit Number", key: "permitNumber", type: "text" },
             { label: "Sticker Number", key: "stickerNumber", type: "text" },
+            {
+              label: "Date of Registration",
+              key: "dateOfRegistration",
+              type: "date",
+            },
+            { label: "Color", key: "color", type: "text" },
+            { label: "Capacity (Seater)", key: "capacity", type: "text" },
+            { label: "Boot Space (Lr)", key: "bootSpace", type: "text" },
             { label: "Chassis Number", key: "chassisNumber", type: "text" },
             { label: "Engine Number", key: "engineNumber", type: "text" },
+            { label: "RC Number", key: "certificateNumber", type: "text" },
+            { label: "RC Issue Date", key: "rcIssueDate", type: "date" },
+            { label: "RC Expiry", key: "rcExpeiry", type: "date" },
+            { label: "Insurance Number", key: "insuranceNumber", type: "text" },
+            {
+              label: "Insurance Issue Date",
+              key: "insuranceIssueDate",
+              type: "date",
+            },
+            { label: "Insurance Expiry", key: "insuranceExpiry", type: "date" },
+            { label: "Pollution Number", key: "pollutionNumber", type: "text" },
+            {
+              label: "Pollution Start Date",
+              key: "pollutionStartDate",
+              type: "date",
+            },
+            {
+              label: "Pollution Expiry Date",
+              key: "pollutionExpiryDate",
+              type: "date",
+            },
+            { label: "Fitness Number", key: "fitnessNumber", type: "text" },
+            {
+              label: "Fitness Start Date",
+              key: "fitnessStartDate",
+              type: "date",
+            },
+            {
+              label: "Fitness Expiry Date",
+              key: "fitnessExpiryDate",
+              type: "date",
+            },
+            {
+              label: "All India Permit Number",
+              key: "permitNumber",
+              type: "text",
+            },
+            {
+              label: "Permit Start Date",
+              key: "permitStartDate",
+              type: "date",
+            },
+            {
+              label: "Permit Expiry Date",
+              key: "permitExpiryDate",
+              type: "date",
+            },
+            { label: "Date of Purchase", key: "dateOfPurchase", type: "date" },
           ].map(({ label, key, type }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>
 
-              {/* ✅ FUEL TYPE DROPDOWN */}
               {type === "select" ? (
                 <select
                   name={key}
@@ -443,8 +482,16 @@ const CreateVehicle = () => {
                   value={formData[key] || ""}
                   onChange={handleChange}
                   className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
-                  placeholder={`Enter ${label}`}
+                  placeholder={type !== "date" ? `Enter ${label}` : ""}
                 />
+                // <input
+                //   type={type}
+                //   name={key}
+                //   value={formData[key] || ""}
+                //   onChange={handleChange}
+                //   className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+                //   placeholder={`Enter ${label}`}
+                // />
               )}
 
               {apiError[key] && (
@@ -453,50 +500,10 @@ const CreateVehicle = () => {
             </div>
           ))}
 
-          {/* DATE FIELDS */}
-          {[
-            // { label: "Certificate Expiry", key: "certificateExpiry" },
-            { label: "RC Issue Date", key: "rcIssueDate" },
-            { label: "Insurance Expiry", key: "insuranceExpiry" },
-            { label: "Pollution Expiry", key: "pollutionExpiry" },
-            { label: "RC Expiry", key: "rcExpeiry" },
-            { label: "Insurance Issue Date", key: "insuranceIssueDate" },
-            { label: "Pollution Start Date", key: "pollutionStartDate" },
-            { label: "Pollution Expiry Date", key: "pollutionExpiryDate" },
-            { label: "Fitness Start Date", key: "fitnessStartDate" },
-            { label: "Fitness Expiry Date", key: "fitnessExpiryDate" },
-            { label: "Permit Start Date", key: "permitStartDate" },
-            { label: "Permit Expiry Date", key: "permitExpiryDate" },
-            { label: "Date of Purchase", key: "dateOfPurchase" },
-            { label: "Date of Registration", key: "dateOfRegistration" },
-          ].map(({ label, key }) => (
-            <div key={key}>
-              <label className="ml-2 mt-5 font-normal block">{label}</label>
-              <input
-                type="date"
-                name={key}
-                value={formData[key] || ""}
-                onChange={handleChange}
-                className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
-              />
-              {apiError[key] && <p className="text-red-500 text-sm ml-2">{apiError[key]}</p>}
-            </div>
-          ))}
-
-          {/* STATUS - ACTIVE */}
-          <div className="mt-8">
-            <label className="ml-2 font-normal block">Active</label>
-            <Switch
-              checked={formData.isActive}
-              onChange={(checked) => setFormData((prev) => ({ ...prev, isActive: checked }))}
-              checkedChildren="Yes"
-              unCheckedChildren="No"
-              size="default"
-            />
-          </div>
-
           {/* CERTIFICATE PHOTO */}
-          <label className="ml-2 mt-5 font-normal block">Certificate Photo</label>
+          <label className="ml-2 mt-5 font-normal block">
+            Certificate Photo
+          </label>
           {previews.certificatePhoto && (
             <img
               src={previews.certificatePhoto}
@@ -596,7 +603,9 @@ const CreateVehicle = () => {
           />
 
           {/* DOCUMENT IMAGES */}
-          <label className="ml-2 mt-5 font-normal block">Miscellaneous Documents</label>
+          <label className="ml-2 mt-5 font-normal block">
+            Miscellaneous Documents
+          </label>
           <div className="flex gap-2 flex-wrap ml-2 mt-2">
             {previews.documentImage.map((img, i) => (
               <img
@@ -623,6 +632,20 @@ const CreateVehicle = () => {
             onChange={handleFileChange}
           />
 
+          {/* STATUS - ACTIVE */}
+          <div className="mt-8">
+            <label className="ml-2 font-normal block">Active</label>
+            <Switch
+              checked={formData.isActive}
+              onChange={(checked) =>
+                setFormData((prev) => ({ ...prev, isActive: checked }))
+              }
+              checkedChildren="Yes"
+              unCheckedChildren="No"
+              size="default"
+            />
+          </div>
+
           {/* SUBMIT BUTTON */}
           {/* <button
             type="submit"
@@ -634,7 +657,6 @@ const CreateVehicle = () => {
 
           {/* ACTION BUTTONS */}
           <div className="flex justify-end gap-4 mt-8">
-
             {/* cleaer button */}
             <button
               type="button"
@@ -660,14 +682,7 @@ const CreateVehicle = () => {
             >
               {loading ? "Creating Vehicle..." : "Create Vehicle"}
             </button>
-
-
-
           </div>
-
-
-
-
         </form>
       </div>
     </div>

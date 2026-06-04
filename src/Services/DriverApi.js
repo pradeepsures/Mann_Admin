@@ -70,6 +70,7 @@ export const getAllDrivers = async ({
   isOnTrip,
   isAssigned,
   isAvailable,
+  isDeleted,
 } = {}) => {
 
   const token = localStorage.getItem("token");
@@ -99,6 +100,10 @@ export const getAllDrivers = async ({
     if (isOnline !== undefined && isOnline !== "") {
       params.append("isOnline", isOnline);
     }
+
+    if (isDeleted !== undefined && isDeleted !== "") {
+  params.append("isDeleted", isDeleted);
+}
 
     if (
       isPunchedIn !== undefined &&
@@ -409,6 +414,36 @@ export const getDriverAttendance = async (driverId, params = {}) => {
       err.message || "Error fetching attendance details"
     );
 
+    throw err;
+  }
+};
+
+//toggle driver
+
+export const toggleDriverDeleteStatus = async (id) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/drivers/${id}/toggleDeleteStatus`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message || "Failed to update driver status");
+    }
+
+    return result;
+  } catch (err) {
+    console.error("toggleDriverDeleteStatus Error:", err);
     throw err;
   }
 };

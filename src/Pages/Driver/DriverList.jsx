@@ -26,7 +26,11 @@ import Loader from "../../compoents/Loader";
 import LoderBtn from "../../compoents/LoderBtn";
 import Breaker from "../../compoents/Breaker";
 
-import { getAllDrivers, deleteDriver } from "../../Services/DriverApi";
+import {
+  getAllDrivers,
+  deleteDriver,
+  toggleDriverDeleteStatus,
+} from "../../Services/DriverApi";
 import { useAuth } from "../../auth/AuthContext";
 import DriverFilter from "./DriverFilter";
 import { useLocation } from "react-router-dom";
@@ -148,6 +152,7 @@ export default function DriverList() {
       isOnline: params.get("isOnline") ?? "",
       isOnTrip: params.get("isOnTrip") ?? "",
       isAvailable: params.get("isAvailable") ?? "",
+      isDeleted: params.get("isDeleted") ?? "",
     };
 
     setFilters(initialFilters);
@@ -166,6 +171,7 @@ export default function DriverList() {
       isAvailable: f.isAvailable || "",
       isPunchedIn: f.isPunchedIn || "",
       isPunchedOut: f.isPunchedOut || "",
+      isDeleted: f.isDeleted || "",
     };
 
     setFilters(cleaned);
@@ -191,6 +197,7 @@ export default function DriverList() {
   };
 
   const deleteHandler = (id) => {
+     handleMenuClose(); 
     Modal.confirm({
       title: "Delete Chauffeur",
       content: "Are you sure you want to delete this Chauffeur?",
@@ -218,6 +225,21 @@ export default function DriverList() {
       navigate("createDriver");
       setIsLoading(false);
     }, 300);
+  };
+
+  //handle toggle delete status (soft delete)
+  const handleToggleDelete = async (id) => {
+     handleMenuClose(); 
+    try {
+      const res = await toggleDriverDeleteStatus(id);
+
+      if (res?.status) {
+        toast.success(res.message || "Status updated");
+        fetchDrivers(); // refresh list
+      }
+    } catch (err) {
+      toast.error("Failed to update status");
+    }
   };
 
   const exportExcel = async () => {
@@ -589,17 +611,12 @@ export default function DriverList() {
                           <div key={v._id}>
                             {/* LINE 1: Brand + Model */}
                             <div className="font-medium">
-                              {v.brand} {v.model}
+                              {v.brand}
+                              {/* {v.model} */}
                             </div>
-
                             {/* LINE 2: Number + Fuel */}
                             <div className="text-xs text-gray-500">
-                              🚗 {v.carNumber} | ⛽ {v.fuelType}
-                            </div>
-
-                            {/* LINE 3: Color + Year */}
-                            <div className="text-xs text-gray-500">
-                              🖌️ {v.color} | 📅 {v.year}
+                              {v.carNumber}
                             </div>
                           </div>
                         ))}
@@ -677,6 +694,13 @@ export default function DriverList() {
                           Delete
                         </MenuItem>
                       )}
+
+                      {hasPermission(SECTION, "delete") && (
+                        <MenuItem onClick={() => handleToggleDelete(row.id)}>
+                          <TrashIcon className="h-5 w-5 text-red-600 mr-2" />
+                          {row.isDeleted ? "Active Driver" : "Inactive Driver"}
+                        </MenuItem>
+                       )} 
                     </Menu>
                   </TableCell>
                 </TableRow>

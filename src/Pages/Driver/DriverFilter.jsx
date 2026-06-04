@@ -190,6 +190,17 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
           <option value="false">No</option>
         </select>
 
+        {/* DELETED FILTER */}
+        <select
+          className="border p-2 rounded-xl"
+          value={localFilters.isDeleted || ""}
+          onChange={(e) => handleChange("isDeleted", e.target.value)}
+        >
+          <option value="">Deleted Status</option>
+          <option value="false">Active (Not Deleted)</option>
+          <option value="true">Deleted</option>
+        </select>
+
         {/* DATE FILTERS */}
         {/* START DATE */}
         <input

@@ -13,6 +13,7 @@ export const getAllUsers = async ({
   search = "",
   gender = "",
   isVerified = "",
+  isDeleted = "",
     filterType = "",
 }) => {
   const token = localStorage.getItem("token");
@@ -24,6 +25,7 @@ export const getAllUsers = async ({
       search,
       gender,
       isVerified,
+      isDeleted,
       filterType ,
     });
 
@@ -304,3 +306,57 @@ export const getBookingsByUserApi = async ({
     throw err;
   }
 };
+
+// ─────────────────────────────────────────────
+// TOGGLE USER SOFT DELETE (isDeleted true/false)
+// PATCH /api/admin/users/:id/delete-toggle
+// ─────────────────────────────────────────────
+// export const toggleUserDeleteApi = async (id) => {
+//   const token = localStorage.getItem("token");
+
+//   try {
+//     const res = await fetch(
+//       `${BASE_URL}/api/admin/users/${id}/delete-toggle`,
+//       {
+//         method: "PATCH",
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+
+//     const result = await res.json();
+
+//     if (!res.ok) {
+//       throw new Error(result.message || "Failed to toggle delete status");
+//     }
+
+//     // toast.success(result.message || "User status updated successfully");
+
+//     return result;
+//   } catch (err) {
+//     toast.error(err.message || "Something went wrong!");
+//     throw err;
+//   }
+// };
+export const toggleUserDeleteApi = async (id) => {
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${BASE_URL}/api/admin/users/${id}/delete-toggle`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  const result = await res.json();
+
+  if (!res.ok) {
+    throw new Error(result.message || "Failed");
+  }
+
+  return result;
+};
+

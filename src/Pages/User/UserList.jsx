@@ -50,7 +50,8 @@ import {
   getAllUsers,
   deleteUserApi,
   toggleUserStatusApi,
-} from "../../Services/UserApi"
+  toggleUserDeleteApi,
+} from "../../Services/UserApi";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     background: "linear-gradient(90deg, #03045E 0%, #0077B6 50%, #00B4D8 100%)",
@@ -112,11 +113,12 @@ export default function UserList() {
   const [selectedRowId, setSelectedRowId] = useState(null);
 
   const [btnLoading, setBtnLoading] = useState(false);
+  const [isDeleted, setIsDeleted] = useState("");
 
   const [isExporting, setIsExporting] = useState(false);
   const location = useLocation();
 
-const filterType = new URLSearchParams(location.search).get("filter");
+  const filterType = new URLSearchParams(location.search).get("filter");
 
   // ─────────────────────────────────────
   // FETCH USERS
@@ -132,7 +134,8 @@ const filterType = new URLSearchParams(location.search).get("filter");
         search: searchQuery,
         gender,
         isVerified,
-         filterType,
+        isDeleted,
+        filterType,
       });
 
       if (result?.status) {
@@ -147,8 +150,16 @@ const filterType = new URLSearchParams(location.search).get("filter");
       toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
-    } 
-  }, [page, rowsPerPage, searchQuery, gender, isVerified, filterType]);
+    }
+  }, [
+    page,
+    rowsPerPage,
+    searchQuery,
+    gender,
+    isVerified,
+    filterType,
+    isDeleted,
+  ]);
 
   useEffect(() => {
     fetchUsers();
@@ -202,6 +213,7 @@ const filterType = new URLSearchParams(location.search).get("filter");
       cancelText: "Cancel",
 
       onOk: async () => {
+        handleMenuClose();
         try {
           setLoading(true);
 
@@ -240,6 +252,36 @@ const filterType = new URLSearchParams(location.search).get("filter");
       toast.error(error.message);
     }
   };
+  //toggle delte
+  const toggleDelete = async (id) => {
+    handleMenuClose();
+
+    try {
+      const result = await toggleUserDeleteApi(id);
+
+      if (result?.status) {
+        toast.success(result.message); // ✅ ONLY ONE TOAST HERE
+        fetchUsers();
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+  // const toggleDelete = async (id) => {
+  //   handleMenuClose();
+  //   try {
+  //     const result = await toggleUserDeleteApi(id);
+
+  //   toast.success(result.message);
+
+  //     if (result?.status) {
+  //       toast.success(result.message);
+  //       fetchUsers(); // refresh list
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message);
+  //   }
+  // };
 
   // ─────────────────────────────────────
   // CREATE USER
@@ -266,6 +308,7 @@ const filterType = new URLSearchParams(location.search).get("filter");
         search: searchQuery,
         gender,
         isVerified,
+        isDeleted,
       });
 
       if (!result?.status || !result?.data?.length) {
@@ -374,6 +417,19 @@ const filterType = new URLSearchParams(location.search).get("filter");
             <option value="">All Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
+          </select>
+
+          <select
+            value={isDeleted}
+            onChange={(e) => {
+              setIsDeleted(e.target.value);
+              setPage(1);
+            }}
+            className="px-4 py-2.5 border rounded-lg"
+          >
+            <option value="">All Users</option>
+            <option value="false">Active Users</option>
+            <option value="true">Deleted Users</option>
           </select>
         </div>
 
@@ -577,9 +633,30 @@ const filterType = new URLSearchParams(location.search).get("filter");
 
                       {/* DELETE */}
 
-                      <MenuItem onClick={() => deleteHandler(row._id)}>
+                      {/* <MenuItem onClick={() => deleteHandler(row._id)}>
                         <TrashIcon className="h-5 w-5 text-red-500 mr-2" />
                         Delete
+                      </MenuItem> */}
+
+                      <MenuItem
+                        onClick={() => toggleDelete(row._id)}
+                        className="flex items-center justify-between"
+                      >
+                        <span className="flex items-center gap-2">
+                          🗑️ {row.isDeleted ? "Restore User" : "Soft Delete"}
+                        </span>
+
+                        <Switch
+                          checked={!row.isDeleted}
+                          onClick={(e) => {
+                            e.stopPropagation(); // 🚫 prevents MenuItem click
+                            toggleDelete(row._id);
+                          }}
+                        />
+                        {/* <Switch
+                          checked={!row.isDeleted}
+                          onClick={() => toggleDelete(row._id)}
+                        /> */}
                       </MenuItem>
                     </Menu>
                   </StyledTableCell>
