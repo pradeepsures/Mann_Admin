@@ -101,7 +101,7 @@ export default function BookingList() {
   const [drivers, setDrivers] = useState([]);
   const [driversLoading, setDriversLoading] = useState(false);
   const [stats, setStats] = useState(null);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  // const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // SEGMENT EDIT
   const [isSegmentEditModalOpen, setIsSegmentEditModalOpen] = useState(false);
@@ -278,7 +278,7 @@ export default function BookingList() {
     setIsAssignModalOpen(true);
     setSelectedDriver("");
     setSearchDriver("");
-    setDropdownOpen(true);
+    // setDropdownOpen(true);
   };
 
   const handleReassignDriver = (bookingId, segmentId) => {
@@ -287,7 +287,7 @@ export default function BookingList() {
     setSelectedSegment(segmentId);
     setIsReassignModalOpen(true);
     setSelectedDriver("");
-    setDropdownOpen(true);
+    // setDropdownOpen(true);
   };
 
   // SEGMENT EDIT HANDLERS
@@ -904,6 +904,22 @@ export default function BookingList() {
         }}
         onOk={handleAssignSubmit}
       >
+        <Select
+  showSearch
+  placeholder="Select Chauffeur"
+  value={selectedDriver || undefined}
+  onChange={(val) => {
+    setSelectedDriver(val);
+  }}
+  style={{ width: "100%" }}
+  loading={driversLoading}
+>
+  {drivers.map((d) => (
+    <Option key={d._id} value={d._id}>
+      {d.name} | {d.phone}
+    </Option>
+  ))}
+</Select>
         {/* <Select
           showSearch
           open={dropdownOpen} // 🔥 FORCE OPEN
@@ -920,7 +936,7 @@ export default function BookingList() {
             </Option>
           ))}
         </Select> */}
-        <div onClick={(e) => e.stopPropagation()}>
+        {/* <div onClick={(e) => e.stopPropagation()}>
           <Select
             showSearch
             open={dropdownOpen}
@@ -943,23 +959,8 @@ export default function BookingList() {
               </Option>
             ))}
           </Select>
-          {/* <Select
-            showSearch
-            open={dropdownOpen}
-            onDropdownVisibleChange={(open) => setDropdownOpen(open)}
-            placeholder="Select Chauffeur"
-            value={selectedDriver || undefined}
-            onChange={(val) => setSelectedDriver(val)}
-            style={{ width: "100%" }}
-            loading={driversLoading}
-          >
-            {drivers.map((d) => (
-              <Option key={d._id} value={d._id}>
-                {d.name} | {d.phone ? `(${d.phone})` : ""}
-              </Option>
-            ))}
-          </Select> */}
-        </div>
+         
+        </div> */}
       </Modal>
       //segment model
       <Modal
