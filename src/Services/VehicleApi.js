@@ -318,3 +318,33 @@ export const toggleVehicleDeleteStatus = async (id) => {
     throw err;
   }
 };
+
+//remove driver form vehicle
+export const removeDriverFromVehicle = async (vehicleId) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/vehicle/remove-driver/${vehicleId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message || "Failed to remove driver");
+    }
+
+    toast.success(result.message || "Driver removed successfully");
+    return result;
+  } catch (err) {
+    toast.error(err.message || "Error removing driver");
+    throw err;
+  }
+};

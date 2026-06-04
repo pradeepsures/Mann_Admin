@@ -1,3 +1,270 @@
+// import React, { useEffect, useState } from "react";
+// import { motion } from "framer-motion";
+// import { Select } from "antd";
+
+// import { getAllRegions } from "../../Services/RegionApi";
+// import { getAllDrivers } from "../../Services/DriverApi";
+
+// const { Option } = Select;
+
+// export default function DriverFilter({ appliedFilters, onApply, onReset }) {
+//   const [localFilters, setLocalFilters] = useState({ ...appliedFilters });
+
+//   const [regions, setRegions] = useState([]);
+//   const [drivers, setDrivers] = useState([]);
+
+//   const [regionLoading, setRegionLoading] = useState(false);
+//   const [driverLoading, setDriverLoading] = useState(false);
+
+//   const [driverSearch, setDriverSearch] = useState("");
+
+//   // sync parent
+//   useEffect(() => {
+//     setLocalFilters({ ...appliedFilters });
+//   }, [appliedFilters]);
+
+//   const handleChange = (key, value) => {
+//     setLocalFilters((prev) => ({ ...prev, [key]: value }));
+//   };
+
+//   // ───────── REGIONS ─────────
+//   const fetchRegions = async () => {
+//     setRegionLoading(true);
+//     try {
+//       const res = await getAllRegions({ page: 1, rowsPerPage: 100 });
+//       if (res?.status) setRegions(res.data || []);
+//     } finally {
+//       setRegionLoading(false);
+//     }
+//   };
+
+//   // ───────── DRIVERS (dropdown search support) ─────────
+//   const fetchDrivers = async (search = "") => {
+//     setDriverLoading(true);
+//     try {
+//       const res = await getAllDrivers({
+//         page: 1,
+//         rowsPerPage: 50,
+//         searchQuery: search,
+//       });
+
+//       if (res?.status) setDrivers(res.data || []);
+//     } finally {
+//       setDriverLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchRegions();
+//     fetchDrivers();
+//   }, []);
+
+//   useEffect(() => {
+//     fetchDrivers(driverSearch);
+//   }, [driverSearch]);
+
+//   // ───────── APPLY ─────────
+//   // const handleApply = () => {
+//   //   const cleaned = { ...localFilters };
+
+//   //   onApply({
+//   //     searchQuery: cleaned.search || "",
+//   //     isVerified: cleaned.isVerified || "",
+//   //     isOnline: cleaned.isOnline || "",
+//   //     region: cleaned.region || "",
+
+//   //     isPunchedIn: cleaned.isPunchedIn || "",
+//   //     isPunchedOut: cleaned.isPunchedOut || "",
+//   //     isOnTrip: cleaned.isOnTrip || "",
+//   //     isAssigned: cleaned.isAssigned || "",
+//   //     isAvailable: cleaned.isAvailable || "",
+
+//   //     startDate: cleaned.startDate || "",
+//   //     endDate: cleaned.endDate || "",
+//   //   });
+//   // };
+//   const handleApply = () => {
+//     onApply(localFilters);
+//   };
+
+//   return (
+//     <div className="bg-white p-5 rounded-xl shadow mb-6">
+//       <h3 className="text-xl font-semibold mb-4">Driver Filters</h3>
+
+//       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//         {/* SEARCH */}
+//         <input
+//           className="border p-2 rounded-xl"
+//           placeholder="Search name / email / phone"
+//           value={localFilters.search || ""}
+//           onChange={(e) => handleChange("search", e.target.value)}
+//         />
+
+//         {/* REGION */}
+//         {/* <Select
+//           showSearch
+//           placeholder="Region"
+//           value={localFilters.region || undefined}
+//           onChange={(val) => handleChange("region", val)}
+//           loading={regionLoading}
+//         >
+//           {regions.map((r) => (
+//             <Option key={r._id} value={r._id}>
+//               {r.name}
+//             </Option>
+//           ))}
+//         </Select> */}
+
+//         {/* VERIFIED */}
+//         <select
+//           className="border p-2 rounded-xl"
+//           value={localFilters.isVerified || ""}
+//           onChange={(e) => handleChange("isVerified", e.target.value)}
+//         >
+//           <option value="">Verified</option>
+//           <option value="true">Yes</option>
+//           <option value="false">No</option>
+//         </select>
+//         {/* <select
+//           className="border p-2 rounded-xl"
+//           value={localFilters.isVerified || ""}
+//           onChange={(e) => handleChange("isVerified", e.target.value)}
+//         >
+//           <option value="">Verified</option>
+//           <option value="true">Verified - yes</option>
+//           <option value="false">Unverified</option>
+//         </select> */}
+
+//         {/* ONLINE */}
+//         <select
+//           className="border p-2 rounded-xl"
+//           value={localFilters.isOnline || ""}
+//           onChange={(e) => handleChange("isOnline", e.target.value)}
+//         >
+//           <option value="">Online Status</option>
+//           <option value="true">Online</option>
+//           <option value="false">Offline</option>
+//         </select>
+
+//         {/* PUNCHED IN */}
+//         <select
+//           className="border p-2 rounded-xl"
+//           value={localFilters.isPunchedIn || ""}
+//           onChange={(e) => handleChange("isPunchedIn", e.target.value)}
+//         >
+//           <option value="">Punched In</option>
+//           <option value="true">Yes</option>
+//           <option value="false">No</option>
+//         </select>
+
+//         {/* ON TRIP */}
+//         <select
+//           className="border p-2 rounded-xl"
+//           value={localFilters.isOnTrip || ""}
+//           onChange={(e) => handleChange("isOnTrip", e.target.value)}
+//         >
+//           <option value="">On Trip</option>
+//           <option value="true">Yes</option>
+//           <option value="false">No</option>
+//         </select>
+
+//         {/* ASSIGNED */}
+//         <select
+//           className="border p-2 rounded-xl"
+//           value={localFilters.isAssigned || ""}
+//           onChange={(e) => handleChange("isAssigned", e.target.value)}
+//         >
+//           <option value="">Assigned</option>
+//           <option value="true">Yes</option>
+//           <option value="false">No</option>
+//         </select>
+
+//         {/* AVAILABLE */}
+//         <select
+//           className="border p-2 rounded-xl"
+//           value={localFilters.isAvailable || ""}
+//           onChange={(e) => handleChange("isAvailable", e.target.value)}
+//         >
+//           <option value="">Available</option>
+//           <option value="true">Yes</option>
+//           <option value="false">No</option>
+//         </select>
+
+//         {/* DELETED FILTER */}
+//         <select
+//           className="border p-2 rounded-xl"
+//           value={localFilters.isDeleted || ""}
+//           onChange={(e) => handleChange("isDeleted", e.target.value)}
+//         >
+//           <option value="">Deleted Status</option>
+//           <option value="false">Active (Not Deleted)</option>
+//           <option value="true">Deleted</option>
+//         </select>
+
+//         {/* DATE FILTERS */}
+//         {/* START DATE */}
+//         <input
+//           type={localFilters.startDate ? "date" : "text"}
+//           className="border p-2 rounded-xl w-full"
+//           placeholder="Start Date"
+//           value={localFilters.startDate || ""}
+//           onFocus={(e) => (e.target.type = "date")}
+//           onBlur={(e) => {
+//             if (!e.target.value) e.target.type = "text";
+//           }}
+//           onChange={(e) => handleChange("startDate", e.target.value)}
+//         />
+
+//         {/* END DATE */}
+//         <input
+//           type={localFilters.endDate ? "date" : "text"}
+//           className="border p-2 rounded-xl w-full"
+//           placeholder="End Date"
+//           value={localFilters.endDate || ""}
+//           onFocus={(e) => (e.target.type = "date")}
+//           onBlur={(e) => {
+//             if (!e.target.value) e.target.type = "text";
+//           }}
+//           onChange={(e) => handleChange("endDate", e.target.value)}
+//         />
+//         {/* <input
+//           type="date"
+//           className="border p-2 rounded-xl"
+//           value={localFilters.startDate || ""}
+//           onChange={(e) => handleChange("startDate", e.target.value)}
+//         />
+
+//         <input
+//           type="date"
+//           className="border p-2 rounded-xl"
+//           value={localFilters.endDate || ""}
+//           onChange={(e) => handleChange("endDate", e.target.value)}
+//         /> */}
+//       </div>
+
+//       {/* BUTTONS */}
+//       <div className="flex gap-3 mt-5">
+//         <motion.button
+//           whileTap={{ scale: 0.95 }}
+//           onClick={handleApply}
+//           className="bg-primary text-white px-5 py-2 rounded-xl"
+//         >
+//           Apply Filters
+//         </motion.button>
+
+//         <motion.button
+//           whileTap={{ scale: 0.95 }}
+//           onClick={onReset}
+//           className="bg-gray-400 text-white px-5 py-2 rounded-xl"
+//         >
+//           Reset
+//         </motion.button>
+//       </div>
+//     </div>
+//   );
+// }
+
+
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Select } from "antd";
@@ -7,8 +274,14 @@ import { getAllDrivers } from "../../Services/DriverApi";
 
 const { Option } = Select;
 
-export default function DriverFilter({ appliedFilters, onApply, onReset }) {
-  const [localFilters, setLocalFilters] = useState({ ...appliedFilters });
+export default function DriverFilter({
+  appliedFilters,
+  onApply,
+  onReset,
+}) {
+  const [localFilters, setLocalFilters] = useState({
+    ...appliedFilters,
+  });
 
   const [regions, setRegions] = useState([]);
   const [drivers, setDrivers] = useState([]);
@@ -18,29 +291,39 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
 
   const [driverSearch, setDriverSearch] = useState("");
 
-  // sync parent
   useEffect(() => {
     setLocalFilters({ ...appliedFilters });
   }, [appliedFilters]);
 
   const handleChange = (key, value) => {
-    setLocalFilters((prev) => ({ ...prev, [key]: value }));
+    setLocalFilters((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
   };
 
-  // ───────── REGIONS ─────────
+  // Regions
   const fetchRegions = async () => {
     setRegionLoading(true);
+
     try {
-      const res = await getAllRegions({ page: 1, rowsPerPage: 100 });
-      if (res?.status) setRegions(res.data || []);
+      const res = await getAllRegions({
+        page: 1,
+        rowsPerPage: 100,
+      });
+
+      if (res?.status) {
+        setRegions(res.data || []);
+      }
     } finally {
       setRegionLoading(false);
     }
   };
 
-  // ───────── DRIVERS (dropdown search support) ─────────
+  // Drivers
   const fetchDrivers = async (search = "") => {
     setDriverLoading(true);
+
     try {
       const res = await getAllDrivers({
         page: 1,
@@ -48,7 +331,9 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
         searchQuery: search,
       });
 
-      if (res?.status) setDrivers(res.data || []);
+      if (res?.status) {
+        setDrivers(res.data || []);
+      }
     } finally {
       setDriverLoading(false);
     }
@@ -63,105 +348,126 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
     fetchDrivers(driverSearch);
   }, [driverSearch]);
 
-  // ───────── APPLY ─────────
-  // const handleApply = () => {
-  //   const cleaned = { ...localFilters };
-
-  //   onApply({
-  //     searchQuery: cleaned.search || "",
-  //     isVerified: cleaned.isVerified || "",
-  //     isOnline: cleaned.isOnline || "",
-  //     region: cleaned.region || "",
-
-  //     isPunchedIn: cleaned.isPunchedIn || "",
-  //     isPunchedOut: cleaned.isPunchedOut || "",
-  //     isOnTrip: cleaned.isOnTrip || "",
-  //     isAssigned: cleaned.isAssigned || "",
-  //     isAvailable: cleaned.isAvailable || "",
-
-  //     startDate: cleaned.startDate || "",
-  //     endDate: cleaned.endDate || "",
-  //   });
-  // };
   const handleApply = () => {
-    onApply(localFilters);
+    onApply({
+      searchQuery: localFilters.searchQuery || "",
+
+      isVerified: localFilters.isVerified ?? "",
+      isOnline: localFilters.isOnline ?? "",
+
+      isPunchedIn: localFilters.isPunchedIn ?? "",
+      isPunchedOut: localFilters.isPunchedOut ?? "",
+
+      isOnTrip: localFilters.isOnTrip ?? "",
+      isAssigned: localFilters.isAssigned ?? "",
+      isAvailable: localFilters.isAvailable ?? "",
+
+      isDeleted: localFilters.isDeleted ?? "",
+
+      startDate: localFilters.startDate || "",
+      endDate: localFilters.endDate || "",
+
+      region: localFilters.region || "",
+    });
   };
 
   return (
     <div className="bg-white p-5 rounded-xl shadow mb-6">
-      <h3 className="text-xl font-semibold mb-4">Driver Filters</h3>
+      <h3 className="text-xl font-semibold mb-4">
+        Driver Filters
+      </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
         {/* SEARCH */}
         <input
           className="border p-2 rounded-xl"
-          placeholder="Search name / email / phone"
-          value={localFilters.search || ""}
-          onChange={(e) => handleChange("search", e.target.value)}
+          placeholder="Search Name / Email / Phone"
+          value={localFilters.searchQuery || ""}
+          onChange={(e) =>
+            handleChange("searchQuery", e.target.value)
+          }
         />
 
-        {/* REGION */}
-        {/* <Select
-          showSearch
-          placeholder="Region"
-          value={localFilters.region || undefined}
-          onChange={(val) => handleChange("region", val)}
-          loading={regionLoading}
-        >
-          {regions.map((r) => (
-            <Option key={r._id} value={r._id}>
-              {r.name}
-            </Option>
-          ))}
-        </Select> */}
+        {/* START DATE */}
+        <input
+          type="date"
+          className="border p-2 rounded-xl"
+          value={localFilters.startDate || ""}
+          onChange={(e) =>
+            handleChange("startDate", e.target.value)
+          }
+        />
+
+        {/* END DATE */}
+        <input
+          type="date"
+          className="border p-2 rounded-xl"
+          value={localFilters.endDate || ""}
+          onChange={(e) =>
+            handleChange("endDate", e.target.value)
+          }
+        />
 
         {/* VERIFIED */}
         <select
           className="border p-2 rounded-xl"
           value={localFilters.isVerified || ""}
-          onChange={(e) => handleChange("isVerified", e.target.value)}
+          onChange={(e) =>
+            handleChange("isVerified", e.target.value)
+          }
         >
           <option value="">Verified</option>
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
-        {/* <select
-          className="border p-2 rounded-xl"
-          value={localFilters.isVerified || ""}
-          onChange={(e) => handleChange("isVerified", e.target.value)}
-        >
-          <option value="">Verified</option>
-          <option value="true">Verified - yes</option>
+          <option value="true">Verified</option>
           <option value="false">Unverified</option>
-        </select> */}
+        </select>
 
         {/* ONLINE */}
-        <select
+        {/* <select
           className="border p-2 rounded-xl"
           value={localFilters.isOnline || ""}
-          onChange={(e) => handleChange("isOnline", e.target.value)}
+          onChange={(e) =>
+            handleChange("isOnline", e.target.value)
+          }
         >
           <option value="">Online Status</option>
           <option value="true">Online</option>
           <option value="false">Offline</option>
-        </select>
+        </select> */}
 
         {/* PUNCHED IN */}
-        <select
+        {/* <select
           className="border p-2 rounded-xl"
           value={localFilters.isPunchedIn || ""}
-          onChange={(e) => handleChange("isPunchedIn", e.target.value)}
+          onChange={(e) =>
+            handleChange("isPunchedIn", e.target.value)
+          }
         >
           <option value="">Punched In</option>
           <option value="true">Yes</option>
           <option value="false">No</option>
-        </select>
+        </select> */}
+
+        {/* PUNCHED OUT */}
+        {/* <select
+          className="border p-2 rounded-xl"
+          value={localFilters.isPunchedOut || ""}
+          onChange={(e) =>
+            handleChange("isPunchedOut", e.target.value)
+          }
+        >
+          <option value="">Punched Out</option>
+          <option value="true">Yes</option>
+          <option value="false">No</option>
+        </select> */}
 
         {/* ON TRIP */}
         <select
           className="border p-2 rounded-xl"
           value={localFilters.isOnTrip || ""}
-          onChange={(e) => handleChange("isOnTrip", e.target.value)}
+          onChange={(e) =>
+            handleChange("isOnTrip", e.target.value)
+          }
         >
           <option value="">On Trip</option>
           <option value="true">Yes</option>
@@ -172,9 +478,11 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
         <select
           className="border p-2 rounded-xl"
           value={localFilters.isAssigned || ""}
-          onChange={(e) => handleChange("isAssigned", e.target.value)}
+          onChange={(e) =>
+            handleChange("isAssigned", e.target.value)
+          }
         >
-          <option value="">Assigned</option>
+          <option value="">vehicle Assigned</option>
           <option value="true">Yes</option>
           <option value="false">No</option>
         </select>
@@ -183,66 +491,29 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
         <select
           className="border p-2 rounded-xl"
           value={localFilters.isAvailable || ""}
-          onChange={(e) => handleChange("isAvailable", e.target.value)}
+          onChange={(e) =>
+            handleChange("isAvailable", e.target.value)
+          }
         >
           <option value="">Available</option>
           <option value="true">Yes</option>
           <option value="false">No</option>
         </select>
 
-        {/* DELETED FILTER */}
+        {/* DELETED */}
         <select
           className="border p-2 rounded-xl"
           value={localFilters.isDeleted || ""}
-          onChange={(e) => handleChange("isDeleted", e.target.value)}
+          onChange={(e) =>
+            handleChange("isDeleted", e.target.value)
+          }
         >
           <option value="">Deleted Status</option>
-          <option value="false">Active (Not Deleted)</option>
+          <option value="false">Active</option>
           <option value="true">Deleted</option>
         </select>
-
-        {/* DATE FILTERS */}
-        {/* START DATE */}
-        <input
-          type={localFilters.startDate ? "date" : "text"}
-          className="border p-2 rounded-xl w-full"
-          placeholder="Start Date"
-          value={localFilters.startDate || ""}
-          onFocus={(e) => (e.target.type = "date")}
-          onBlur={(e) => {
-            if (!e.target.value) e.target.type = "text";
-          }}
-          onChange={(e) => handleChange("startDate", e.target.value)}
-        />
-
-        {/* END DATE */}
-        <input
-          type={localFilters.endDate ? "date" : "text"}
-          className="border p-2 rounded-xl w-full"
-          placeholder="End Date"
-          value={localFilters.endDate || ""}
-          onFocus={(e) => (e.target.type = "date")}
-          onBlur={(e) => {
-            if (!e.target.value) e.target.type = "text";
-          }}
-          onChange={(e) => handleChange("endDate", e.target.value)}
-        />
-        {/* <input
-          type="date"
-          className="border p-2 rounded-xl"
-          value={localFilters.startDate || ""}
-          onChange={(e) => handleChange("startDate", e.target.value)}
-        />
-
-        <input
-          type="date"
-          className="border p-2 rounded-xl"
-          value={localFilters.endDate || ""}
-          onChange={(e) => handleChange("endDate", e.target.value)}
-        /> */}
       </div>
 
-      {/* BUTTONS */}
       <div className="flex gap-3 mt-5">
         <motion.button
           whileTap={{ scale: 0.95 }}
@@ -255,7 +526,7 @@ export default function DriverFilter({ appliedFilters, onApply, onReset }) {
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={onReset}
-          className="bg-gray-400 text-white px-5 py-2 rounded-xl"
+          className="bg-gray-500 text-white px-5 py-2 rounded-xl"
         >
           Reset
         </motion.button>

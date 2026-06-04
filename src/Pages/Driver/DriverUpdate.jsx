@@ -36,6 +36,12 @@ const UpdateDriver = () => {
     adhaarNumber: "",
     panNumber: "",
     policeVerificationExpiry: "",
+    dateOfJoining: "",
+    dateOfLeaving: "",
+    dateOfLeavingReason: "",
+    medicalCertificateIssue: "",
+    medicalCertificateExpiry: "",
+    medicalCertificatePhoto: "",
     isVerified: false,
     isOnline: false,
     isAvailable: false,
@@ -57,6 +63,7 @@ const UpdateDriver = () => {
     panFrontPhoto: "",
     panBackPhoto: "",
     policeVerificationPhoto: "",
+    medicalCertificatePhoto: "",
   });
 
   // Existing image URLs from backend (for display when no new file selected)
@@ -69,6 +76,7 @@ const UpdateDriver = () => {
     panFrontPhoto: "",
     panBackPhoto: "",
     policeVerificationPhoto: "",
+    medicalCertificatePhoto: "",
   });
 
   // Fetch regions + single driver data
@@ -105,10 +113,23 @@ const UpdateDriver = () => {
             panNumber: driver.panNumber || "",
             policeVerificationExpiry: driver.policeVerificationExpiry
               ? new Date(driver.policeVerificationExpiry)
-                  .toISOString()
-                  .split("T")[0]
+                .toISOString()
+                .split("T")[0]
+              : "", dateOfJoining: driver.dateOfJoining
+                ? new Date(driver.dateOfJoining).toISOString().split("T")[0]
+                : "",
+            dateOfLeaving: driver.dateOfLeaving
+              ? new Date(driver.dateOfLeaving).toISOString().split("T")[0]
               : "",
-            isVerified: driver.isVerified || false,
+            dateOfLeavingReason: driver.dateOfLeavingReason || "",
+            medicalCertificateIssue: driver.medicalCertificateIssue
+              ? new Date(driver.medicalCertificateIssue).toISOString().split("T")[0]
+              : "",
+            medicalCertificateExpiry: driver.medicalCertificateExpiry
+              ? new Date(driver.medicalCertificateExpiry)
+                .toISOString()
+                .split("T")[0]
+              : "", isVerified: driver.isVerified || false,
             isOnline: driver.isOnline || false,
             isAvailable: driver.isAvailable || false,
             // region: driver.region?._id || driver.region || "", // assuming region is populated or just ID
@@ -129,6 +150,7 @@ const UpdateDriver = () => {
             panFrontPhoto: driver.panFrontPhoto || "",
             panBackPhoto: driver.panBackPhoto || "",
             policeVerificationPhoto: driver.policeVerificationPhoto || "",
+            medicalCertificatePhoto: driver.medicalCertificatePhoto || "",
           });
         } else {
           toast.error("Chauffeur not found");
@@ -316,7 +338,7 @@ const UpdateDriver = () => {
           {/* Personal Info */}
           <label className="ml-2 mt-4 font-normal block">Full Name *</label>
           <input
-          className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
             type="text"
             name="name"
             value={formData.name}
@@ -619,11 +641,11 @@ const UpdateDriver = () => {
                 toast.error("Aadhaar Number accepts digits only");
               }
             }}
-            // onChange={handleChange}
-            // onChange={(e) => {
-            //   const value = e.target.value.replace(/\D/g, ""); // only digits
-            //   setFormData({ ...formData, adhaarNumber: value });
-            // }}
+          // onChange={handleChange}
+          // onChange={(e) => {
+          //   const value = e.target.value.replace(/\D/g, ""); // only digits
+          //   setFormData({ ...formData, adhaarNumber: value });
+          // }}
           />
           {apiError.adhaarNumber && (
             <p className="text-red-500 text-sm ml-2">{apiError.adhaarNumber}</p>
@@ -829,6 +851,94 @@ const UpdateDriver = () => {
             className="hidden"
             type="file"
             name="policeVerificationPhoto"
+            accept="image/*,application/pdf"
+            onChange={handleFileChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Date of Joining
+          </label>
+          <input
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            type="date"
+            name="dateOfJoining"
+            value={formData.dateOfJoining}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Date of Leaving
+          </label>
+          <input
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            type="date"
+            name="dateOfLeaving"
+            value={formData.dateOfLeaving}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Leaving Reason
+          </label>
+          <textarea
+            className="w-full h-20 mb-1 border rounded-xl pl-4 pt-2 border-gray-500 resize-none"
+            name="dateOfLeavingReason"
+            placeholder="Enter reason for leaving"
+            value={formData.dateOfLeavingReason}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Medical Certificate Issue
+          </label>
+          <input
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            type="date"
+            name="medicalCertificateIssue"
+            value={formData.medicalCertificateIssue}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Medical Certificate Expiry
+          </label>
+          <input
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            type="date"
+            name="medicalCertificateExpiry"
+            value={formData.medicalCertificateExpiry}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Medical Certificate Photo
+          </label>
+          <div className="mb-2">
+            {previews.medicalCertificatePhoto ? (
+              <img
+                src={previews.medicalCertificatePhoto}
+                alt="New Medical Certificate"
+                className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
+              />
+            ) : existingImages.medicalCertificatePhoto ? (
+              <img
+                src={existingImages.medicalCertificatePhoto}
+                alt="Current Medical Certificate"
+                className="h-16 w-24 object-cover rounded mt-2 mb-2 ml-2 border border-gray-300"
+              />
+            ) : null}
+          </div>
+          <label
+            htmlFor="medical-certificate-upload"
+            className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
+          >
+            � {previews.medicalCertificatePhoto ? "Replace" : "Upload / Replace"} Medical Certificate Photo or PDF
+          </label>
+          <input
+            id="medical-certificate-upload"
+            className="hidden"
+            type="file"
+            name="medicalCertificatePhoto"
             accept="image/*,application/pdf"
             onChange={handleFileChange}
           />

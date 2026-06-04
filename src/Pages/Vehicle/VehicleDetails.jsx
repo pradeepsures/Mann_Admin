@@ -152,6 +152,9 @@ export default function VehicleDetails() {
           <DetailItem label="Engine Number" value={vehicle.engineNumber} />
           <DetailItem label="Date of Purchase" value={formatDate(vehicle.dateOfPurchase)} />
           <DetailItem label="Date of Registration" value={formatDate(vehicle.dateOfRegistration)} />
+          <DetailItem label="Current Odometer Reading" value={vehicle.currentOdometerReading} />
+          <DetailItem label="Previous Odometer Reading" value={vehicle.previousOdometerReading} />
+          <DetailItem label="Average Mileage" value={vehicle.averageMileage} />
           <DetailItem
             label="Status"
             value={

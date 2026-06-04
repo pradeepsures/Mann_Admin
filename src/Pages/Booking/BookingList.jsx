@@ -905,62 +905,41 @@ export default function BookingList() {
         onOk={handleAssignSubmit}
       >
         <Select
-  showSearch
-  placeholder="Select Chauffeur"
-  value={selectedDriver || undefined}
-  onChange={(val) => {
-    setSelectedDriver(val);
-  }}
-  style={{ width: "100%" }}
-  loading={driversLoading}
->
-  {drivers.map((d) => (
-    <Option key={d._id} value={d._id}>
-      {d.name} | {d.phone}
-    </Option>
-  ))}
-</Select>
-        {/* <Select
           showSearch
-          open={dropdownOpen} // 🔥 FORCE OPEN
-          onDropdownVisibleChange={(open) => setDropdownOpen(open)} // keep control
           placeholder="Select Chauffeur"
           value={selectedDriver || undefined}
-          onChange={(val) => setSelectedDriver(val)}
+          onChange={(val) => {
+            setSelectedDriver(val);
+          }}
+          style={{ width: "100%" }}
+          loading={driversLoading}
+          optionFilterProp="label"
+          filterOption={(input, option) =>
+            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+          }
+        >
+          {drivers.map((d) => (
+            <Option key={d._id} value={d._id} label={`${d.name} | ${d.phone}`}>
+              {d.name} | {d.phone}
+            </Option>
+          ))}
+        </Select>
+        {/* <Select
+          showSearch
+          placeholder="Select Chauffeur"
+          value={selectedDriver || undefined}
+          onChange={(val) => {
+            setSelectedDriver(val);
+          }}
           style={{ width: "100%" }}
           loading={driversLoading}
         >
           {drivers.map((d) => (
             <Option key={d._id} value={d._id}>
-              {d.name} {d.phone ? `(${d.phone})` : ""}
+              {d.name} | {d.phone}
             </Option>
           ))}
         </Select> */}
-        {/* <div onClick={(e) => e.stopPropagation()}>
-          <Select
-            showSearch
-            open={dropdownOpen}
-            placeholder="Select Chauffeur"
-            value={selectedDriver || undefined}
-            onChange={(val) => setSelectedDriver(val)}
-            style={{ width: "100%" }}
-            loading={driversLoading}
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              option?.children
-                ?.toString()
-                .toLowerCase()
-                .includes(input.toLowerCase())
-            }
-          >
-            {drivers.map((d) => (
-              <Option key={d._id} value={d._id}>
-                {d.name} | {d.phone ? `(${d.phone})` : ""}
-              </Option>
-            ))}
-          </Select>
-         
-        </div> */}
       </Modal>
       //segment model
       <Modal

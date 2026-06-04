@@ -37,6 +37,12 @@ const CreateDriver = () => {
     adhaarNumber: "",
     panNumber: "",
     policeVerificationExpiry: "",
+    dateOfJoining: "",
+    dateOfLeaving: "",
+    dateOfLeavingReason: "",
+    medicalCertificateIssue: "",
+    medicalCertificateExpiry: "",
+    medicalCertificatePhoto: "",
     isVerified: false,
     isOnline: false,
     isAvailable: false,
@@ -56,6 +62,7 @@ const CreateDriver = () => {
     panFrontPhoto: "",
     panBackPhoto: "",
     policeVerificationPhoto: "",
+    medicalCertificatePhoto: "",
   });
 
   // Fetch regions
@@ -134,6 +141,12 @@ const CreateDriver = () => {
       adhaarNumber: "",
       panNumber: "",
       policeVerificationExpiry: "",
+      dateOfJoining: "",
+      dateOfLeaving: "",
+      dateOfLeavingReason: "",
+      medicalCertificateIssue: "",
+      medicalCertificateExpiry: "",
+      medicalCertificatePhoto: "",
       isVerified: false,
       isOnline: false,
       isAvailable: false,
@@ -153,6 +166,7 @@ const CreateDriver = () => {
       panFrontPhoto: "",
       panBackPhoto: "",
       policeVerificationPhoto: "",
+      medicalCertificatePhoto: "",
     });
 
     setApiError({});
@@ -195,14 +209,14 @@ const CreateDriver = () => {
 
     const pan = (formData.panNumber || "").trim().toUpperCase();
 
-  if (formData.panNumber?.trim()) {
-  const pan = formData.panNumber.trim().toUpperCase();
-  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+    if (formData.panNumber?.trim()) {
+      const pan = formData.panNumber.trim().toUpperCase();
+      const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 
-  if (!panRegex.test(pan)) {
-    errors.panNumber = "Invalid PAN format (e.g. ABCDE1234F)";
-  }
-}
+      if (!panRegex.test(pan)) {
+        errors.panNumber = "Invalid PAN format (e.g. ABCDE1234F)";
+      }
+    }
     if (formData.pincode) {
       const pin = formData.pincode.trim();
       const pinRegex = /^[1-9][0-9]{5}$/;
@@ -259,6 +273,11 @@ const CreateDriver = () => {
         formDataToSend.append(
           "policeVerificationPhoto",
           formData.policeVerificationPhoto,
+        );
+      if (formData.medicalCertificatePhoto)
+        formDataToSend.append(
+          "medicalCertificatePhoto",
+          formData.medicalCertificatePhoto,
         );
 
       const res = await createDriverApi(formDataToSend);
@@ -384,9 +403,8 @@ const CreateDriver = () => {
 
           <label className="ml-2 mt-5 font-normal block">Alternate Phone</label>
           <input
-            className={`w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500 ${
-              apiError.alternatePhone ? "border-red-500" : "border-gray-500"
-            }`}
+            className={`w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500 ${apiError.alternatePhone ? "border-red-500" : "border-gray-500"
+              }`}
             type="tel"
             name="alternatePhone"
             placeholder="Alternate phone (optional)"
@@ -591,11 +609,11 @@ const CreateDriver = () => {
                 toast.error("Aadhaar Number accepts digits only");
               }
             }}
-            // onChange={handleChange}
-            // onChange={(e) => {
-            //   const value = e.target.value.replace(/\D/g, ""); // allow only digits
-            //   setFormData({ ...formData, adhaarNumber: value });
-            // }}
+          // onChange={handleChange}
+          // onChange={(e) => {
+          //   const value = e.target.value.replace(/\D/g, ""); // allow only digits
+          //   setFormData({ ...formData, adhaarNumber: value });
+          // }}
           />
           {apiError.adhaarNumber && (
             <p className="text-red-500 text-sm ml-2">{apiError.adhaarNumber}</p>
@@ -741,6 +759,80 @@ const CreateDriver = () => {
             className="hidden"
             type="file"
             name="policeVerificationPhoto"
+            accept="image/*,application/pdf"
+            onChange={handleFileChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Date of Joining
+          </label>
+          <input
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            type="date"
+            name="dateOfJoining"
+            value={formData.dateOfJoining}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Date of Leaving
+          </label>
+          <input
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            type="date"
+            name="dateOfLeaving"
+            value={formData.dateOfLeaving}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Leaving Reason
+          </label>
+          <textarea
+            className="w-full h-20 mb-1 border rounded-xl pl-4 pt-2 border-gray-500 resize-none"
+            name="dateOfLeavingReason"
+            placeholder="Enter reason for leaving"
+            value={formData.dateOfLeavingReason}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Medical Certificate Issue
+          </label>
+          <input
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            type="date"
+            name="medicalCertificateIssue"
+            value={formData.medicalCertificateIssue}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Medical Certificate Expiry
+          </label>
+          <input
+            className="w-full h-10 mb-1 border rounded-xl pl-4 border-gray-500"
+            type="date"
+            name="medicalCertificateExpiry"
+            value={formData.medicalCertificateExpiry}
+            onChange={handleChange}
+          />
+
+          <label className="ml-2 mt-5 font-normal block">
+            Medical Certificate Photo
+          </label>
+          {renderPreviewFile("medicalCertificatePhoto", "Medical Certificate")}
+          <label
+            htmlFor="medical-certificate-upload"
+            className="flex items-center justify-center h-10 border border-gray-500 rounded-xl cursor-pointer bg-white hover:bg-gray-100 transition-colors px-4"
+          >
+            📎 Upload Medical Certificate Photo or PDF
+          </label>
+          <input
+            id="medical-certificate-upload"
+            className="hidden"
+            type="file"
+            name="medicalCertificatePhoto"
             accept="image/*,application/pdf"
             onChange={handleFileChange}
           />

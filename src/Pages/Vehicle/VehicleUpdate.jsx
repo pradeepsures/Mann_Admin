@@ -42,6 +42,9 @@ const UpdateVehicle = () => {
     certificatePhoto: null, // only for new file object
     rcFrontPhoto: null, // only for new file object
     rcBackPhoto: null, // only for new file object
+    currentOdometerReading: "",
+    previousOdometerReading: "",
+    averageMileage: "",
   });
 
   const [previews, setPreviews] = useState({
@@ -85,7 +88,7 @@ const UpdateVehicle = () => {
           pollutionNumber: data.pollutionNumber || "",
           fitnessNumber: data.fitnessNumber || "",
           permitNumber: data.permitNumber || "",
-          insureanceIssueDate: data.insuranceIssueDate
+          insuranceIssueDate: data.insuranceIssueDate
             ? data.insuranceIssueDate.split("T")[0]
             : "",
           pollutionStartDate: data.pollutionStartDate
@@ -122,6 +125,9 @@ const UpdateVehicle = () => {
           certificatePhoto: null,
           rcFrontPhoto: null,
           rcBackPhoto: null,
+          currentOdometerReading: data.currentOdometerReading || "",
+          previousOdometerReading: data.previousOdometerReading || "",
+          averageMileage: data.averageMileage || "",
         });
 
         // ✅ PREVIEW existing images from API
@@ -454,6 +460,9 @@ const UpdateVehicle = () => {
               type: "date",
             },
             { label: "Date of Purchase", key: "dateOfPurchase", type: "date" },
+            { label: "Current Odometer Reading (km)", key: "currentOdometerReading", type: "number" },
+            { label: "Previous Odometer Reading (km)", key: "previousOdometerReading", type: "number" },
+            { label: "Average Mileage (km/l)", key: "averageMileage", type: "number" }, 
           ].map(({ label, key, type }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>

@@ -194,9 +194,28 @@ export default function PunchList() {
           { label: "Region", value: (r) => r?.region?.name },
           { label: "Punch Region", value: (r) => r?.punchRegion?.name },
           { label: "Status", value: "status" },
-          { label: "Punch In", value: (r) => r?.punchInAtIST },
-          { label: "Punch Out", value: (r) => r?.punchOutAtIST },
+          { label: "Punch In", value: (r) => r?.punchInAt },
+          { label: "Punch Out", value: (r) => r?.punchOutAt },
           { label: "Total Minutes", value: "totalMinutes" },
+          {
+            label: "Booking Report",
+            value: (r) => {
+              const b = r?.currentBooking?.booking;
+
+              if (!b) return "No Booking";
+
+              return `
+Booking No: ${b.bookingNumber}
+Traveller: ${b.travellerName}
+Phone: ${b.travellerPhone}
+Type: ${b.bookingType}
+Status: ${b.tripStatus}
+Pickup: ${b.pickup?.address}
+Dropoff: ${b.dropoff?.address}
+Fare: ${b.estimatedFare}
+    `;
+            },
+          },
         ],
         content: data,
       },
@@ -229,8 +248,13 @@ export default function PunchList() {
             optionFilterProp="children"
             className="custom-select"
             filterOption={(input, option) =>
-              option.children.toLowerCase().includes(input.toLowerCase())
+              String(option?.children ?? "")
+                .toLowerCase()
+                .includes(input.toLowerCase())
             }
+            // filterOption={(input, option) =>
+            //   option.children.toLowerCase().includes(input.toLowerCase())
+            // }
           >
             {drivers.map((d) => (
               <Option key={d._id} value={d._id}>
@@ -315,25 +339,6 @@ export default function PunchList() {
               setLocalFilters({ ...localFilters, endDate: e.target.value })
             }
           />
-          {/* <input
-                        type="date"
-                        placeholder="Start Date"
-                        className="border p-2 rounded-2xl"
-                        value={localFilters.startDate}
-                        onChange={(e) =>
-                            setLocalFilters({ ...localFilters, startDate: e.target.value })
-                        }
-                    />
-
-                    <input
-                        type="date"
-                        placeholder="End Date"
-                        className="border p-2 rounded-2xl"
-                        value={localFilters.endDate}
-                        onChange={(e) =>
-                            setLocalFilters({ ...localFilters, endDate: e.target.value })
-                        }
-                    /> */}
         </div>
 
         <div className="flex gap-3 mt-5">
@@ -477,15 +482,13 @@ export default function PunchList() {
                     </div>
                   ) : (
                     <span className="text-green-600 font-medium">
-                     No Booking
+                      No Booking
                     </span>
                   )}
                 </TableCell>
 
                 <TableCell>
-                  {row?.punchOutAtIST
-                    ? formatPunchDate(row.punchOutAtIST)
-                    : "N/A"}
+                  {row?.punchOutAt ? formatPunchDate(row.punchOutAt) : "N/A"}
                 </TableCell>
 
                 <TableCell align="center">

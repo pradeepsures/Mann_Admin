@@ -6,6 +6,7 @@ import { getAllDrivers } from "../../Services/DriverApi";
 import { getAllSegment } from "../../Services/SegmentApi";
 import { Select, Switch } from "antd";
 import Breaker from "../../compoents/Breaker";
+import { CurrencyBangladeshiIcon } from "@heroicons/react/24/outline";
 
 const { Option } = Select;
 
@@ -56,6 +57,9 @@ const CreateVehicle = () => {
     certificatePhoto: null,
     rcFrontPhoto: null,
     rcBackPhoto: null,
+    currentOdometerReading: "",
+    previousOdometerReading: "",
+    averageMileage: "",
   });
 
   // Image previews (exactly like CreateDriver)
@@ -247,6 +251,9 @@ const CreateVehicle = () => {
       certificatePhoto: null,
       rcFrontPhoto: null,
       rcBackPhoto: null,
+      currentOdometerReading: "",
+      previousOdometerReading: "",
+      averageMileage: "",
     });
   };
 
@@ -460,6 +467,9 @@ const CreateVehicle = () => {
               type: "date",
             },
             { label: "Date of Purchase", key: "dateOfPurchase", type: "date" },
+            { label: "Current Odometer Reading (km)", key: "currentOdometerReading", type: "number" },
+            { label: "Previous Odometer Reading (km)", key: "previousOdometerReading", type: "number" },
+            { label: "Average Mileage (km/l)", key: "averageMileage", type: "number" },
           ].map(({ label, key, type }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>

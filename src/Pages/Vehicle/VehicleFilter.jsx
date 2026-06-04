@@ -18,18 +18,46 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
   const [driverLoading, setDriverLoading] = useState(false);
   const [segmentLoading, setSegmentLoading] = useState(false);
 
+
   useEffect(() => {
     setLocalFilters({ ...appliedFilters });
   }, [appliedFilters]);
 
-  const handleChange = (key, value) => {
-    setLocalFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
+  
+  // const handleChange = (key, value) => {
+  //   setLocalFilters((prev) => ({
+  //     ...prev,
+  //     [key]: value,
+  //   }));
+  // };
 
   // FETCH DRIVERS
+  const handleChange = (key, value) => {
+    setLocalFilters((prev) => {
+      const updated = {
+        ...prev,
+        [key]: value,
+      };
+
+      // Auto apply filters
+       if (key !== "search" && key !== "brand") {
+      onApply({
+        search: updated.search || "",
+        driverId: updated.driverId || "",
+        segmentId: updated.segmentId || "",
+        brand: updated.brand || "",
+        fuelType: updated.fuelType || "",
+        isActive: updated.isActive || "",
+        isOnTrip: updated.isOnTrip || "",
+        isAvailable: updated.isAvailable || "",
+        isAssigned: updated.isAssigned || "",
+        isDeleted: updated.isDeleted || "",
+      });
+    }
+      return updated;
+    });
+  };
+
   const fetchDrivers = async () => {
     setDriverLoading(true);
 
@@ -84,6 +112,7 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
       isOnTrip: localFilters.isOnTrip || "",
       isAvailable: localFilters.isAvailable || "",
       isAssigned: localFilters.isAssigned || "",
+      isDeleted: localFilters.isDeleted || "",
     });
   };
 
@@ -101,20 +130,6 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
         />
 
         {/* DRIVER */}
-        {/* <Select
-          showSearch
-          placeholder="Select Driver"
-          value={localFilters.driverId || undefined}
-          onChange={(val) => handleChange("driverId", val)}
-          loading={driverLoading}
-          allowClear
-        >
-          {drivers.map((d) => (
-            <Option key={d._id} value={d._id}>
-              {d.name} | {d.phone}
-            </Option>
-          ))}
-        </Select> */}
         <Select
           showSearch
           placeholder="Select Driver"
@@ -233,10 +248,9 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
           <option value="">Assigned</option>
           <option value="true">Yes</option>
           <option value="false">No</option>
-        
         </select>
 
-           <Select
+        <Select
           showSearch
           placeholder="Deleted Status"
           value={localFilters.isDeleted || undefined}
@@ -247,7 +261,6 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
           <Option value="true">Deleted</Option>
           <Option value="false">Active</Option>
         </Select>
-
       </div>
 
       <div className="flex gap-3 mt-5">

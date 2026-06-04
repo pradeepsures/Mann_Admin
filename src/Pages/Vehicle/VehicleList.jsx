@@ -34,6 +34,7 @@ import {
   deleteVehicle,
   assignDriverToVehicle,
   toggleVehicleDeleteStatus,
+  removeDriverFromVehicle,
 } from "../../Services/VehicleApi";
 // import { assignDriver } from "../../Services/BookingApi";
 import { reassignCancelRequestApi } from "../../Services/RequestApi";
@@ -106,10 +107,10 @@ export default function VehicleList() {
         page,
         limit: rowsPerPage,
         ...filters,
-        isActive,
-        isAvailable,
-        isOnTrip,
-       isDeleted,        // isAssigned
+        //   isActive,
+        //   isAvailable,
+        //   isOnTrip,
+        //  isDeleted,        // isAssigned
       });
       // const result = await getAllVehicles({
       //   page,
@@ -165,12 +166,17 @@ export default function VehicleList() {
 
       brand: f.brand || "",
       fuelType: f.fuelType || "",
+      isActive: f.isActive,
+      isOnTrip: f.isOnTrip,
+      isAvailable: f.isAvailable,
+      isAssigned: f.isAssigned,
+      isDeleted: f.isDeleted,
 
-      isActive: f.isActive || "",
-      isOnTrip: f.isOnTrip || "",
-      isAvailable: f.isAvailable || "",
-      isAssigned: f.isAssigned || "",
-      isDeleted: f.isDeleted || "",
+      // isActive: f.isActive || "",
+      // isOnTrip: f.isOnTrip || "",
+      // isAvailable: f.isAvailable || "",
+      // isAssigned: f.isAssigned || "",
+      // isDeleted: f.isDeleted || "",
     });
   };
 
@@ -248,57 +254,248 @@ export default function VehicleList() {
     handleMenuClose();
   };
 
-  const exportFunc = async (vehiclesData) => {
-    if (!vehiclesData?.length) return toast.error("No vehicles to export");
+  // const handleRemoveDriver = async (vehicleId) => {
+  //   try {
+  //     const res = await removeDriverFromVehicle(vehicleId);
 
-    setIsExporting(true);
-    const settings = {
-      fileName: "Mann_Fleet_Vehicles",
+  //     if (res?.status) {
+  //       toast.success("Driver removed successfully");
+  //       fetchData(); // refresh list
+  //     } else {
+  //       toast.error(res?.message || "Failed to remove driver");
+  //     }
+  //   } catch (err) {
+  //     toast.error("Error removing driver");
+  //   }
+  // };
+
+  const handleRemoveDriver = (vehicleId) => {
+    Modal.confirm({
+      title: "Remove Driver",
+      content: "Are you sure you want to remove this driver from vehicle?",
+      okText: "Remove",
+      okType: "danger",
+      cancelText: "Cancel",
+
+      onOk: async () => {
+        try {
+          const res = await removeDriverFromVehicle(vehicleId);
+
+          if (res?.status) {
+            toast.success("Driver removed successfully");
+            fetchData();
+          } else {
+            toast.error(res?.message || "Failed to remove driver");
+          }
+        } catch (err) {
+          toast.error("Error removing driver");
+        }
+      },
+    });
+  };
+  // const exportFunc = async (vehiclesData) => {
+  //   if (!vehiclesData?.length) return toast.error("No vehicles to export");
+
+  //   setIsExporting(true);
+  //   const settings = {
+  //     fileName: "Vehicle Master",
+  //     extraLength: 3,
+  //     writeMode: "writeFile",
+  //     writeOptions: {},
+  //     RTL: false,
+  //   };
+
+  //   const data = [
+  //     {
+  //       sheet: "Vehicles",
+  //       columns: [
+  //         { label: "ID", value: (row) => row?._id || "" },
+  //         { label: "Car Number", value: (row) => row?.carNumber || "" },
+  //         { label: "Brand", value: (row) => row?.brand || "" },
+  //         { label: "Model", value: (row) => row?.model || "" },
+  //         { label: "Driver Name", value: (row) => row?.driver?.name || "N/A" },
+  //         {
+  //           label: "Driver Phone",
+  //           value: (row) => row?.driver?.phone || "N/A",
+  //         },
+  //         { label: "Color", value: (row) => row?.color || "" },
+  //         { label: "Fuel Type", value: (row) => row?.fuelType || "" },
+  //         {
+  //           label: "Segment",
+  //           value: (row) => row?.segment?.name || "",
+  //         },
+  //         {
+  //           label: "Year",
+  //           value: (row) => row?.year || "",
+  //         },
+  //         {
+  //           label: "Color",
+  //           value: (row) => row?.color || "",
+  //         },
+  //         {
+  //           label: "Capacity",
+  //           value: (row) => row?.capacity || "",
+  //         },
+  //         {
+  //           label: "Insurance Number",
+  //           value: (row) => row?.insuranceNumber || "",
+  //         },
+  //         {
+  //           label: "Insurance Expiry",
+  //           value: (row) => row?.insuranceExpiry || "",
+  //         },
+  //         {
+  //           label: "RC Number",
+  //           value: (row) => row?.rcNumber || "",
+  //         },
+  //         {
+  //           label: "Fitness Number",
+  //           value: (row) => row?.fitnessNumber || "",
+  //         },
+  //         {
+  //           label: "Engine Number",
+  //           value: (row) => row?.engineNumber || "",
+  //         },
+  //         {
+  //           label: "Chassis Number",
+  //           value: (row) => row?.chassisNumber || "",
+  //         },
+  //         {
+  //           label: "Odometer",
+  //           value: (row) => row?.currentOdometerReading || "",
+  //         },
+  //         {
+  //           label: "Purchase Date",
+  //           value: (row) => row?.dateOfPurchase || "",
+  //         },
+  //         {
+  //           label: "Registration Date",
+  //           value: (row) => row?.dateOfRegistration || "",
+  //         },
+  //         {
+  //           label: "Status",
+  //           value: (row) => (row?.isActive ? "Active" : "Inactive"),
+  //         },
+  //         {
+  //           label: "Created At",
+  //           value: (row) =>
+  //             row?.createdAt ? new Date(row.createdAt).toLocaleString() : "",
+  //         },
+  //       ],
+  //       content: vehiclesData,
+  //     },
+  //   ];
+
+  //   try {
+  //     xlsx(data, settings);
+  //     toast.success("Exported successfully!");
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error("Export failed");
+  //   } finally {
+  //     setIsExporting(false);
+  //   }
+  // };
+const exportFunc = async (vehiclesData) => {
+  if (!vehiclesData?.length)
+    return toast.error("No vehicles to export");
+
+  setIsExporting(true);
+
+  const formatDate = (date) =>
+    date ? new Date(date).toLocaleString() : "";
+
+  const data = [
+    {
+      sheet: "Vehicles",
+      columns: [
+        { label: "Vehicle ID", value: (r) => r?._id || "" },
+
+        // DRIVER
+        { label: "Driver Name", value: (r) => r?.driver?.name || "" },
+        { label: "Driver Phone", value: (r) => r?.driver?.phone || "" },
+        { label: "Driver License", value: (r) => r?.driver?.licenseNumber || "" },
+        { label: "Driver Online", value: (r) => r?.driver?.isOnline ? "Yes" : "No" },
+        { label: "Driver Available", value: (r) => r?.driver?.isAvailable ? "Yes" : "No" },
+
+        // VEHICLE BASIC
+        { label: "Car Number", value: (r) => r?.carNumber || "" },
+        { label: "Brand", value: (r) => r?.brand || "" },
+        { label: "Model", value: (r) => r?.model || "" },
+        { label: "Fuel Type", value: (r) => r?.fuelType || "" },
+        { label: "Year", value: (r) => r?.year || "" },
+        { label: "Color", value: (r) => r?.color || "" },
+        { label: "Capacity", value: (r) => r?.capacity || "" },
+
+        // SEGMENT
+        { label: "Segment", value: (r) => r?.segment?.name || "" },
+
+        // STATUS
+        { label: "Is Active", value: (r) => (r?.isActive ? "Active" : "Inactive") },
+        { label: "Is Deleted", value: (r) => (r?.isDeleted ? "Yes" : "No") },
+        { label: "Is Assigned", value: (r) => (r?.isAssigned ? "Yes" : "No") },
+        { label: "Is Available", value: (r) => (r?.isAvailable ? "Yes" : "No") },
+        { label: "Is On Trip", value: (r) => (r?.isOnTrip ? "Yes" : "No") },
+
+        // DOCUMENTS
+        { label: "Insurance Number", value: (r) => r?.insuranceNumber || "" },
+        { label: "Insurance Issue Date", value: (r) => formatDate(r?.insuranceIssueDate) },
+        { label: "Insurance Expiry", value: (r) => formatDate(r?.insuranceExpiry) },
+
+        { label: "Pollution Number", value: (r) => r?.pollutionNumber || "" },
+        { label: "Pollution Start Date", value: (r) => formatDate(r?.pollutionStartDate) },
+        { label: "Pollution Expiry Date", value: (r) => formatDate(r?.pollutionExpiryDate) },
+
+        { label: "Fitness Number", value: (r) => r?.fitnessNumber || "" },
+        { label: "Fitness Start Date", value: (r) => formatDate(r?.fitnessStartDate) },
+        { label: "Fitness Expiry Date", value: (r) => formatDate(r?.fitnessExpiryDate) },
+
+        { label: "Permit Number", value: (r) => r?.permitNumber || "" },
+        { label: "Permit Start Date", value: (r) => formatDate(r?.permitStartDate) },
+        { label: "Permit Expiry Date", value: (r) => formatDate(r?.permitExpiryDate) },
+
+        { label: "RC Issue Date", value: (r) => formatDate(r?.rcIssueDate) },
+        { label: "RC Expiry", value: (r) => formatDate(r?.rcExpeiry) },
+
+        // IDENTIFIERS
+        { label: "Chassis Number", value: (r) => r?.chassisNumber || "" },
+        { label: "Engine Number", value: (r) => r?.engineNumber || "" },
+        { label: "Sticker Number", value: (r) => r?.stickerNumber || "" },
+        { label: "Boot Space", value: (r) => r?.bootSpace || "" },
+
+        // MILEAGE
+        { label: "Odometer Current", value: (r) => r?.currentOdometerReading || "" },
+        { label: "Odometer Previous", value: (r) => r?.previousOdometerReading || "" },
+        { label: "Average Mileage", value: (r) => r?.averageMileage || "" },
+
+        // DATES
+        { label: "Purchase Date", value: (r) => formatDate(r?.dateOfPurchase) },
+        { label: "Registration Date", value: (r) => formatDate(r?.dateOfRegistration) },
+
+        // SYSTEM
+        { label: "Created At", value: (r) => formatDate(r?.createdAt) },
+      ],
+
+      content: vehiclesData,
+    },
+  ];
+
+  try {
+    xlsx(data, {
+      fileName: "Vehicle Master",
       extraLength: 3,
       writeMode: "writeFile",
-      writeOptions: {},
       RTL: false,
-    };
+    });
 
-    const data = [
-      {
-        sheet: "Vehicles",
-        columns: [
-          { label: "ID", value: (row) => row?._id || "" },
-          { label: "Car Number", value: (row) => row?.carNumber || "" },
-          { label: "Brand", value: (row) => row?.brand || "" },
-          { label: "Model", value: (row) => row?.model || "" },
-          { label: "Driver Name", value: (row) => row?.driver?.name || "N/A" },
-          {
-            label: "Driver Phone",
-            value: (row) => row?.driver?.phone || "N/A",
-          },
-          { label: "Color", value: (row) => row?.color || "" },
-          { label: "Fuel Type", value: (row) => row?.fuelType || "" },
-          {
-            label: "Status",
-            value: (row) => (row?.isActive ? "Active" : "Inactive"),
-          },
-          {
-            label: "Created At",
-            value: (row) =>
-              row?.createdAt ? new Date(row.createdAt).toLocaleString() : "",
-          },
-        ],
-        content: vehiclesData,
-      },
-    ];
-
-    try {
-      xlsx(data, settings);
-      toast.success("Exported successfully!");
-    } catch (err) {
-      console.error(err);
-      toast.error("Export failed");
-    } finally {
-      setIsExporting(false);
-    }
-  };
+    toast.success("Exported successfully!");
+  } catch (err) {
+    console.error(err);
+    toast.error("Export failed");
+  } finally {
+    setIsExporting(false);
+  }
+};
 
   const openAssignModal = (row) => {
     setSelectedVehicle(row);
@@ -617,12 +814,31 @@ export default function VehicleList() {
                           {row.driver.licenseNumber}
                         </span>
                         <br></br>
-                        <button
+                        <div className="flex gap-2 mt-2">
+                          <button
+                            onClick={() => openAssignModal(row)}
+                            className={`text-xs px-2 py-1 rounded text-white ${
+                              row.driver ? "bg-yellow-500" : "bg-blue-600"
+                            }`}
+                          >
+                            {row.driver ? "Reassign" : "Assign"}
+                          </button>
+
+                          {row.driver && (
+                            <button
+                              onClick={() => handleRemoveDriver(row.id)}
+                              className="text-xs bg-red-600 text-white px-2 py-1 rounded"
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                        {/* <button
                           onClick={() => openAssignModal(row)}
                           className="mt-2 text-xs bg-yellow-500 text-white px-2 py-1 rounded"
                         >
                           Reassign
-                        </button>
+                        </button> */}
                       </>
                     ) : (
                       <>
@@ -703,14 +919,14 @@ export default function VehicleList() {
                           <PencilIcon className="h-5 w-5 text-green-600" /> Edit
                         </MenuItem>
                       )}
-                      {hasPermission("Vehicle", "delete") && (
+                      {/* {hasPermission("Vehicle", "delete") && (
                         <MenuItem
                           onClick={() => deleteHandler(row.id)}
                           className="flex items-center gap-2 text-gray-700"
                         >
                           <TrashIcon className="h-5 w-5 text-red-600" /> Delete
                         </MenuItem>
-                      )}
+                      )} */}
                       {hasPermission("Vehicle", "delete") && (
                         <MenuItem
                           onClick={() => toggleDeleteHandler(row.id)}
@@ -720,7 +936,9 @@ export default function VehicleList() {
                             className={`h-5 w-5 ${row.isDeleted ? "text-green-600" : "text-red-600"}`}
                           />
 
-                          {row.isDeleted ? "Restore Vehicle" : "Delete Vehicle"}
+                          {row.isDeleted
+                            ? "Activate Vehicle"
+                            : "Inactivate Vehicle"}
                         </MenuItem>
                       )}
                     </Menu>

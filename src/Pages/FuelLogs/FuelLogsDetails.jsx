@@ -116,6 +116,16 @@ const FuelLogView = () => {
                                     <p>{show(data.odometerReading)}</p>
                                 </div>
 
+                                <div>
+                                    <p className="text-sm text-gray-500">Vehivle Avg.</p>
+                                    <p>{show(data.currentVechicleAverage)}</p>
+                                </div>
+
+                                <div>
+                                    <p className="text-sm text-gray-500">Actual Avg.</p>
+                                    <p>{show(data.actualAverage)}</p>
+                                </div>
+
                                 <div className="md:col-span-3">
                                     <p className="text-sm text-gray-500">Location</p>
                                     <p>{show(data.locationAddress)}</p>
