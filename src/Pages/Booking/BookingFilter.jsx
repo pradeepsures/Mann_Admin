@@ -40,6 +40,27 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
     setLocalFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  //handle auto apply filter okay
+  const handleAutoFilter = (key, value) => {
+    const updatedFilters = {
+      ...localFilters,
+      [key]: value,
+    };
+
+    setLocalFilters(updatedFilters);
+
+    const cleaned = { ...updatedFilters };
+
+    delete cleaned.driverName;
+    delete cleaned.driverPhone;
+
+    onApply({
+      ...cleaned,
+      startDate: cleaned.startDate || "",
+      endDate: cleaned.endDate || "",
+    });
+  };
+
   // FETCH SEGMENTS
   const fetchSegments = async () => {
     setSegmentLoading(true);
@@ -128,7 +149,13 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           placeholder="Search booking/chauffeur /vehicle"
           className="border p-2 rounded-2xl"
           value={localFilters.searchQuery || ""}
+          // onChange={(e) => handleChange("searchQuery", e.target.value)}
           onChange={(e) => handleChange("searchQuery", e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleApply();
+            }
+          }}
         />
 
         {/* DATE */}
@@ -168,7 +195,13 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           onBlur={(e) => {
             if (!e.target.value) e.target.type = "text";
           }}
+          // onChange={(e) => handleChange("scheduledStartDate", e.target.value)}
           onChange={(e) => handleChange("scheduledStartDate", e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleApply();
+            }
+          }}
         />
 
         {/* SCHEDULED END DATE */}
@@ -181,14 +214,22 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           onBlur={(e) => {
             if (!e.target.value) e.target.type = "text";
           }}
+          // onChange={(e) => handleChange("scheduledEndDate", e.target.value)}
+
           onChange={(e) => handleChange("scheduledEndDate", e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleApply();
+            }
+          }}
         />
 
+        {/* //replacce handleChange to handleAutoFilter */}
         {/* UPCOMING */}
         <select
           className="border p-2 rounded-2xl"
           value={localFilters.upcoming || ""}
-          onChange={(e) => handleChange("upcoming", e.target.value)}
+          onChange={(e) => handleAutoFilter("upcoming", e.target.value)}
         >
           <option value="">Upcoming</option>
           <option value="true">True</option>
@@ -199,7 +240,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
         <select
           className="border p-2 rounded-2xl"
           value={localFilters.bookingType || ""}
-          onChange={(e) => handleChange("bookingType", e.target.value)}
+          onChange={(e) => handleAutoFilter("bookingType", e.target.value)}
         >
           <option value="">Booking Type</option>
           <option value="one_way">One Way</option>
@@ -212,7 +253,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
         <select
           className="border p-2 rounded-2xl"
           value={localFilters.paymentStatus || ""}
-          onChange={(e) => handleChange("paymentStatus", e.target.value)}
+          onChange={(e) => handleAutoFilter("paymentStatus", e.target.value)}
         >
           <option value="">Payment Status</option>
           <option value="pending">Pending</option>
@@ -225,7 +266,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
         <select
           className="border p-2 rounded-2xl"
           value={localFilters.assignmentStatus || ""}
-          onChange={(e) => handleChange("assignmentStatus", e.target.value)}
+          onChange={(e) => handleAutoFilter("assignmentStatus", e.target.value)}
         >
           <option value="">Assignment Status</option>
           <option value="unassigned">Unassigned</option>
@@ -238,7 +279,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
         <select
           className="border p-2 rounded-2xl"
           value={localFilters.tripStatus || ""}
-          onChange={(e) => handleChange("tripStatus", e.target.value)}
+          onChange={(e) => handleAutoFilter("tripStatus", e.target.value)}
         >
           <option value="">Trip Status</option>
           <option value="not_started">Not Started</option>
@@ -253,7 +294,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
         <select
           className="border p-2 rounded-2xl"
           value={localFilters.overallStatus || ""}
-          onChange={(e) => handleChange("overallStatus", e.target.value)}
+          onChange={(e) => handleAutoFilter("overallStatus", e.target.value)}
         >
           <option value="">Overall Status</option>
           <option value="pending_payment">Pending Payment</option>
@@ -269,7 +310,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           showSearch
           placeholder="Segment"
           value={localFilters.segment || undefined}
-          onChange={(val) => handleChange("segment", val)}
+          onChange={(val) => handleAutoFilter("segment", val)}
           className="custom-select w-full "
           loading={segmentLoading}
         >
@@ -285,7 +326,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           showSearch
           placeholder="Region"
           value={localFilters.region || undefined}
-          onChange={(val) => handleChange("region", val)}
+          onChange={(val) => handleAutoFilter("region", val)}
           className="custom-select w-full"
           loading={regionLoading}
         >
@@ -322,7 +363,7 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           showSearch
           placeholder="Chauffeur"
           value={localFilters.driverId || undefined}
-          onChange={(val) => handleChange("driverId", val)}
+          onChange={(val) => handleAutoFilter("driverId", val)}
           className="custom-select w-full"
           loading={driverLoading}
         >
@@ -339,7 +380,13 @@ export default function BookingFilter({ appliedFilters, onApply, onReset }) {
           placeholder="Vehicle Number"
           className="border p-2 rounded-2xl"
           value={localFilters.carNumber || ""}
+          // onChange={(e) => handleChange("carNumber", e.target.value)}
           onChange={(e) => handleChange("carNumber", e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleApply();
+            }
+          }}
         />
       </div>
 

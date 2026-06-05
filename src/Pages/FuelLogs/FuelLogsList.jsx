@@ -123,6 +123,19 @@ export default function FuelLogsList() {
     setPage(1);
   };
 
+  //auto apply filter
+  const handleAutoFilter = (key, value) => {
+    const updatedFilters = {
+      ...localFilters,
+      [key]: value,
+    };
+
+    setLocalFilters(updatedFilters);
+
+    setFilters(updatedFilters);
+    setPage(1);
+  };
+
   useEffect(() => {
     const fetchDrivers = async () => {
       const res = await getAllDrivers({ page: 1, rowsPerPage: 100 });
@@ -262,9 +275,10 @@ export default function FuelLogsList() {
             showSearch
             placeholder="Select chauffeur"
             value={localFilters.driver || undefined}
-            onChange={(val) =>
-              setLocalFilters({ ...localFilters, driver: val })
-            }
+            onChange={(val) => handleAutoFilter("driver", val)}
+            // onChange={(val) =>
+            //   setLocalFilters({ ...localFilters, driver: val })
+            // }
             optionFilterProp="children"
             className="custom-select"
           >
@@ -280,9 +294,10 @@ export default function FuelLogsList() {
             showSearch
             placeholder="Select Vehicle"
             value={localFilters.vehicle || undefined}
-            onChange={(val) =>
-              setLocalFilters({ ...localFilters, vehicle: val })
-            }
+            onChange={(val) => handleAutoFilter("vehicle", val)}
+            // onChange={(val) =>
+            //   setLocalFilters({ ...localFilters, vehicle: val })
+            // }
             optionFilterProp="children"
             className="custom-select"
           >
@@ -301,14 +316,23 @@ export default function FuelLogsList() {
             onChange={(e) =>
               setLocalFilters({ ...localFilters, carNumber: e.target.value })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleApply();
+              }
+            }}
+            // onChange={(e) =>
+            //   setLocalFilters({ ...localFilters, carNumber: e.target.value })
+            // }
           />
 
           <select
             className="border p-2 rounded-2xl"
             value={localFilters.fuelType}
-            onChange={(e) =>
-              setLocalFilters({ ...localFilters, fuelType: e.target.value })
-            }
+            onChange={(e) => handleAutoFilter("fuelType", e.target.value)}
+            // onChange={(e) =>
+            //   setLocalFilters({ ...localFilters, fuelType: e.target.value })
+            // }
           >
             <option value="">All Fuel Types</option>
             <option value="petrol">Petrol</option>
@@ -328,12 +352,23 @@ export default function FuelLogsList() {
                 e.target.type = "text";
               }
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleApply();
+              }
+            }}
             onChange={(e) =>
               setLocalFilters({
                 ...localFilters,
                 startDate: e.target.value,
               })
             }
+            // onChange={(e) =>
+            //   setLocalFilters({
+            //     ...localFilters,
+            //     startDate: e.target.value,
+            //   })
+            // }
           />
 
           <input
@@ -355,6 +390,17 @@ export default function FuelLogsList() {
                 endDate: e.target.value,
               })
             }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleApply();
+              }
+            }}
+            // onChange={(e) =>
+            //   setLocalFilters({
+            //     ...localFilters,
+            //     endDate: e.target.value,
+            //   })
+            // }
           />
         </div>
 

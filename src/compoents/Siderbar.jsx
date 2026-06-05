@@ -120,6 +120,12 @@ const Sidebar = () => {
           sectionName: "Booking",
         },
 
+          {
+          name: "Rating",
+          link: "/home/rating",
+          sectionName: "Rating",
+        },
+
         {
           name: "Driver Cancel Request",
           link: "/home/cancelRequest",

@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 import { Modal, Input, Select } from "antd";
 import { motion } from "framer-motion";
 import xlsx from "json-as-xlsx";  
-
+import { useAuth } from "../../auth/AuthContext";
 import Loader from "../../compoents/Loader";
 
 import {
@@ -41,6 +41,8 @@ const StyledTableCell = styled(TableCell)(() => ({
 }));
 
 export default function CancelRequestList() {
+    const { hasPermission } = useAuth();
+  const SECTION = "CancelRequest";
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 

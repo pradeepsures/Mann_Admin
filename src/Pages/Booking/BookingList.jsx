@@ -33,11 +33,12 @@ import {
   assignDriver as assignDriverApi,
   getUnassignedDriversBySegment,
   updateBookingSegment,
+  unassignDriver,
 } from "../../Services/BookingApi";
 import { getAllDrivers } from "../../Services/DriverApi";
 import { reassignCancelRequestApi } from "../../Services/RequestApi";
 import { getAllSegment } from "../../Services/SegmentApi";
-
+import { useAuth } from "../../auth/AuthContext";
 const { Option } = Select;
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -45,6 +46,7 @@ const StyledTableCell = styled(TableCell)(() => ({
     background: "linear-gradient(to right, #03045E, #023E8A, #0077B6)",
     color: "#fff",
     fontWeight: 600,
+    whiteSpace: "nowrap",
   },
 }));
 
@@ -57,6 +59,8 @@ const formatText = (text) => {
 };
 
 export default function BookingList() {
+  const { hasPermission } = useAuth();
+const SECTION = "Booking";
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [data, setData] = useState([]);
@@ -110,6 +114,10 @@ export default function BookingList() {
   const [selectedSegmentForUpdate, setSelectedSegmentForUpdate] = useState("");
   const [availableSegments, setAvailableSegments] = useState([]);
   const [segmentsLoading, setSegmentsLoading] = useState(false);
+  const [isUnassignModalOpen, setIsUnassignModalOpen] = useState(false);
+  const [selectedBookingForUnassign, setSelectedBookingForUnassign] =
+    useState(null);
+  const [unassignReason, setUnassignReason] = useState("");
 
   // ✅ FETCH BOOKINGS
   const fetchBookings = useCallback(
@@ -288,6 +296,37 @@ export default function BookingList() {
     setIsReassignModalOpen(true);
     setSelectedDriver("");
     // setDropdownOpen(true);
+  };
+
+  //remove form assign
+  const handleOpenUnassignModal = (bookingId) => {
+    setSelectedBookingForUnassign(bookingId);
+    setUnassignReason("");
+    setIsUnassignModalOpen(true);
+  };
+
+  //remove form assgin sumbit funtion
+  const handleUnassignSubmit = async () => {
+    try {
+      setLoading(true);
+
+      const res = await unassignDriver(
+        selectedBookingForUnassign,
+        unassignReason,
+      );
+
+      if (res?.status) {
+        fetchBookings();
+
+        setIsUnassignModalOpen(false);
+        setSelectedBookingForUnassign(null);
+        setUnassignReason("");
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to unassign driver");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // SEGMENT EDIT HANDLERS
@@ -650,6 +689,7 @@ export default function BookingList() {
         onReset={handleResetFilters}
       />
       <div className="flex justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Trip Management</h1>
         <div />
         <motion.button
           whileTap={{ scale: 0.95 }}
@@ -664,13 +704,28 @@ export default function BookingList() {
           <TableHead>
             <TableRow>
               <StyledTableCell>S.No</StyledTableCell>
-              <StyledTableCell>BOOKING & PAYMENT</StyledTableCell>
-              <StyledTableCell>INFORMATION</StyledTableCell>
+              <StyledTableCell>BOOKING No</StyledTableCell>
+              <StyledTableCell>CUSTOMER</StyledTableCell>
+              <StyledTableCell>PHONE NO</StyledTableCell>
+              <StyledTableCell>PICKUP ADDRESS</StyledTableCell>
+              <StyledTableCell>PICKUP PIN</StyledTableCell>
+              <StyledTableCell>DROP ADDRESS</StyledTableCell>
+              <StyledTableCell>DROP PIN</StyledTableCell>
               <StyledTableCell>BOOKING TYPE</StyledTableCell>
               <StyledTableCell>TRIP STATUS</StyledTableCell>
+              <StyledTableCell>PAYMENT STATUS</StyledTableCell>
+              <StyledTableCell>ASSIGNMENT STATUS</StyledTableCell>
               <StyledTableCell>SEGMENT</StyledTableCell>
-              <StyledTableCell>VEHICLE</StyledTableCell>
-              <StyledTableCell>CHAUFFEUR INFO</StyledTableCell>
+              <StyledTableCell>VEHICLE NUMBER</StyledTableCell>
+              <StyledTableCell>STICKER NUMBER</StyledTableCell>
+              <StyledTableCell>DRIVER NAME</StyledTableCell>
+              <StyledTableCell>DRIVER PHONE</StyledTableCell>
+              <StyledTableCell>ESTIMATED FARE</StyledTableCell>
+              <StyledTableCell>FINAL FARE</StyledTableCell>
+              <StyledTableCell>CREATED AT</StyledTableCell>
+              <StyledTableCell>SCHEDULED AT</StyledTableCell>
+              <StyledTableCell>TRIP START</StyledTableCell>
+              <StyledTableCell>TRIP END</StyledTableCell>
               <StyledTableCell align="center">ACTIONS</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -690,52 +745,72 @@ export default function BookingList() {
                     {row.bookingNumber}<br></br>
                     {row.paymentStatus}
                     </TableCell> */}
-                  <TableCell>
-                    <div>{row.bookingNumber}</div>
+                  {/* <TableCell>
+                    {row.bookingNumber}
+                  </TableCell> */}
 
-                    <span
-                      className={`inline-block mt-1 px-2 py-1 text-xs font-semibold rounded-full
-      ${
-        row.paymentStatus === "paid"
-          ? "bg-green-100 text-green-700"
-          : row.paymentStatus === "pending"
-            ? "bg-yellow-100 text-yellow-700"
-            : row.paymentStatus === "failed"
-              ? "bg-red-100 text-red-700"
-              : "bg-gray-100 text-gray-700"
-      }
-    `}
-                    >
-                      {/* {row.paymentStatus} */}
-                      {formatText(row.paymentStatus)}
-                    </span>
+                  <TableCell>
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                      {/* Booking number */}
+                      <span>{row.bookingNumber}</span>
+
+                      {/* Rating */}
+                      <span style={{ color: "#f5c518", fontSize: "13px" }}>
+                        ★ ({row.rating?.length || 0}/5)
+                      </span>
+                    </div>
                   </TableCell>
 
                   <TableCell>
                     <div className="font-medium text-gray-800">
-                      {row.user?.name || "_"}
-                    </div>
-
-                    <div className="text-xs text-gray-500 mt-1">
-                      PickUp:- {row.pickup?.address || "-"}
-                    </div>
-
-                    <div className="text-xs text-gray-500">
-                      Drop:- {row.dropoff?.address || "-"}
-                    </div>
-
-                    <div className="text-xs text-blue-600 mt-1">
-                      Pickup Date: {row.scheduledAtIST || "-"}
-                    </div>
-
-                    <div className="text-xs text-green-600">
-                      Drop date: {row.tripEndAtIST || "-"}
+                      {row.travellerName || "_"}
                     </div>
                   </TableCell>
 
-                  {/* <TableCell>{row.bookingType || "-"}</TableCell> */}
+                  <TableCell>
+                    <div className="font-medium text-gray-800">
+                      {row.travellerPhone || "_"}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {row.pickup?.address || "-"}
+                    </div>
+
+                    {/* <div className="text-xs text-gray-500">
+                      Drop:- {row.dropoff?.address || "-"}
+                    </div> */}
+                    {/* 
+                    <div className="text-xs text-blue-600 mt-1">
+                      Pickup Date: {row.scheduledAtIST || "-"}
+                    </div> */}
+
+                    {/* <div className="text-xs text-green-600">
+                      Drop date: {row.tripEndAtIST || "-"}
+                    </div> */}
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="font-medium text-gray-800">
+                      {row.pickupPinCode || "_"}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="font-medium text-gray-800">
+                      {row.dropoff?.address || "-"}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="font-medium text-gray-800">
+                      {row.dropoffPinCode || "-"}
+                    </div>
+                  </TableCell>
+
                   <TableCell>{formatText(row.bookingType)}</TableCell>
-                  {/* <TableCell>{row.tripStatus || "-"}</TableCell> */}
+
                   <TableCell>
                     {row.tripStatus ? (
                       <span
@@ -748,6 +823,33 @@ export default function BookingList() {
                       </span>
                     ) : (
                       "-"
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-block mt-1 px-2 py-1 text-xs font-semibold rounded-full capitalize
+      ${
+        row.paymentStatus?.toLowerCase() === "paid"
+          ? "bg-green-100 text-green-700"
+          : row.paymentStatus?.toLowerCase() === "pending"
+            ? "bg-yellow-100 text-yellow-700"
+            : row.paymentStatus?.toLowerCase() === "failed"
+              ? "bg-red-100 text-red-700"
+              : "bg-gray-100 text-gray-700"
+      }
+    `}
+                    >
+                      {row.paymentStatus}
+                    </span>
+                  </TableCell>
+
+                  <TableCell>
+                    {row.assignmentStatus?.toLowerCase() === "assigned" ? (
+                      <span className="inline-block mt-1 px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-700">
+                        Assigned
+                      </span>
+                    ) : (
+                      "_"
                     )}
                   </TableCell>
 
@@ -769,72 +871,135 @@ export default function BookingList() {
                     {row.vehicle ? (
                       <>
                         {row.vehicle.carNumber || "-"}
-                        <br />
+                        {/* <br />
                         {row.vehicle?.brand || "-"}
                         <br />
-                        {row.vehicle?.model || "-"}
+                        {row.vehicle?.model || "-"} */}
                       </>
                     ) : (
                       "-"
                     )}
                   </TableCell>
 
-                  {/* <TableCell>
-                    {row.driver ? (
-                      <>
-                        {row.driver.name || "-"}<br />
-                        {row.driver.phone || "-"}<br />
-
-                        {row.tripStatus?.toLowerCase() !== "completed" && (
-                          <button
-                            onClick={() =>
-                              handleReassignDriver(
-                                row._id,
-                                row.segment?._id
-                              )
-                            }
-                            className="mt-1 text-xs bg-red-500 text-white px-2 py-1 rounded"
-                          >
-                            Reassign
-                          </button>
-                        )}
-                      </>
+                  <TableCell>
+                    {row.vehicle ? (
+                      <>{row.vehicle.stickerNumber || "-"}</>
                     ) : (
                       "-"
                     )}
-                  </TableCell> */}
+                  </TableCell>
+
                   <TableCell>
                     {row.driver ? (
                       <>
                         {row.driver.name || "-"} <br />
-                        {row.driver.phone || "-"} <br />
+                        {/* {row.driver.phone || "-"} <br /> */}
                         {row.tripStatus?.toLowerCase() !== "completed" && (
-                          <button
-                            onClick={() =>
-                              handleReassignDriver(row._id, row.segment?._id)
-                            }
-                            className="mt-1 text-xs bg-red-500 text-white px-2 py-1 rounded"
-                          >
-                            Reassign
-                          </button>
+                          <div className="flex gap-2 mt-1">
+                            <button
+                              onClick={() =>
+                                handleReassignDriver(row._id, row.segment?._id)
+                              }
+                              className="text-xs bg-blue-500 text-white px-2 py-1 rounded"
+                            >
+                              Reassign
+                            </button>
+
+                            <button
+                              onClick={() => handleOpenUnassignModal(row._id)}
+                              className="text-xs bg-red-500 text-white px-2 py-1 rounded"
+                            >
+                              Unassign
+                            </button>
+                          </div>
+                          // <button
+                          //   onClick={() =>
+                          //     handleReassignDriver(row._id, row.segment?._id)
+                          //   }
+                          //   className="mt-1 text-xs bg-red-500 text-white px-2 py-1 rounded"
+                          // >
+                          //   Reassign
+                          // </button>
                         )}
                       </>
                     ) : (
                       <>
-                        <span className="text-gray-400">Not Assigned</span>
+                          {/* <span className="text-gray-400">Not Assigned</span> */}
 
-                        {showAssignHint(row) && (
-                          <div className="mt-2">
-                            <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded animate-pulse">
-                              ⚠ Please assign driver for this trip
-                            </span>
-                          </div>
-                        )}
+                          {showAssignHint(row) && (
+                            <div className="mt-2">
+                              <span className="inline-block bg-orange-100 text-orange-700 text-xs px-2 py-1 rounded animate-pulse">
+                                ⚠ Please assign driver for this trip
+                              </span>
+                            </div>
+                          )}
+
+                          {/* ✅ ADD ASSIGN BUTTON HERE */}
+                          <button
+                            onClick={() =>
+                              handleAssignDriver(row._id, row.segment?._id)
+                            }
+                            className="mt-2 text-xs bg-green-600 text-white px-2 py-1 rounded"
+                          >
+                            Assign Driver
+                          </button>
                       </>
                     )}
                   </TableCell>
 
+                  <TableCell>
+                    {row.driver ? <>{row.driver.phone || "-"}</> : "-"}
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="font-medium text-gray-800">
+                      {row.estimatedFare || "_"}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="font-medium text-gray-800">
+                      {row.finalFare || "_"}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>
+                    {row.createdAtIST
+                      ? new Date(row.createdAtIST).toLocaleString("en-IN")
+                      : "_"}
+                  </TableCell>
+
+                  <TableCell>
+                    {row.scheduledAtIST
+                      ? new Date(row.scheduledAtIST).toLocaleString("en-IN")
+                      : "_"}
+                  </TableCell>
+
+                  <TableCell>
+                    {row.tripStartAtIST
+                      ? new Date(row.tripStartAtIST).toLocaleString("en-IN")
+                      : "_"}
+                  </TableCell>
+
+                  <TableCell>
+                    {row.tripEndAtIST
+                      ? new Date(row.tripEndAtIST).toLocaleString("en-IN")
+                      : "_"}
+                  </TableCell>
+
                   <TableCell align="center">
+                      {hasPermission(SECTION, "read") && (
+                    <IconButton
+                      onClick={() =>
+                        navigate(`/home/booking/bookingdetails/${row._id}`)
+                      }
+                    >
+                      <EyeIcon className="h-5 w-5 text-blue-600" />
+                    </IconButton>
+                      )}
+                  </TableCell>
+
+                  {/* <TableCell align="center">
                     <IconButton onClick={(e) => handleMenuOpen(e, row._id)}>
                       <MoreVertIcon />
                     </IconButton>
@@ -847,11 +1012,7 @@ export default function BookingList() {
                         onClick: (e) => e.stopPropagation(),
                       }}
                     >
-                      {/* <Menu
-                      anchorEl={anchorEl}
-                      open={Boolean(anchorEl) && selectedRowId === row._id}
-                      onClose={handleMenuClose}
-                    > */}
+                    
                       <MenuItem
                         onClick={() =>
                           navigate(`/home/booking/bookingdetails/${row._id}`)
@@ -870,14 +1031,8 @@ export default function BookingList() {
                             🚗 Assign Chauffeur
                           </MenuItem>
                         )}
-
-                      {/* {row.assignmentStatus === "unassigned" && (
-                        <MenuItem onClick={() => handleAssignDriver(row._id, row.segment?._id)}>
-                          🚗 Assign Chauffeur
-                        </MenuItem>
-                      )} */}
                     </Menu>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))
             )}
@@ -941,7 +1096,7 @@ export default function BookingList() {
           ))}
         </Select> */}
       </Modal>
-      //segment model
+      {/* //segment model */}
       <Modal
         title="Update Booking Segment"
         open={isSegmentEditModalOpen}
@@ -963,6 +1118,23 @@ export default function BookingList() {
             </Option>
           ))}
         </Select>
+      </Modal>
+      {/* unassign model */}
+      <Modal
+        title="Unassign Driver"
+        open={isUnassignModalOpen}
+        onCancel={() => setIsUnassignModalOpen(false)}
+        onOk={handleUnassignSubmit}
+        okText="Unassign"
+        okButtonProps={{ danger: true }}
+      >
+        <textarea
+          rows={4}
+          className="w-full border rounded p-2"
+          placeholder="Reason (Optional)"
+          value={unassignReason}
+          onChange={(e) => setUnassignReason(e.target.value)}
+        />
       </Modal>
     </div>
   );

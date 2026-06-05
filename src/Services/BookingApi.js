@@ -246,3 +246,40 @@ export const updateBookingSegment = async (bookingId, segmentId) => {
     throw err;
   }
 };
+
+export const unassignDriver = async (bookingId, reason = "") => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/unassignDriver/${bookingId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ reason }),
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok || result.status === false) {
+      const errorMessage =
+        result.message || "Failed to unassign driver";
+
+      toast.error(errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    toast.success(
+      result.message || "Driver unassigned successfully"
+    );
+
+    return result;
+  } catch (err) {
+    toast.error(err.message || "Something went wrong");
+    throw err;
+  }
+};

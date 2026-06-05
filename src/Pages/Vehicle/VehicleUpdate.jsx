@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { getVehicleById, updateVehicle } from "../../Services/VehicleApi";
 import { getAllDrivers } from "../../Services/DriverApi";
 import { getAllSegment } from "../../Services/SegmentApi";
+import { getAllRegions } from "../../Services/RegionApi";
 import { Select, Switch } from "antd";
 import Breaker from "../../compoents/Breaker";
 
@@ -17,6 +18,7 @@ const UpdateVehicle = () => {
 
   const [drivers, setDrivers] = useState([]);
   const [segments, setSegments] = useState([]);
+  const [regions, setRegions] = useState([]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -45,6 +47,7 @@ const UpdateVehicle = () => {
     currentOdometerReading: "",
     previousOdometerReading: "",
     averageMileage: "",
+    region: "",
   });
 
   const [previews, setPreviews] = useState({
@@ -65,6 +68,7 @@ const UpdateVehicle = () => {
         setFormData({
           driver: data.driver?._id || "",
           segment: data.segment?._id || "",
+          region: data.region?._id || "",
           brand: data.brand || "",
           model: data.model || "",
           fuelType: data.fuelType || "diesel",
@@ -161,8 +165,14 @@ const UpdateVehicle = () => {
           rowsPerPage: 50,
         });
 
+        const regionsRes = await getAllRegions({
+          page: 1,
+          rowsPerPage: 100,
+        });
+
         setDrivers(driversRes?.data || []);
         setSegments(segmentsRes?.data || []);
+        setRegions(regionsRes?.data || []);
       } catch (err) {
         toast.error("Failed to load data");
       }
@@ -394,6 +404,38 @@ const UpdateVehicle = () => {
             <p className="text-red-500 text-sm ml-2">{apiError.segment}</p>
           )}
 
+          {/* REGION */}
+          <label className="ml-2 mt-5 font-normal block">Region</label>
+
+          <Select
+            showSearch
+            placeholder="Select Region"
+            value={formData.region || undefined}
+            className="w-full h-10 mb-3 border rounded-xl"
+            onChange={(val) =>
+              setFormData((prev) => ({
+                ...prev,
+                region: val,
+              }))
+            }
+            filterOption={(input, option) =>
+              option?.children
+                ?.toString()
+                .toLowerCase()
+                .includes(input.toLowerCase())
+            }
+          >
+            {regions.map((r) => (
+              <Option key={r._id} value={r._id}>
+                {r.name}
+              </Option>
+            ))}
+          </Select>
+
+          {apiError.region && (
+            <p className="text-red-500 text-sm ml-2">{apiError.region}</p>
+          )}
+
           {/* BASIC FIELDS */}
           {[
             { label: "Vehicle Brand *", key: "brand", type: "text" },
@@ -460,9 +502,21 @@ const UpdateVehicle = () => {
               type: "date",
             },
             { label: "Date of Purchase", key: "dateOfPurchase", type: "date" },
-            { label: "Current Odometer Reading (km)", key: "currentOdometerReading", type: "number" },
-            { label: "Previous Odometer Reading (km)", key: "previousOdometerReading", type: "number" },
-            { label: "Average Mileage (km/l)", key: "averageMileage", type: "number" }, 
+            {
+              label: "Current Odometer Reading (km)",
+              key: "currentOdometerReading",
+              type: "number",
+            },
+            {
+              label: "Previous Odometer Reading (km)",
+              key: "previousOdometerReading",
+              type: "number",
+            },
+            {
+              label: "Average Mileage (km/l)",
+              key: "averageMileage",
+              type: "number",
+            },
           ].map(({ label, key, type }) => (
             <div key={key}>
               <label className="ml-2 mt-5 font-normal block">{label}</label>

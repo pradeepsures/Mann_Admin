@@ -28,6 +28,8 @@ import xlsx from "json-as-xlsx";
 import { useAuth } from "../../auth/AuthContext";
 import { getAllDrivers } from "../../Services/DriverApi";
 import { Select } from "antd";
+import { Input } from "antd";
+const { TextArea } = Input;
 const { Option } = Select;
 import {
   getAllVehicles,
@@ -35,6 +37,7 @@ import {
   assignDriverToVehicle,
   toggleVehicleDeleteStatus,
   removeDriverFromVehicle,
+  unassignRegionFromVehicle,
 } from "../../Services/VehicleApi";
 // import { assignDriver } from "../../Services/BookingApi";
 import { reassignCancelRequestApi } from "../../Services/RequestApi";
@@ -163,6 +166,7 @@ export default function VehicleList() {
 
       driverId: f.driverId || "",
       segmentId: f.segmentId || "",
+      region: f.region || "",
 
       brand: f.brand || "",
       fuelType: f.fuelType || "",
@@ -293,6 +297,72 @@ export default function VehicleList() {
       },
     });
   };
+const handleRemoveRegion = (vehicleId) => {
+  let reasonText = "";
+
+  Modal.confirm({
+    title: "Remove Region",
+    content: (
+      <div>
+        <p>Are you sure you want to remove region from this vehicle?</p>
+
+        <TextArea
+          placeholder="Enter reason (optional)"
+          rows={3}
+          onChange={(e) => {
+            reasonText = e.target.value;
+          }}
+        />
+      </div>
+    ),
+
+    okText: "Remove",
+    okType: "danger",
+    cancelText: "Cancel",
+
+    async onOk() {
+      try {
+        const res = await unassignRegionFromVehicle(vehicleId, {
+          reason: reasonText,
+        });
+
+        if (res?.status) {
+          toast.success(res?.message || "Region removed successfully");
+          fetchData();
+        } else {
+          toast.error(res?.message || "Failed to remove region");
+        }
+      } catch (err) {
+        toast.error("Error removing region");
+      }
+    },
+  });
+};
+  // const handleRemoveRegion = (vehicleId) => {
+  //   Modal.confirm({
+  //     title: "Remove Region",
+  //     content: "Are you sure you want to remove region from this vehicle?",
+  //     okText: "Remove",
+  //     okType: "danger",
+  //     cancelText: "Cancel",
+
+  //     onOk: async () => {
+  //       try {
+  //         const res = await unassignRegionFromVehicle(vehicleId, {reason});
+
+  //         if (res?.status) {
+  //           toast.success(res?.message || "Region removed successfully");
+  //           fetchData();
+  //         } else {
+  //           toast.error(res?.message || "Failed to remove region");
+  //         }
+  //       } catch (err) {
+  //         toast.error("Error removing region");
+  //       }
+  //     },
+  //   });
+  // };
+
   // const exportFunc = async (vehiclesData) => {
   //   if (!vehiclesData?.length) return toast.error("No vehicles to export");
 
@@ -396,106 +466,158 @@ export default function VehicleList() {
   //     setIsExporting(false);
   //   }
   // };
-const exportFunc = async (vehiclesData) => {
-  if (!vehiclesData?.length)
-    return toast.error("No vehicles to export");
+  const exportFunc = async (vehiclesData) => {
+    if (!vehiclesData?.length) return toast.error("No vehicles to export");
 
-  setIsExporting(true);
+    setIsExporting(true);
 
-  const formatDate = (date) =>
-    date ? new Date(date).toLocaleString() : "";
+    const formatDate = (date) => (date ? new Date(date).toLocaleString() : "");
 
-  const data = [
-    {
-      sheet: "Vehicles",
-      columns: [
-        { label: "Vehicle ID", value: (r) => r?._id || "" },
+    const data = [
+      {
+        sheet: "Vehicles",
+        columns: [
+          { label: "Vehicle ID", value: (r) => r?._id || "" },
 
-        // DRIVER
-        { label: "Driver Name", value: (r) => r?.driver?.name || "" },
-        { label: "Driver Phone", value: (r) => r?.driver?.phone || "" },
-        { label: "Driver License", value: (r) => r?.driver?.licenseNumber || "" },
-        { label: "Driver Online", value: (r) => r?.driver?.isOnline ? "Yes" : "No" },
-        { label: "Driver Available", value: (r) => r?.driver?.isAvailable ? "Yes" : "No" },
+          // DRIVER
+          { label: "Driver Name", value: (r) => r?.driver?.name || "" },
+          { label: "Driver Phone", value: (r) => r?.driver?.phone || "" },
+          {
+            label: "Driver License",
+            value: (r) => r?.driver?.licenseNumber || "",
+          },
+          {
+            label: "Driver Online",
+            value: (r) => (r?.driver?.isOnline ? "Yes" : "No"),
+          },
+          {
+            label: "Driver Available",
+            value: (r) => (r?.driver?.isAvailable ? "Yes" : "No"),
+          },
 
-        // VEHICLE BASIC
-        { label: "Car Number", value: (r) => r?.carNumber || "" },
-        { label: "Brand", value: (r) => r?.brand || "" },
-        { label: "Model", value: (r) => r?.model || "" },
-        { label: "Fuel Type", value: (r) => r?.fuelType || "" },
-        { label: "Year", value: (r) => r?.year || "" },
-        { label: "Color", value: (r) => r?.color || "" },
-        { label: "Capacity", value: (r) => r?.capacity || "" },
+          // VEHICLE BASIC
+          { label: "Car Number", value: (r) => r?.carNumber || "" },
+          { label: "Brand", value: (r) => r?.brand || "" },
+          { label: "Model", value: (r) => r?.model || "" },
+          { label: "Fuel Type", value: (r) => r?.fuelType || "" },
+          { label: "Year", value: (r) => r?.year || "" },
+          { label: "Color", value: (r) => r?.color || "" },
+          { label: "Capacity", value: (r) => r?.capacity || "" },
 
-        // SEGMENT
-        { label: "Segment", value: (r) => r?.segment?.name || "" },
+          // SEGMENT
+          { label: "Segment", value: (r) => r?.segment?.name || "" },
 
-        // STATUS
-        { label: "Is Active", value: (r) => (r?.isActive ? "Active" : "Inactive") },
-        { label: "Is Deleted", value: (r) => (r?.isDeleted ? "Yes" : "No") },
-        { label: "Is Assigned", value: (r) => (r?.isAssigned ? "Yes" : "No") },
-        { label: "Is Available", value: (r) => (r?.isAvailable ? "Yes" : "No") },
-        { label: "Is On Trip", value: (r) => (r?.isOnTrip ? "Yes" : "No") },
+          // STATUS
+          {
+            label: "Is Active",
+            value: (r) => (r?.isActive ? "Active" : "Inactive"),
+          },
+          { label: "Is Deleted", value: (r) => (r?.isDeleted ? "Yes" : "No") },
+          {
+            label: "Is Assigned",
+            value: (r) => (r?.isAssigned ? "Yes" : "No"),
+          },
+          {
+            label: "Is Available",
+            value: (r) => (r?.isAvailable ? "Yes" : "No"),
+          },
+          { label: "Is On Trip", value: (r) => (r?.isOnTrip ? "Yes" : "No") },
 
-        // DOCUMENTS
-        { label: "Insurance Number", value: (r) => r?.insuranceNumber || "" },
-        { label: "Insurance Issue Date", value: (r) => formatDate(r?.insuranceIssueDate) },
-        { label: "Insurance Expiry", value: (r) => formatDate(r?.insuranceExpiry) },
+          // DOCUMENTS
+          { label: "Insurance Number", value: (r) => r?.insuranceNumber || "" },
+          {
+            label: "Insurance Issue Date",
+            value: (r) => formatDate(r?.insuranceIssueDate),
+          },
+          {
+            label: "Insurance Expiry",
+            value: (r) => formatDate(r?.insuranceExpiry),
+          },
 
-        { label: "Pollution Number", value: (r) => r?.pollutionNumber || "" },
-        { label: "Pollution Start Date", value: (r) => formatDate(r?.pollutionStartDate) },
-        { label: "Pollution Expiry Date", value: (r) => formatDate(r?.pollutionExpiryDate) },
+          { label: "Pollution Number", value: (r) => r?.pollutionNumber || "" },
+          {
+            label: "Pollution Start Date",
+            value: (r) => formatDate(r?.pollutionStartDate),
+          },
+          {
+            label: "Pollution Expiry Date",
+            value: (r) => formatDate(r?.pollutionExpiryDate),
+          },
 
-        { label: "Fitness Number", value: (r) => r?.fitnessNumber || "" },
-        { label: "Fitness Start Date", value: (r) => formatDate(r?.fitnessStartDate) },
-        { label: "Fitness Expiry Date", value: (r) => formatDate(r?.fitnessExpiryDate) },
+          { label: "Fitness Number", value: (r) => r?.fitnessNumber || "" },
+          {
+            label: "Fitness Start Date",
+            value: (r) => formatDate(r?.fitnessStartDate),
+          },
+          {
+            label: "Fitness Expiry Date",
+            value: (r) => formatDate(r?.fitnessExpiryDate),
+          },
 
-        { label: "Permit Number", value: (r) => r?.permitNumber || "" },
-        { label: "Permit Start Date", value: (r) => formatDate(r?.permitStartDate) },
-        { label: "Permit Expiry Date", value: (r) => formatDate(r?.permitExpiryDate) },
+          { label: "Permit Number", value: (r) => r?.permitNumber || "" },
+          {
+            label: "Permit Start Date",
+            value: (r) => formatDate(r?.permitStartDate),
+          },
+          {
+            label: "Permit Expiry Date",
+            value: (r) => formatDate(r?.permitExpiryDate),
+          },
 
-        { label: "RC Issue Date", value: (r) => formatDate(r?.rcIssueDate) },
-        { label: "RC Expiry", value: (r) => formatDate(r?.rcExpeiry) },
+          { label: "RC Issue Date", value: (r) => formatDate(r?.rcIssueDate) },
+          { label: "RC Expiry", value: (r) => formatDate(r?.rcExpeiry) },
 
-        // IDENTIFIERS
-        { label: "Chassis Number", value: (r) => r?.chassisNumber || "" },
-        { label: "Engine Number", value: (r) => r?.engineNumber || "" },
-        { label: "Sticker Number", value: (r) => r?.stickerNumber || "" },
-        { label: "Boot Space", value: (r) => r?.bootSpace || "" },
+          // IDENTIFIERS
+          { label: "Chassis Number", value: (r) => r?.chassisNumber || "" },
+          { label: "Engine Number", value: (r) => r?.engineNumber || "" },
+          { label: "Sticker Number", value: (r) => r?.stickerNumber || "" },
+          { label: "Boot Space", value: (r) => r?.bootSpace || "" },
 
-        // MILEAGE
-        { label: "Odometer Current", value: (r) => r?.currentOdometerReading || "" },
-        { label: "Odometer Previous", value: (r) => r?.previousOdometerReading || "" },
-        { label: "Average Mileage", value: (r) => r?.averageMileage || "" },
+          // MILEAGE
+          {
+            label: "Odometer Current",
+            value: (r) => r?.currentOdometerReading || "",
+          },
+          {
+            label: "Odometer Previous",
+            value: (r) => r?.previousOdometerReading || "",
+          },
+          { label: "Average Mileage", value: (r) => r?.averageMileage || "" },
 
-        // DATES
-        { label: "Purchase Date", value: (r) => formatDate(r?.dateOfPurchase) },
-        { label: "Registration Date", value: (r) => formatDate(r?.dateOfRegistration) },
+          // DATES
+          {
+            label: "Purchase Date",
+            value: (r) => formatDate(r?.dateOfPurchase),
+          },
+          {
+            label: "Registration Date",
+            value: (r) => formatDate(r?.dateOfRegistration),
+          },
 
-        // SYSTEM
-        { label: "Created At", value: (r) => formatDate(r?.createdAt) },
-      ],
+          // SYSTEM
+          { label: "Created At", value: (r) => formatDate(r?.createdAt) },
+        ],
 
-      content: vehiclesData,
-    },
-  ];
+        content: vehiclesData,
+      },
+    ];
 
-  try {
-    xlsx(data, {
-      fileName: "Vehicle Master",
-      extraLength: 3,
-      writeMode: "writeFile",
-      RTL: false,
-    });
+    try {
+      xlsx(data, {
+        fileName: "Vehicle Master",
+        extraLength: 3,
+        writeMode: "writeFile",
+        RTL: false,
+      });
 
-    toast.success("Exported successfully!");
-  } catch (err) {
-    console.error(err);
-    toast.error("Export failed");
-  } finally {
-    setIsExporting(false);
-  }
-};
+      toast.success("Exported successfully!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Export failed");
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const openAssignModal = (row) => {
     setSelectedVehicle(row);
@@ -733,6 +855,7 @@ const exportFunc = async (vehiclesData) => {
               <StyledTableCell>Chauffeur</StyledTableCell>
               <StyledTableCell>Trip</StyledTableCell>
               <StyledTableCell>Segment</StyledTableCell>
+              <StyledTableCell>Region</StyledTableCell>
               <StyledTableCell align="center">Actions</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -871,6 +994,32 @@ const exportFunc = async (vehiclesData) => {
 
                   {/* Segment */}
                   <StyledTableCell>{row.segment?.name || "—"}</StyledTableCell>
+
+                  {/* region */}
+                  <StyledTableCell>
+                    {row.region ? (
+                      <>
+                        <div>
+                          {row.region.name} ({row.region.state})
+                        </div> 
+
+                        <button
+                          onClick={() => handleRemoveRegion(row.id)}
+                          className="mt-2 text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700"
+                        >
+                          Remove Region
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-gray-400">No Region</span>
+                    )}
+                  </StyledTableCell>
+                  {/* <StyledTableCell>
+                    {row.region
+                      ? `${row.region.name} (${row.region.state})`
+                      : "_"}
+                  </StyledTableCell> */}
+
                   {/* <StyledTableCell>
                     <span
                       className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${row.isActive

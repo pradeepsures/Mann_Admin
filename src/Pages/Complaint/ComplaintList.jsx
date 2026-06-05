@@ -26,7 +26,7 @@ import Breaker from "../../compoents/Breaker";
 import ComplaintFilter from "./ComplaintFilter"; // <-- Import your filter component
 
 import { getAllComplaints } from "../../Services/ComplaintApi";
-
+import { useAuth } from "../../auth/AuthContext";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     background: "linear-gradient(to right, #03045E, #023E8A, #0077B6)",
@@ -36,6 +36,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 export default function ComplaintList() {
+  const { hasPermission } = useAuth();
+  const SECTION = "Complaint";
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -230,8 +232,12 @@ export default function ComplaintList() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col">
-                      <span className="font-semibold">{row?.reporter?.name}</span>
-                      <span className="text-sm text-gray-500">{row?.reporter?.email}</span>
+                      <span className="font-semibold">
+                        {row?.reporter?.name}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {row?.reporter?.email}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>{row.issueCategory}</TableCell>
@@ -250,12 +256,22 @@ export default function ComplaintList() {
                       open={Boolean(anchorEl) && selectedRowId === row.id}
                       onClose={handleMenuClose}
                     >
-                      <MenuItem onClick={() => navigate(`complaintView/${row.id}`)}>
-                        <EyeIcon className="h-5 w-5 text-blue-600 mr-2" /> View
-                      </MenuItem>
-                      <MenuItem onClick={() => navigate(`updateComplaint/${row.id}`)}>
-                        <PencilIcon className="h-5 w-5 text-green-600 mr-2" /> Edit
-                      </MenuItem>
+                      {hasPermission("SECTION", "view") && (
+                        <MenuItem
+                          onClick={() => navigate(`complaintView/${row.id}`)}
+                        >
+                          <EyeIcon className="h-5 w-5 text-blue-600 mr-2" />{" "}
+                          View
+                        </MenuItem>
+                      )}
+                      {hasPermission("SECTION", "edit") && (
+                        <MenuItem
+                          onClick={() => navigate(`updateComplaint/${row.id}`)}
+                        >
+                          <PencilIcon className="h-5 w-5 text-green-600 mr-2" />{" "}
+                          Edit
+                        </MenuItem>
+                      )}
                     </Menu>
                   </TableCell>
                 </TableRow>
@@ -268,7 +284,11 @@ export default function ComplaintList() {
       {/* PAGINATION */}
       {totalRecord > rowsPerPage && (
         <Stack alignItems="center" mt={4}>
-          <Pagination count={totalPages} page={page} onChange={handlePageChange} />
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handlePageChange}
+          />
         </Stack>
       )}
     </div>

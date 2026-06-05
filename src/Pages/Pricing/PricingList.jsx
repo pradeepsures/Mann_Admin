@@ -201,12 +201,12 @@ export default function PricingList() {
           </select>
 
           {/* ✅ APPLY BUTTON FIXED */}
-          <button
+          {/* <button
             onClick={() => setPage(1)}
             className="bg-blue-600 text-white px-4 rounded"
           >
             Apply
-          </button>
+          </button> */}
         </div>
 
         <div className="flex gap-3">

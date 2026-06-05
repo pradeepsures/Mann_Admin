@@ -77,7 +77,8 @@ export default function VehicleDetails() {
           const next = { ...prev };
 
           if (field === "carImage" || field === "documentImage") {
-            next[field] = prev[field]?.filter((item) => item !== imageUrl) || [];
+            next[field] =
+              prev[field]?.filter((item) => item !== imageUrl) || [];
           } else {
             next[field] = null;
           }
@@ -129,7 +130,7 @@ export default function VehicleDetails() {
           onClick={() => navigate(-1)}
           className="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
         >
-          Back 
+          Back
         </button>
       </div>
 
@@ -144,17 +145,39 @@ export default function VehicleDetails() {
           <DetailItem label="Model" value={vehicle.model} />
           <DetailItem label="Year" value={vehicle.year} />
           <DetailItem label="Color" value={vehicle.color} />
-          <DetailItem label="Fuel Type" value={vehicle.fuelType?.toUpperCase()} />
-          <DetailItem label="Capacity" value={`${vehicle.capacity || "—"} Seats`} />
+          <DetailItem
+            label="Fuel Type"
+            value={vehicle.fuelType?.toUpperCase()}
+          />
+          <DetailItem
+            label="Capacity"
+            value={`${vehicle.capacity || "—"} Seats`}
+          />
           <DetailItem label="Boot Space" value={vehicle.bootSpace} />
           <DetailItem label="Sticker Number" value={vehicle.stickerNumber} />
           <DetailItem label="Chassis Number" value={vehicle.chassisNumber} />
           <DetailItem label="Engine Number" value={vehicle.engineNumber} />
-          <DetailItem label="Date of Purchase" value={formatDate(vehicle.dateOfPurchase)} />
-          <DetailItem label="Date of Registration" value={formatDate(vehicle.dateOfRegistration)} />
-          <DetailItem label="Current Odometer Reading" value={vehicle.currentOdometerReading} />
-          <DetailItem label="Previous Odometer Reading" value={vehicle.previousOdometerReading} />
+          <DetailItem
+            label="Date of Purchase"
+            value={formatDate(vehicle.dateOfPurchase)}
+          />
+          <DetailItem
+            label="Date of Registration"
+            value={formatDate(vehicle.dateOfRegistration)}
+          />
+          <DetailItem
+            label="Current Odometer Reading"
+            value={vehicle.currentOdometerReading}
+          />
+          <DetailItem
+            label="Previous Odometer Reading"
+            value={vehicle.previousOdometerReading}
+          />
           <DetailItem label="Average Mileage" value={vehicle.averageMileage} />
+          <DetailItem
+            label="Region"
+            value={`${vehicle.region.name} (${vehicle.region.state})`}
+          />
           <DetailItem
             label="Status"
             value={
@@ -169,7 +192,10 @@ export default function VehicleDetails() {
               </span>
             }
           />
-          <DetailItem label="Created At" value={formatDate(vehicle.createdAt)} />
+          <DetailItem
+            label="Created At"
+            value={formatDate(vehicle.createdAt)}
+          />
         </div>
       </div>
 
@@ -193,11 +219,19 @@ export default function VehicleDetails() {
           </h2>
           <div className="space-y-3">
             <DetailItem label="Name" value={vehicle.segment?.name} />
-            <DetailItem label="Description" value={vehicle.segment?.description} />
-            <DetailItem label="Max Capacity" value={`${vehicle.segment?.maxCapacity} Seats`} />
+            <DetailItem
+              label="Description"
+              value={vehicle.segment?.description}
+            />
+            <DetailItem
+              label="Max Capacity"
+              value={`${vehicle.segment?.maxCapacity} Seats`}
+            />
             {vehicle.segment?.image && (
               <div>
-                <p className="text-sm font-medium text-gray-700 mb-1">Segment Image</p>
+                <p className="text-sm font-medium text-gray-700 mb-1">
+                  Segment Image
+                </p>
                 <img
                   src={vehicle.segment.image}
                   alt="Segment"
@@ -281,13 +315,15 @@ export default function VehicleDetails() {
           )} */}
         </div>
 
-        {(!vehicle.carImage?.length &&
+        {!vehicle.carImage?.length &&
           !vehicle.documentImage?.length &&
           !vehicle.certificatePhoto &&
           !vehicle.rcFrontPhoto &&
-          !vehicle.rcBackPhoto) && (
-          <p className="text-gray-500 text-center py-8">No images available</p>
-        )}
+          !vehicle.rcBackPhoto && (
+            <p className="text-gray-500 text-center py-8">
+              No images available
+            </p>
+          )}
       </div>
 
       {/* Documents & Expiry Dates */}
@@ -297,22 +333,62 @@ export default function VehicleDetails() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <DetailItem label="Rc Number" value={vehicle.certificateNumber} />
-          <DetailItem label="Insurance Number" value={vehicle.insuranceNumber} />
-          <DetailItem label="Pollution Number" value={vehicle.pollutionNumber} />
+          <DetailItem
+            label="Insurance Number"
+            value={vehicle.insuranceNumber}
+          />
+          <DetailItem
+            label="Pollution Number"
+            value={vehicle.pollutionNumber}
+          />
           <DetailItem label="Fitness Number" value={vehicle.fitnessNumber} />
-          <DetailItem label=" All India Permit Number" value={vehicle.permitNumber} />
+          <DetailItem
+            label=" All India Permit Number"
+            value={vehicle.permitNumber}
+          />
           {/* <DetailItem label="Certificate Expiry" value={formatDate(vehicle.certificateExpiry)} /> */}
-          <DetailItem label="RC Issue Date" value={formatDate(vehicle.rcIssueDate)} />
-          <DetailItem label="Insurance Expiry" value={formatDate(vehicle.insuranceExpiry)} />
-          <DetailItem label="Pollution Expiry" value={formatDate(vehicle.pollutionExpiry)} />
-          <DetailItem label="RC Expiry" value={formatDate(vehicle.rcExpeiry)} /> {/* note: typo in backend */}
-          <DetailItem label="Insurance Issue Date" value={formatDate(vehicle.insuranceIssueDate)} />
-          <DetailItem label="Pollution Start Date" value={formatDate(vehicle.pollutionStartDate)} />
-          <DetailItem label="Pollution Expiry Date" value={formatDate(vehicle.pollutionExpiryDate)} />
-          <DetailItem label="Fitness Start Date" value={formatDate(vehicle.fitnessStartDate)} />
-          <DetailItem label="Fitness Expiry Date" value={formatDate(vehicle.fitnessExpiryDate)} />
-          <DetailItem label="Permit Start Date" value={formatDate(vehicle.permitStartDate)} />
-          <DetailItem label="Permit Expiry Date" value={formatDate(vehicle.permitExpiryDate)} />
+          <DetailItem
+            label="RC Issue Date"
+            value={formatDate(vehicle.rcIssueDate)}
+          />
+          <DetailItem
+            label="Insurance Expiry"
+            value={formatDate(vehicle.insuranceExpiry)}
+          />
+          <DetailItem
+            label="Pollution Expiry"
+            value={formatDate(vehicle.pollutionExpiry)}
+          />
+          <DetailItem label="RC Expiry" value={formatDate(vehicle.rcExpeiry)} />{" "}
+          {/* note: typo in backend */}
+          <DetailItem
+            label="Insurance Issue Date"
+            value={formatDate(vehicle.insuranceIssueDate)}
+          />
+          <DetailItem
+            label="Pollution Start Date"
+            value={formatDate(vehicle.pollutionStartDate)}
+          />
+          <DetailItem
+            label="Pollution Expiry Date"
+            value={formatDate(vehicle.pollutionExpiryDate)}
+          />
+          <DetailItem
+            label="Fitness Start Date"
+            value={formatDate(vehicle.fitnessStartDate)}
+          />
+          <DetailItem
+            label="Fitness Expiry Date"
+            value={formatDate(vehicle.fitnessExpiryDate)}
+          />
+          <DetailItem
+            label="Permit Start Date"
+            value={formatDate(vehicle.permitStartDate)}
+          />
+          <DetailItem
+            label="Permit Expiry Date"
+            value={formatDate(vehicle.permitExpiryDate)}
+          />
         </div>
       </div>
     </div>
@@ -323,7 +399,9 @@ export default function VehicleDetails() {
 const DetailItem = ({ label, value, small = false }) => (
   <div>
     <p className="text-sm font-medium text-gray-600">{label}</p>
-    <p className={`${small ? "text-sm" : "text-base"} font-medium text-gray-900 mt-1`}>
+    <p
+      className={`${small ? "text-sm" : "text-base"} font-medium text-gray-900 mt-1`}
+    >
       {value || "—"}
     </p>
   </div>
@@ -350,8 +428,7 @@ const DetailItem = ({ label, value, small = false }) => (
 // };
 const handleDownloadImage = (src, title, idx) => {
   try {
-    const extension =
-      src.split(".").pop().split(/[?#]/)[0] || "file";
+    const extension = src.split(".").pop().split(/[?#]/)[0] || "file";
 
     const link = document.createElement("a");
     link.href = src;
@@ -369,16 +446,28 @@ const handleDownloadImage = (src, title, idx) => {
   }
 };
 
-const ImageCard = ({ title, images, field, onDelete, horizontal = false, disabled = false }) => (
+const ImageCard = ({
+  title,
+  images,
+  field,
+  onDelete,
+  horizontal = false,
+  disabled = false,
+}) => (
   <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50">
     <div className="bg-gray-100 px-4 py-2 font-medium text-gray-700 text-center">
       {title}
     </div>
-    <div className={`p-3 ${horizontal ? "flex gap-3 overflow-x-auto" : "grid grid-cols-1 gap-3"}`}>
+    <div
+      className={`p-3 ${horizontal ? "flex gap-3 overflow-x-auto" : "grid grid-cols-1 gap-3"}`}
+    >
       {images.map((img, idx) => {
         const isImage = isImageUrl(img);
         return (
-          <div key={idx} className={`overflow-hidden rounded-md shadow-sm bg-white ${horizontal ? "min-w-[220px]" : ""}`}>
+          <div
+            key={idx}
+            className={`overflow-hidden rounded-md shadow-sm bg-white ${horizontal ? "min-w-[220px]" : ""}`}
+          >
             {isImage ? (
               <img
                 src={img}
@@ -393,7 +482,9 @@ const ImageCard = ({ title, images, field, onDelete, horizontal = false, disable
               <div className="w-full h-40 flex flex-col items-center justify-center gap-2 rounded-md bg-gray-100 p-4 text-center text-gray-700">
                 <div className="text-4xl">📄</div>
                 <div className="text-sm font-medium">{title}</div>
-                <div className="text-xs text-gray-500 break-all">{getFileName(img)}</div>
+                <div className="text-xs text-gray-500 break-all">
+                  {getFileName(img)}
+                </div>
               </div>
             )}
             <div className="p-2 bg-gray-50 flex justify-between gap-2">

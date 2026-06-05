@@ -41,6 +41,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     color: "#fff",
     fontWeight: 600,
     fontSize: "0.95rem",
+    whiteSpace: "nowrap",
   },
 }));
 
@@ -96,15 +97,39 @@ export default function DriverList() {
   //     setLoading(false);
   //   }
   // }, [page, rowsPerPage, searchQuery]);
+  // const fetchDrivers = useCallback(async () => {
+  //   try {
+  //     setLoading(true);
+
+  //     const result = await getAllDrivers({
+  //       page,
+  //       rowsPerPage,
+  //       ...filters,
+  //     });
+
+  //     if (result?.status) {
+  //       setData(result.data.map((i) => ({ ...i, id: i._id })));
+  //       setTotalPages(result.totalPage);
+  //       setTotalRecord(result.totalResult);
+  //       setStats(result.stats || null);
+  //     }
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [page, rowsPerPage, filters]);
   const fetchDrivers = useCallback(async () => {
     try {
       setLoading(true);
+
+      console.log("Current Filters:", filters);
 
       const result = await getAllDrivers({
         page,
         rowsPerPage,
         ...filters,
       });
+
+      console.log("API Result:", result);
 
       if (result?.status) {
         setData(result.data.map((i) => ({ ...i, id: i._id })));
@@ -134,16 +159,23 @@ export default function DriverList() {
   //   setFilters(initialFilters);
   //   setPage(1);
   // }, [location.search]);
+  // useEffect(() => {
+  //   const params = new URLSearchParams(location.search);
+
+  //   const initialFilters = {
+  //     searchQuery: params.get("searchQuery") ?? "",
+  //     isVerified: params.get("isVerified") ?? "",
+  //     isOnline: params.get("isOnline") ?? "",
+  //     isOnTrip: params.get("isOnTrip") ?? "",
+  //     isAvailable: params.get("isAvailable") ?? "",
+  //     isDeleted: params.get("isDeleted") ?? "",
+  //   };
+  //   setFilters(initialFilters);
+  //   setPage(1);
+  // }, [location.search]);
   useEffect(() => {
     const params = new URLSearchParams(location.search);
 
-    // const initialFilters = {
-    //   isVerified: params.get("isVerified") ?? "",
-    //   isOnline: params.get("isOnline") ?? "",
-    //   isOnTrip: params.get("isOnTrip") ?? "",
-    //   isAvailable: params.get("isAvailable") ?? "",
-    //   isDeleted: params.get("isDeleted") ?? "",
-    // };
     const initialFilters = {
       searchQuery: params.get("searchQuery") ?? "",
       isVerified: params.get("isVerified") ?? "",
@@ -151,7 +183,9 @@ export default function DriverList() {
       isOnTrip: params.get("isOnTrip") ?? "",
       isAvailable: params.get("isAvailable") ?? "",
       isDeleted: params.get("isDeleted") ?? "",
+      region: params.get("region") ?? "", // ✅ add this
     };
+
     setFilters(initialFilters);
     setPage(1);
   }, [location.search]);
@@ -358,10 +392,10 @@ export default function DriverList() {
             label: "On Trip",
             value: (row) => (row?.isOnTrip ? "Yes" : "No"),
           },
-          {
-            label: "Assigned",
-            value: (row) => (row?.isAssigned ? "Yes" : "No"),
-          },
+          // {
+          //   label: "Assigned",
+          //   value: (row) => (row?.isAssigned ? "Yes" : "No"),
+          // },
           {
             label: "Punched In",
             value: (row) => (row?.isPunchedIn ? "Yes" : "No"),
@@ -380,11 +414,8 @@ export default function DriverList() {
           { label: "Rating Count", value: "ratingCount" },
           { label: "Total Rides", value: "totalRides" },
 
-          { label: "Device Type", value: "deviceType" },
-          {
-            label: "First User",
-            value: (row) => (row?.firstUser ? "Yes" : "No"),
-          },
+          // { label: "Device Type", value: "deviceType" },
+          // { label: "First User", value: (row) => (row?.firstUser ? "Yes" : "No") },
 
           {
             label: "Created At",
@@ -631,12 +662,15 @@ export default function DriverList() {
                       >
                         <EyeIcon className="h-5 w-5 text-blue-600 mr-2" /> Trips
                       </MenuItem>
+                     
+                          
                       <MenuItem
                         onClick={() => navigate(`driverAttendance/${row.id}`)}
                       >
                         <CalendarDaysIcon className="h-5 w-5 text-green-600 mr-2" />{" "}
                         Attendance
                       </MenuItem>
+
                     </div>
                   </TableCell>
 
@@ -750,38 +784,42 @@ export default function DriverList() {
             )}
           </TableBody>
         </Table>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          {hasPermission(SECTION, "read") && (
+            <MenuItem
+              onClick={() => {
+                navigate(`driverView/${selectedRowId}`);
+                handleMenuClose();
+              }}
+            >
+              <EyeIcon className="h-5 w-5 text-blue-600 mr-2" />
+              View
+            </MenuItem>
+          )}
+
+          {hasPermission(SECTION, "update") && (
+            <MenuItem
+              onClick={() => {
+                navigate(`updateDriver/${selectedRowId}`);
+                handleMenuClose();
+              }}
+            >
+              <PencilIcon className="h-5 w-5 text-green-600 mr-2" />
+              Edit
+            </MenuItem>
+          )}
+          {hasPermission(SECTION, "delete") && (
+          <MenuItem onClick={() => deleteHandler(selectedRowId)}>
+            <TrashIcon className="h-5 w-5 text-red-600 mr-2" />
+            Delete
+          </MenuItem>
+          )}
+        </Menu>
       </TableContainer>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
-        <MenuItem
-          onClick={() => {
-            navigate(`driverView/${selectedRowId}`);
-            handleMenuClose();
-          }}
-        >
-          <EyeIcon className="h-5 w-5 text-blue-600 mr-2" />
-          View
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
-            navigate(`updateDriver/${selectedRowId}`);
-            handleMenuClose();
-          }}
-        >
-          <PencilIcon className="h-5 w-5 text-green-600 mr-2" />
-          Edit
-        </MenuItem>
-
-        <MenuItem onClick={() => deleteHandler(selectedRowId)}>
-          <TrashIcon className="h-5 w-5 text-red-600 mr-2" />
-          Delete
-        </MenuItem>
-      </Menu>
 
       {totalRecord > rowsPerPage && (
         <Stack spacing={2} alignItems="center" mt={6}>

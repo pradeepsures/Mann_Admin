@@ -136,6 +136,7 @@ import InterCityPincodeList from "./Pages/Pincode/IntercityPincodeList";
 import CorporateList from "./Pages/Corporate/CorporateList";
 import CorporateDetails from "./Pages/Corporate/CorporateDetails";
 import CorporateUpdate from "./Pages/Corporate/CorporateUpdate";
+import RatingList from "./Pages/Rating/RatingList";
 
 // import UserPrivacyPolicyView from "./Pages/PrivacyPolicy/PrivacyPolicyView";
 
@@ -352,6 +353,9 @@ const router = createBrowserRouter([
       { path: "corporate", element: <CorporateList/> },
       { path: "corporate/view/:id", element: <CorporateDetails/> },
       { path: "corporate/edit/:id", element: <CorporateUpdate/> },
+
+      //rating
+      { path: "rating", element: <RatingList/> }
 
     ],
   },

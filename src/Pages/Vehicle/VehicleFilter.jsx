@@ -4,6 +4,7 @@ import { Select } from "antd";
 
 import { getAllDrivers } from "../../Services/DriverApi";
 import { getAllSegment } from "../../Services/SegmentApi";
+import { getAllRegions } from "../../Services/RegionApi";
 
 const { Option } = Select;
 
@@ -18,12 +19,13 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
   const [driverLoading, setDriverLoading] = useState(false);
   const [segmentLoading, setSegmentLoading] = useState(false);
 
+  const [regions, setRegions] = useState([]);
+  const [regionLoading, setRegionLoading] = useState(false);
 
   useEffect(() => {
     setLocalFilters({ ...appliedFilters });
   }, [appliedFilters]);
 
-  
   // const handleChange = (key, value) => {
   //   setLocalFilters((prev) => ({
   //     ...prev,
@@ -40,20 +42,21 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
       };
 
       // Auto apply filters
-       if (key !== "search" && key !== "brand") {
-      onApply({
-        search: updated.search || "",
-        driverId: updated.driverId || "",
-        segmentId: updated.segmentId || "",
-        brand: updated.brand || "",
-        fuelType: updated.fuelType || "",
-        isActive: updated.isActive || "",
-        isOnTrip: updated.isOnTrip || "",
-        isAvailable: updated.isAvailable || "",
-        isAssigned: updated.isAssigned || "",
-        isDeleted: updated.isDeleted || "",
-      });
-    }
+      if (key !== "search" && key !== "brand") {
+        onApply({
+          search: updated.search || "",
+          driverId: updated.driverId || "",
+          segmentId: updated.segmentId || "",
+          brand: updated.brand || "",
+          fuelType: updated.fuelType || "",
+          isActive: updated.isActive || "",
+          isOnTrip: updated.isOnTrip || "",
+          isAvailable: updated.isAvailable || "",
+          isAssigned: updated.isAssigned || "",
+          isDeleted: updated.isDeleted || "",
+          region: updated.regionId || "",
+        });
+      }
       return updated;
     });
   };
@@ -93,9 +96,27 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
     }
   };
 
+  const fetchRegions = async () => {
+    setRegionLoading(true);
+
+    try {
+      const res = await getAllRegions({
+        page: 1,
+        rowsPerPage: 100,
+      });
+
+      if (res?.status) {
+        setRegions(res.data || []);
+      }
+    } finally {
+      setRegionLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchDrivers();
     fetchSegments();
+    fetchRegions();
   }, []);
 
   const handleApply = () => {
@@ -113,6 +134,7 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
       isAvailable: localFilters.isAvailable || "",
       isAssigned: localFilters.isAssigned || "",
       isDeleted: localFilters.isDeleted || "",
+      region: localFilters.regionId || "",
     });
   };
 
@@ -126,7 +148,13 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
           className="border p-2 rounded-xl"
           placeholder="Search number/model"
           value={localFilters.search || ""}
+          // onChange={(e) => handleChange("search", e.target.value)}
           onChange={(e) => handleChange("search", e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleApply();
+            }
+          }}
         />
 
         {/* DRIVER */}
@@ -170,27 +198,42 @@ export default function VehicleFilter({ appliedFilters, onApply, onReset }) {
             </Option>
           ))}
         </Select>
-        {/* <Select
+
+        {/* REGION */}
+        <Select
           showSearch
-          placeholder="Select Segment"
-          value={localFilters.segmentId || undefined}
-          onChange={(val) => handleChange("segmentId", val)}
-          loading={segmentLoading}
+          placeholder="Select Region"
+          value={localFilters.regionId || undefined}
+          onChange={(val) => handleChange("regionId", val)}
+          // value={localFilters.regionId || undefined}
+          // onChange={(val) => handleChange("regionId", val)}
+          loading={regionLoading}
           allowClear
+          className="custom-select w-full"
+          optionFilterProp="children"
+          filterOption={(input, option) =>
+            (option?.children ?? "").toLowerCase().includes(input.toLowerCase())
+          }
         >
-          {segments.map((s) => (
-            <Option key={s._id} value={s._id}>
-              {s.name}
+          {regions.map((r) => (
+            <Option key={r._id} value={r._id}>
+              {r.name} | {r.state}
             </Option>
           ))}
-        </Select> */}
+        </Select>
 
         {/* BRAND */}
         <input
           className="border p-2 rounded-xl"
           placeholder="Brand"
           value={localFilters.brand || ""}
+          // onChange={(e) => handleChange("brand", e.target.value)}
           onChange={(e) => handleChange("brand", e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleApply();
+            }
+          }}
         />
 
         {/* FUEL TYPE */}

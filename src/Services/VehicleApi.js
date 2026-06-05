@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { ur } from "zod/v4/locales";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -16,6 +17,7 @@ export const getAllVehicles = async ({
   isAvailable = "",
   isAssigned = "",
   isDeleted = "",
+  region= ""
 }) => {
   const token = localStorage.getItem("token");
 
@@ -32,6 +34,7 @@ export const getAllVehicles = async ({
     if (isAvailable !== "") url += `&isAvailable=${isAvailable}`;
     if (isAssigned !== "") url += `&isAssigned=${isAssigned}`;
     if (isDeleted !== "") url += `&isDeleted=${isDeleted}`;
+    if (region !== "") url += `&region=${region}`;
 
     const res = await fetch(url, {
       method: "GET",
@@ -345,6 +348,41 @@ export const removeDriverFromVehicle = async (vehicleId) => {
     return result;
   } catch (err) {
     toast.error(err.message || "Error removing driver");
+    throw err;
+  }
+};
+
+// Unassign Region From Vehicle
+export const unassignRegionFromVehicle = async (
+  vehicleId,
+  reason = ""
+) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/admin/unAssignVehicleRegion/${vehicleId}`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ reason }),
+      }
+    );
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        result.message || "Failed to unassign region"
+      );
+    }
+
+    return result;
+  } catch (err) {
+    toast.error(err.message || "Error removing region");
     throw err;
   }
 };
